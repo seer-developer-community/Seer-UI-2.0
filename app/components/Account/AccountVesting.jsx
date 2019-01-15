@@ -29,7 +29,24 @@ class VestingBalance extends React.Component {
             cvbAsset = ChainStore.getAsset(vb.balance.asset_id);
             earned = vb.policy[1].coin_seconds_earned;
             vestingPeriod = vb.policy[1].vesting_seconds;
-            availablePercent = vestingPeriod === 0 ? 1 : earned / (vestingPeriod * balance);
+
+            if(vestingPeriod === 0){
+                availablePercent = 1;
+            }
+            else{
+                var localUTCTime = new Date().getTime() + new Date().getTimezoneOffset()*60000;
+                var delta_seconds = parseInt((localUTCTime  -new Date(vb.policy[1].coin_seconds_earned_last_update).getTime())/1000);
+
+                var delta_coin_seconds = parseFloat(balance);
+                delta_coin_seconds *= delta_seconds;
+
+                var withdraw_available = (parseFloat(earned) + delta_coin_seconds) / vestingPeriod
+
+                if(withdraw_available > balance)
+                    withdraw_available = balance
+
+                availablePercent = withdraw_available / balance;
+            }
         }
 
         if (!cvbAsset) {

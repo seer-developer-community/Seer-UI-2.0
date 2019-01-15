@@ -12,6 +12,7 @@ import {PropTypes} from "react";
 import {ChainStore} from "seerjs/es";
 import AmountSelector from "../Utility/AmountSelector";
 import AssetStore from "stores/AssetStore";
+import FormattedAsset from "../Utility/FormattedAsset";
 
 class AccountRoomCreate extends React.Component {
 
@@ -32,12 +33,15 @@ class AccountRoomCreate extends React.Component {
             max: 0,
             L: 0,
             pool: 0,
+            pool2modified: 0,
             awards: [],
             result_owner_percent: 0,
             reward_per_oracle: 0,
             reputation: 0,
             guaranty: 0,
-            volume: 0
+            volume: 0,
+            pvp_owner_percent:0,
+            owner_pay_fee_percent:0
            // all_oracles: []
            // allowed_oracles: [] //set as account names eg:a,b,ss,seer,cef,
         };
@@ -58,13 +62,16 @@ class AccountRoomCreate extends React.Component {
                 max: room.option.maximum / 100000,
                 L: 0,
                 pool: 0,
+                pool2modified: 0,
                 awards: [],
                 result_owner_percent: room.option.result_owner_percent/100,
                 reward_per_oracle: room.option.reward_per_oracle/100000,
                 reputation: room.option.filter.reputation,
                 guaranty: room.option.filter.guaranty/100000,
                 volume: room.option.filter.volume,
-                selections: room.running_option.selection_description
+                selections: room.running_option.selection_description,
+                pvp_owner_percent:room.running_option.pvp_owner_percent,
+                owner_pay_fee_percent:room.owner_pay_fee_percent
                 //all_oracles: [],
                 //allowed_oracles: room.option.allowed_oracles
             };
@@ -86,6 +93,18 @@ class AccountRoomCreate extends React.Component {
         };
 
         SeerActions.updateRoom(args);
+    }
+
+    _updatePool() {
+        let args = {
+            issuer: this.props.account.get("id"),
+            room: this.props.room.get("id"),
+            amount: {
+                amount: this.state.pool2modified * this.state.accept_asset_precision,
+                asset_id: "1.3.0"
+            }
+        };
+        SeerActions.updatePool(args);
     }
 
     _updateRoom() {
@@ -128,6 +147,22 @@ class AccountRoomCreate extends React.Component {
                 pool: parseInt(this.state.pool),
                 awards: this.state.awards.map(a => {return parseInt(a*10000);})
             };
+        }
+
+        if(this.state.pvp_owner_percent && this.state.pvp_owner_percent > 0){
+            args.upgrade_option = {
+                pvp_owner_percent:this.state.pvp_owner_percent
+            };
+        }
+
+        if(this.state.owner_pay_fee_percent && this.state.owner_pay_fee_percent > 0){
+            if(args.upgrade_option)
+                args.upgrade_option.owner_pay_fee_percent = this.state.owner_pay_fee_percent;
+            else
+                args.upgrade_option = {
+                    owner_pay_fee_percent:this.state.owner_pay_fee_percent
+                };
+
         }
 
         SeerActions.updateRoom(args);
@@ -175,6 +210,23 @@ class AccountRoomCreate extends React.Component {
                 awards: this.state.awards.map(a => {return parseInt(a*10000);})
             };
         }
+
+        if(this.state.pvp_owner_percent && this.state.pvp_owner_percent > 0){
+            args.upgrade_option = {
+                pvp_owner_percent:this.state.pvp_owner_percent
+            };
+        }
+
+        if(this.state.owner_pay_fee_percent && this.state.owner_pay_fee_percent > 0){
+            if(args.upgrade_option)
+                args.upgrade_option.owner_pay_fee_percent = this.state.owner_pay_fee_percent;
+            else
+                args.upgrade_option = {
+                    owner_pay_fee_percent:this.state.owner_pay_fee_percent
+                };
+
+        }
+
         SeerActions.createRoom(args);
     }
 
@@ -309,6 +361,8 @@ class AccountRoomCreate extends React.Component {
             {label: "Advanced", value: 2},
         ];
 
+
+
         let i = 0;
 
         let type_options = [];
@@ -331,7 +385,10 @@ class AccountRoomCreate extends React.Component {
             case 1:
                 room_type = (
                     <div>
-
+                        <label>
+                            <Translate content="seer.room.pvp_owner_percent"/>
+                            <input type="text" value={this.state.pvp_owner_percent/100} onChange={e => this.setState({pvp_owner_percent:parseInt(e.target.value*100)})}/>
+                        </label>
                     </div>
                 );
                 break;
@@ -479,8 +536,6 @@ class AccountRoomCreate extends React.Component {
                         </table>
                         : null
                 }
-
-
             </div>
         );
         }
@@ -494,14 +549,31 @@ class AccountRoomCreate extends React.Component {
                             <h3><Translate content="seer.room.update" /></h3>
                         </div>
                         <div className="small-12 grid-content" style={{padding: "15px"}}>
-
                             {awards_type2}
-
                             <button className="button" onClick={this._updateRoomAward.bind(this)}>
                                 <Translate content="seer.room.update"/>
                             </button>
+                            <div className="tabs-container generic-bordered-box">
+                                <div className="tabs-header">
+                                    <h3><Translate content="seer.room.update_pool" /></h3>
+                                </div>
+                                <div className="small-12 grid-content" style={{padding: "15px"}}>
+                                    <Translate content="seer.room.pool_explain" />
+                                    <FormattedAsset amount={this.state.pool} asset={this.state.accept_asset_symbol}/>
+                                    <AmountSelector
+                                        amount={this.state.pool2modified}
+                                        onChange={(v) => this.setState({pool2modified: v.amount})}
+                                        asset= {this.state.accept_asset}
+                                        assets={[this.state.accept_asset]}
+                                    />
+                                    <button className="button" onClick={this._updatePool.bind(this)}>
+                                        <Translate content="seer.room.update_pool"/>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         ): (/*here is create room*/
@@ -541,6 +613,7 @@ class AccountRoomCreate extends React.Component {
                                         content="seer.room.add_label"/></button>
                                 </div>)
                             }
+                            <br/>
                             <label><Translate content="seer.oracle.description" />
                                 <input type="text" value={this.state.description} onChange={this._changeDescription.bind(this)}/>
                             </label>
@@ -605,6 +678,10 @@ class AccountRoomCreate extends React.Component {
                                     <input value={this.state.max} onChange={(e) => {this.setState({max: e.target.value});}} type="text"></input>
                                 </label>
                             </label>
+                            <label>
+                                <Translate content="seer.room.owner_pay_fee_percent" />
+                                <input type="text" value={this.state.owner_pay_fee_percent/100} onChange={e => this.setState({owner_pay_fee_percent:parseInt(e.target.value*100)})}/>
+                            </label>
                             {
                                 this.state.room_type != 2 ?
                                     <div>
@@ -652,6 +729,7 @@ class AccountRoomCreate extends React.Component {
                                         <button className="button" onClick={this._addSelectionType2.bind(this)}><Translate content="seer.room.add_selection"/></button>
                                     </div>
                             }
+                            <br/>
                             {room_type}
                             {
                                 this.props.room ?
@@ -664,6 +742,7 @@ class AccountRoomCreate extends React.Component {
                                 </button>
                             }
                         </div>
+
                     </div>
                 </div>
             </div>

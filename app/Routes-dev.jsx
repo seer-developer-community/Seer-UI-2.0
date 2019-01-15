@@ -65,6 +65,7 @@ import AccountOracleUpdate from "./components/Account/AccountOracleUpdate";
 import AccountRoomUpdateWrapper from "./components/Account/AccountRoomUpdateWrapper";
 import OracleInput from "./components/Account/OracleInput";
 import ERC20Gateway from "./components/Balances/ERC20Gateway";
+import AccountWitness from "./components/Account/AccountWitness";
 
 const history = __HASH_HISTORY__ ? hashHistory : browserHistory;
 
@@ -162,6 +163,7 @@ const routes = (
             <Route path="rooms/:room_id/update" component={AccountRoomUpdateWrapper}/>
             <Route path="update-house/:house_id" component={AccountHouseUpdate}/>
             <Route path="update-oracle/:oracle_id" component={AccountOracleUpdate}/>
+            <Route path="witness" component={AccountWitness}/>
         </Route>
 
         <Route path="deposit-withdraw" component={AccountDepositWithdraw} />

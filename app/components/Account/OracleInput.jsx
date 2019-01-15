@@ -8,6 +8,8 @@ import AssetActions from "actions/AssetActions";
 import AccountSelector from "../Account/AccountSelector";
 import AmountSelector from "../Utility/AmountSelector";
 import SeerActions from "../../actions/SeerActions";
+import ZfApi from "react-foundation-apps/src/utils/foundation-api";
+import Modal from '../Modal/BaseModal';
 var Apis =  require("seerjs-ws").Apis;
 
 class OracleInput extends React.Component {
@@ -25,7 +27,7 @@ class OracleInput extends React.Component {
         this.state = {
             room: {},
             input: 0,
-            oracle: ""
+            oracle: null,
         };
     }
 
@@ -42,7 +44,8 @@ class OracleInput extends React.Component {
         });
     }
 
-    onSubmit() {
+    onSubmit = () => {
+        this.onModalClose();
         let args = {
             issuer: this.props.account.get("id"),
             oracle: this.state.oracle.id,
@@ -51,15 +54,19 @@ class OracleInput extends React.Component {
         };
         SeerActions.inputOracle(args);
     }
-
+    onModalShow() {
+        ZfApi.publish('oracleInputModal', "open");
+    }
+    onModalClose() {
+        ZfApi.publish('oracleInputModal', "close");
+        ZfApi.unsubscribe("transaction_confirm_actions");
+    }
     handleInputChange(idx) {
         this.setState({input: idx});
     }
 
-
     render() {
         let tabIndex = 1;
-
         let options = [];
         if (this.state.room.running_option) {
             let idx = 0;
@@ -79,8 +86,37 @@ class OracleInput extends React.Component {
                 <input type="radio" name="radio" value={255} checked={this.state.input == 255} onChange={this.handleInputChange.bind(this, 255)}/> <Translate content="seer.room.abandon"/>
             </label>
         );
-
         return ( <div className="grid-block vertical full-width-content">
+            <Modal
+                id='oracleInputModal'
+                overlay={true}
+                onClose={this.onModalCancel}
+                noCloseBtn
+            >
+                <div style={{ margin: '12px' }}>
+                    <Translate content="seer.room.confirm"/>
+                    <span style={{textTransform: 'uppercase'}}>
+                        &nbsp;
+                        {
+                            this.state.input === 255
+                            ? <Translate content="seer.room.abandon"/>
+                            : this.state.room.running_option
+                                ? this.state.room.running_option.selection_description[this.state.input]
+                                : null
+                        }
+                        &nbsp;
+                    </span>
+                    ?
+                </div>
+                <div style={{ float: 'right' }}>
+                    <button className='button' type="submit" value="Submit" onClick={this.onSubmit}>
+                        <Translate component="span" content="transfer.confirm" />
+                    </button>
+                    <button className='button' type="submit" value="Submit" onClick={this.onModalClose}>
+                        <Translate component="span" content="transfer.cancel" />
+                    </button>
+                </div>
+            </Modal>
             <div className="grid-container " style={{paddingTop: "2rem"}}>
                 <h3><Translate content="seer.oracle.input"/></h3>
                 <div className="content-block">
@@ -88,7 +124,12 @@ class OracleInput extends React.Component {
                 </div>
 
                 <div className="content-block button-group">
-                    <button className="button" onClick={this.onSubmit.bind(this)}>
+                    <div style={this.state.oracle ? {} : { width: '100%', height: '100%', position: 'absolute'}}></div>
+                    <button
+                        className="button"
+                        style={this.state.oracle ? {} : { background: '#e5e6e4', color: '#333' }}
+                        onClick={this.onModalShow}
+                    >
                         <Translate content="seer.oracle.input"/>
                     </button>
                 </div>

@@ -8,6 +8,8 @@ import AssetActions from "actions/AssetActions";
 import AccountSelector from "../Account/AccountSelector";
 import AmountSelector from "../Utility/AmountSelector";
 import SeerActions from "../../actions/SeerActions";
+import ZfApi from "react-foundation-apps/src/utils/foundation-api";
+import Modal from '../Modal/BaseModal';
 var Apis =  require("seerjs-ws").Apis;
 
 class RoomInput extends React.Component {
@@ -38,7 +40,8 @@ class RoomInput extends React.Component {
         });
     }
 
-    onSubmit() {
+    onSubmit = () => {
+        this.onModalClose();
         let args = {
             issuer: this.props.account.get("id"),
             room: this.state.room.id,
@@ -46,11 +49,16 @@ class RoomInput extends React.Component {
         };
         SeerActions.inputRoom(args);
     }
-
+    onModalShow() {
+        ZfApi.publish('roomInputModal', "open");
+    }
+    onModalClose() {
+        ZfApi.publish('roomInputModal', "close");
+        ZfApi.unsubscribe("transaction_confirm_actions");
+    }
     handleInputChange(idx) {
         this.setState({input: idx});
     }
-
 
     render() {
         let tabIndex = 1;
@@ -76,6 +84,36 @@ class RoomInput extends React.Component {
         );
 
         return ( <div className="grid-block vertical full-width-content">
+            <Modal
+                id='roomInputModal'
+                overlay={true}
+                onClose={this.onModalCancel}
+                noCloseBtn
+            >
+                <div style={{ margin: '12px' }}>
+                    <Translate content="seer.room.confirm"/>
+                    <span style={{textTransform: 'uppercase'}}>
+                        &nbsp;
+                        {
+                            this.state.input === 255
+                            ? <Translate content="seer.room.abandon"/>
+                            : this.state.room.running_option
+                                ? this.state.room.running_option.selection_description[this.state.input]
+                                : null
+                        }
+                        &nbsp;
+                    </span>
+                    ?
+                </div>
+                <div style={{ float: 'right' }}>
+                    <button className='button' type="submit" value="Submit" onClick={this.onSubmit}>
+                        <Translate component="span" content="transfer.confirm" />
+                    </button>
+                    <button className='button' type="submit" value="Submit" onClick={this.onModalClose}>
+                        <Translate component="span" content="transfer.cancel" />
+                    </button>
+                </div>
+            </Modal>
             <div className="grid-container " style={{paddingTop: "2rem"}}>
                 <h3><Translate content="seer.room.input"/></h3>
                 <div className="content-block">
@@ -84,8 +122,9 @@ class RoomInput extends React.Component {
 
                 <div className="content-block button-group">
                     <input
+                        type='button'
                         className="button success"
-                        onClick={this.onSubmit.bind(this, this.state.checks)}
+                        onClick={this.onModalShow}
                         value={counterpart.translate("seer.room.input")}
                         tabIndex={tabIndex++}
                     />

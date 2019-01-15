@@ -14,25 +14,39 @@ import QRCode from "qrcode.react";
 //import Example from "../../assets/img/example.png"
 import counterpart from "counterpart";
 import AccountStore from "stores/AccountStore";
-import Modal from "../Modal/Modal";
+import Modal from "../Modal/BaseModal";
 import {ChainStore} from "seerjs/es";
 import FormattedAsset from "../Utility/FormattedAsset";
 import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
 import { Asset } from "common/MarketClasses";
 import AccountActions from "actions/AccountActions";
+import ZfApi from "react-foundation-apps/src/utils/foundation-api";
 const gatewaySuppots =[
     "erc20.transfer_in_title",
     "erc20.transfer_out_title",
     "bts.transfer_in_title",
-    "bts.transfer_out_title"
+    "bts.transfer_out_title",
+    "erc20.transfer_opc_in_title",
+    "erc20.transfer_opc_out_title"
 ];
 
 const network_fee_asset=[
     "1.3.0",
     "1.3.0",
     "1.3.0",
-    "1.3.0"
+    "1.3.0",
+    "1.3.1",
+    "1.3.1"
+];
+
+const gateway_account =[
+    "1.2.9981",
+    "1.2.9981",
+    "1.2.9981",
+    "1.2.9981",
+    "1.2.12590",
+    "1.2.12590"
 ];
 
 class ERC20Gateway extends React.Component {
@@ -41,8 +55,6 @@ class ERC20Gateway extends React.Component {
         currentAccount: ChainTypes.ChainAccount
     }
     static defaultProps = {
-        //gateway_account: "1.2.44"//testnet
-        gateway_account: "1.2.9981"//main net
     };
     constructor() {
         super();
@@ -88,13 +100,17 @@ class ERC20Gateway extends React.Component {
 
     confirmTransfer(){
         this.setState({error: null});
-        const {asset, amount} = this.state;
+        const {asset, amount, address, account_bts, curInx} = this.state;
+        if (curInx != 3 && (!address || address === '') || curInx == 3 && (!account_bts || account_bts == '')) {
+            ZfApi.publish("seer-out", "open");
+            return;
+        }
         const sendAmount = new Asset({real: amount, asset_id: this.state.asset_id, precision: 5});
         let from=this.props.currentAccount.get("id");
 
         AccountActions.transfer(
             from,
-            this.props.gateway_account,
+            gateway_account[this.state.curInx],
             sendAmount.getAmount(),
             this.state.asset_id,
             this.state.memo ? new Buffer(this.state.memo, "utf-8") : this.state.memo,
@@ -109,16 +125,26 @@ class ERC20Gateway extends React.Component {
     }
 
     initGatewaySettings(idx){
+        if(idx == this.state.curInx){
+            return
+        }
+
+        this.setState({amount:"",address: "",account_bts:""});
+
         if(idx == 0){
             this.setState({curInx: idx});
             //this.setState({asset_id:"1.3.0",network_fee_amount:10,network_fee_asset:"1.3.0"});
         } else if(idx == 1){
-            this.setState({curInx: idx,asset_id:"1.3.0",network_fee_amount:5000000,memo:"erc20#",unit:"SEER"});
+            this.setState({curInx: idx,asset_id:"1.3.0",network_fee_amount:25000000,memo:"erc20#",unit:"SEER"});
         } else if(idx == 2){
             this.setState({curInx: idx});
             //this.setState({asset_id:"1.3.0",network_fee_amount:10,network_fee_asset:"1.3.0"});
         } else if(idx == 3){
             this.setState({curInx: idx,asset_id:"1.3.0",network_fee_amount:200000,memo:"bts#",unit:"SEER"});
+        }else if(idx == 4){
+            this.setState({curInx: idx});
+        }else if(idx == 5){
+            this.setState({curInx: idx,asset_id:"1.3.1",network_fee_amount:5000000,memo:"erc20#",unit:"OPC"});
         }
     }
 
@@ -153,14 +179,31 @@ class ERC20Gateway extends React.Component {
                     ethaddr:res
                 })
             })
+    }
+
+    handleAmountChange(e) {
+        let {value} = e.target;
+        let {balance} = this.props;
+        this.setState({
+            amount: value
+        });
+    }
+
+    handleAddressChange(e) {
+        if (this.state.curInx == 1){
+            this.setState({address: e.target.value,memo:"erc20#"+e.target.value});
+        } else if (this.state.curInx == 3){
+            this.setState({account_bts: e.target.value,memo:"bts#"+e.target.value});
+        } else if (this.state.curInx == 5){
+            this.setState({address: e.target.value,memo:"erc20#"+e.target.value});
         }
+    }
 
     renderERC20SeerIn()
     {
         let from_error = null;
         let {propose, from_account, to_account, asset, asset_id, propose_account, feeAmount,
             amount, error, to_name, from_name, memo, feeAsset, fee_asset_id, balanceError ,ethaddr} = this.state;
-        let from_my_account = AccountStore.isMyAccount(from_account) || from_name === this.props.passwordAccount;
 
         let {eth_address} = this.props;
         if(ethaddr == null || this.state.account != this.props.currentAccount.get("id")){
@@ -204,21 +247,7 @@ class ERC20Gateway extends React.Component {
         )
     }
 
-    handleAmountChange(e) {
-        let {value} = e.target;
-        let {balance} = this.props;
-        this.setState({
-            amount: value
-        });
-    }
 
-    handleAddressChange(e) {
-        if (this.state.curInx == 1){
-            this.setState({address: e.target.value,memo:"erc20#"+e.target.value});
-        } else if (this.state.curInx == 3){
-            this.setState({account_bts: e.target.value,memo:"bts#"+e.target.value});
-        }
-    }
 
     renderERC20SeerOut(){
         let {master, address,account_bts, amount, useCsaf} = this.state;
@@ -340,6 +369,104 @@ class ERC20Gateway extends React.Component {
     }
 
 
+    renderERC20OPCIn()
+    {
+        let from_error = null;
+        let {propose, from_account, to_account, asset, asset_id, propose_account, feeAmount,
+            amount, error, to_name, from_name, memo, feeAsset, fee_asset_id, balanceError ,ethaddr} = this.state;
+
+        let {eth_address} = this.props;
+        if(ethaddr == null || this.state.account != this.props.currentAccount.get("id")){
+            this.changeUser(this.props.currentAccount);
+        }
+
+        return(
+            <div data-title={counterpart.translate("erc20.transfer_in_title")}>
+                <div className="m-t-20 balance-whitespace">{counterpart.translate("erc20.note_opc")}</div>
+                <br/>
+
+                <div className="balance-whitespace-small">{counterpart.translate("erc20.current_account")}</div>
+                <div><input type="text" readOnly={true} className="erc-btn text-center m-t-14" value={this.props.currentAccount.get("name")}/> </div> <br/>
+
+                <div className="balance-whitespace-small">{counterpart.translate("erc20.bind_eth")}</div>
+                {ethaddr == null || this.state.account != this.props.currentAccount.get("id")?
+                    <input  onClick={this.seerErc20Bind.bind(this)} type="button"
+                            className="button" value={counterpart.translate("erc20.btn_generate")}/>
+                    : (
+                    <span>
+                        <input type="text" readOnly={true} className="erc-btn text-center m-t-14" value={ethaddr}/>
+                        <div className="layer-modal" display={ this.state.modalIsShow ? '' : 'none' }>
+                            <div>
+                                <h4>{counterpart.translate("erc20.qrcode")}</h4>
+                                <dl>
+                                    <dt>
+                                        <span className="qrcode">
+                                        <QRCode size={136} value={ethaddr} /></span>
+                                    </dt>
+                                </dl>
+                            </div>
+                        </div>
+                    </span>
+                )
+
+                }
+                <span className="mini_code"></span>
+            </div>
+        )
+    }
+
+
+    renderERC20OPCOut(){
+        let {master, address,account_bts, amount, useCsaf} = this.state;
+        let {wallet, ethaddr, balance, loading, fees} = this.props;
+
+        let account_balances = this.props.currentAccount.get("balances").toJS();
+
+        let account_balance;
+
+        for (let key in account_balances) {
+            if(key == this.state.asset_id)
+            {
+                let balanceObject = ChainStore.getObject(account_balances[key]);
+                account_balance = balanceObject.get("balance");
+                console.log(account_balance)
+                break;
+            }
+        }
+
+        return (
+            <div data-title={counterpart.translate("erc20.transfer_out_title")}>
+                <div className="m-t-20">{counterpart.translate("erc20.transfer_out_note")}</div>
+                <br/>
+                <div>{counterpart.translate("erc20.transfer_out_to")}</div><br/>
+                <input type="text" placeholder={counterpart.translate("erc20.placeholder_out_address")}
+                       className="input-500 m-t-14"  value={this.state.address} onChange={this.handleAddressChange.bind(this)}/><br/><br/><br/>
+                <div>{counterpart.translate("erc20.transfer_out_amount")}</div><br/>
+                <input type="text"
+                       placeholder={counterpart.translate("erc20.placeholder_out_amount", {unit: this.state.unit})}
+                       className="input-500 m-t-14"
+                       value={amount}
+                       onChange={this.handleAmountChange.bind(this)}/>
+
+                {counterpart.translate("erc20.useable")}
+                <FormattedAsset amount={account_balance} asset={this.state.asset_id}/>
+                <br/><br/><br/>
+
+                <span>{counterpart.translate("erc20.fees")}</span>
+                <FormattedAsset amount={this.state.network_fee_amount} asset={network_fee_asset[this.state.curInx]}/>
+                <br/><br/><br/>
+                {counterpart.translate("erc20.confirm_note")}
+                <FormattedAsset amount={this.state.network_fee_amount} asset={network_fee_asset[this.state.curInx]}/>
+                <br/><br/>
+
+                <br/><br/>
+                {loading ? <TextLoading/> :
+                    <input type="button" value={counterpart.translate("erc20.confirm_btn")} className="button" onClick={this.confirmTransfer.bind(this)}/>}
+
+            </div>
+        )
+    }
+
     render() {
         if(!this.props.currentAccount){
             return(
@@ -369,6 +496,10 @@ class ERC20Gateway extends React.Component {
             detail = this.renderBTSIn();
         } else if(this.state.curInx == 3){
             detail = this.renderBTSOut();
+        }else if(this.state.curInx == 4){
+            detail = this.renderERC20OPCIn();
+        }else if(this.state.curInx == 5){
+            detail = this.renderERC20OPCOut();
         }
 
         let type_options=[];
@@ -380,6 +511,12 @@ class ERC20Gateway extends React.Component {
 
         return (
             <div className="balance-body">
+                <Modal
+                    id='seer-out'
+                    overlay = {true}
+                >
+                    {counterpart.translate("erc20.to_require")}
+                </Modal>
                 <h3>{counterpart.translate("erc20.title")}</h3>
                 <select className="balance-select" value={this.state.curInx} onChange={this.handleChangeTab.bind(this)}>
                     {type_options}

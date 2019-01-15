@@ -185,6 +185,22 @@ class SeerActions {
         };
     }
 
+    updatePool(args) {
+        let tr = WalletApi.new_transaction();
+
+        tr.add_type_operation("seer_room_pool", args);
+        console.log(tr);
+        return (dispatch) => {
+            return WalletDb.process_transaction(tr, null, true).then(result => {
+                console.log("room update result:", result);
+                dispatch(true);
+            }).catch(error => {
+                console.log("updateRoom error ----->", error);
+                dispatch(false);
+            });
+        };
+    }
+
     createHouse(args) {
         let tr = WalletApi.new_transaction();
 

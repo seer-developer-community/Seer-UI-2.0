@@ -128,6 +128,8 @@
   },
   "propose": "Propose",
   "cancel": "Cancel",
+  "submit": "Submit",
+  "confirm": "Confirm",
   "account": {
     "search": "Search for an account",
     "new_user": "New user?",
@@ -482,7 +484,29 @@
     "eq_value_header": "Value ({asset})",
     "qty": "Qty",
     "quote": "Quote",
-    "total": "Total ({asset})"
+    "total": "Total ({asset})",
+    "witness": {
+        "title": "My witness",
+        "create": "Create witness",
+        "update": "Update witness",
+        "signing_key": "Signing key",
+        "not_created": "You haven't created a witness yet",
+        "not_lifetime_member": "Creating witness requires lifetime membership",
+        "collateral": {
+            "title": "Collaterals",
+            "date": "Start time",
+            "amount": "Amount",
+            "status": "Status",
+            "expiration": "Expiration",
+            "claim": "Claim",
+            "cancel": "Cancel",
+            "frozen": "Frozen",
+            "unfreezing": "Unfreezing",
+            "unfrozen": "Unfrozen",
+            "operation": "Operation",
+            "create":  "Create collateral"
+        }
+    }
   },
   "pagination": {
     "newer": "Newer",
@@ -583,7 +607,7 @@
     "seer_room_settle": "{issuer} settle room {room},balance change:{balance}",
     "seer_room_participate": "{issuer} participate room {room},balance change:{balance}",
     "seer_room_close": "{issuer} close room {room}",
-    "seer_room_claim": "{issuer} claim {amount} from room {room}",
+    "seer_room_pool": "{issuer} Add {amount} to room {room}'s pool",
     "seer_house_create": "{issuer} create a house with guaranty {guaranty}",
     "seer_house_update": "{issuer} update house {house}",
     "asset_create_market": "{issuer} Create Asset｛asset_id}'s the {sequence}th market｛asset_id}/{target}"
@@ -744,7 +768,7 @@
       "seer_room_settle": "Settle room",
       "seer_room_participate": "Participate room",
       "seer_room_close": "Close room",
-      "seer_room_claim": "Claim from room",
+      "seer_room_pool": "Add pool to room",
       "seer_house_create": "Create house",
       "seer_house_update": "Update house",
       "account_authentication_apply":"Authentication apply",
@@ -1638,7 +1662,8 @@
       "volume": "Volume",
       "not_created": "Yout don't have an oracle",
       "update": "Update oracle",
-      "input": "Oracle input"
+      "input": "Oracle input",
+      "balance": "(means withdraw if amount is minus,otherwise positive),current balance:"
     },
     "room": {
       "title": "Room",
@@ -1684,7 +1709,14 @@
       "abandon": "Abandon",
       "add_label": "Add label",
       "add_selection": "Add selection",
-      "add_allowed_oracles": "Add allowed oracles"
+      "add_allowed_oracles": "Add allowed oracles",
+      "confirm": "Confirm input option",
+      "show_money": "you'd pay %(amount)s if you want to buy %(_count)s PART",
+      "current_rate": "Current rate",
+      "pool_explain": "Current balance: ",
+      "update_pool": "Add balance to pool",
+      "pvp_owner_percent":"PVP owner profit percent(%)",
+      "owner_pay_fee_percent":"PVP owner pay fee percent(%)"
     }
   },
   "erc20": {
@@ -1702,8 +1734,8 @@
     "fees": "ERC20 Gateway Fees：",
     "confirm_note": "ERC20 Gateway fees will be charged from the amount transferred. Please make sure the amount is greater than ",
     "confirm_btn": "Submit",
-    "transfer_in_title": "In(ERC20)",
-    "transfer_out_title": "Out(ERC20)",
+    "transfer_in_title": "SEER In(ERC20)",
+    "transfer_out_title": "SEER Out(ERC20)",
     "alert_input_address": "Please enter the ETH address",
     "alert_input_amount": "Please enter the amount of transfers",
     "alert_valid_amount": "The amount of transfers must be greater than %(amount)s %(unit)s",
@@ -1712,7 +1744,11 @@
     "error_master": "ERC20 Gateway account exception",
     "success_info": "Submit successful",
     "qrcode":"ETH address",
-    "button_generate_QR": "Click to show QR code"
+    "button_generate_QR": "Click to show QR code",
+    "transfer_opc_in_title": "OPC In(ERC20)",
+    "transfer_opc_out_title": "OPC Out(ERC20)",
+    "to_require": "To is required",
+    "note_opc": "Conversion from ethereum ERC20 tokens to Seer main net tokens is now available. Click the “Generate” button, an ethereum address will be assigned automatically. Send your OPC token from your ERC20 compatible ethereum wallet to this address, the system will automatically transfer equivalent number of OPC tokens to your Seer account. "
   },
   "bts": {
     "title": "Gateway",
@@ -1727,8 +1763,8 @@
     "fees": "Gateway Fees：：",
     "confirm_note": "Gateway fees will be charged from the amount transferred. Please make sure the amount is greater than ",
     "confirm_btn": "Submit",
-    "transfer_in_title": "In",
-    "transfer_out_title": "Out",
+    "transfer_in_title": "SEER In",
+    "transfer_out_title": "SEER Out",
     "alert_input_address": "Please enter the BTS address",
     "alert_input_amount": "Please enter the amount of transfers",
     "alert_valid_amount": "The amount of transfers must be greater than %(amount)s %(unit)s",

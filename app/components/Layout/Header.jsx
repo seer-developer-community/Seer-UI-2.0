@@ -767,6 +767,13 @@ class Header extends React.Component {
                                     <div className="table-cell"><Icon size="2x" name="blocks"/></div>
                                     <div className="table-cell"><Translate content="seer.oracle.title"/></div>
                                 </li>
+
+                                <li className={cnames({active: active.indexOf("/witness") !== -1})}
+                                    onClick={this._onNavigate.bind(this, `/account/${currentAccount}/witness`)}>
+                                    <div className="table-cell"><Icon size="2x" name="witnesses"/></div>
+                                    <div className="table-cell"><Translate content="account.witness.title"/></div>
+                                </li>
+
                             </ul>
 
                         )}

@@ -166,6 +166,7 @@ class AccountHouse extends React.Component {
         }
         let myRooms = this.state.rooms
             .map(room => {
+                console.log(room)
                 let isMyRoom = account && AccountStore.isMyAccount(account) && (room.owner == account.get("id"));
                 var localUTCTime = new Date().getTime() + new Date().getTimezoneOffset()*60000;
                 return (

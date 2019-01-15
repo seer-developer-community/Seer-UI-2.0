@@ -124,6 +124,8 @@
     },
     "propose": "提议",
     "cancel": "取消",
+    "submit": "提交",
+    "confirm": "确定",
     "account": {
         "search": "Search for an account",
         "new_user": "新用户？",
@@ -472,6 +474,28 @@
         "total": "总价值 ({asset})",
         "houses": {
             "title": "我的平台"
+        },
+        "witness": {
+            "title": "我的见证人",
+            "create": "创建见证人",
+            "update": "更新见证人",
+            "signing_key": "出块密钥",
+            "not_created": "您还没有创建见证人",
+            "not_lifetime_member": "创建见证人需要成为终身会员",
+            "collateral": {
+                "title": "抵押",
+                "date": "抵押时间",
+                "amount": "数量",
+                "status": "状态",
+                "expiration": "到期时间",
+                "claim": "领取",
+                "cancel": "解冻",
+                "frozen": "冻结",
+                "unfreezing": "解冻中",
+                "unfrozen": "已解冻",
+                "operation": "操作",
+                "create":  "创建抵押"
+            }
         }
     },
     "pagination": {
@@ -573,7 +597,7 @@
         "seer_room_settle": "{issuer}对房间{room}派发奖励,余额变动:{balance}",
         "seer_room_participate": "{issuer}参与房间{room}预测,余额变动:{balance}",
         "seer_room_close": "{issuer}关闭房间{room}",
-        "seer_room_claim": "{issuer}从房间{room}领取余额{amount}",
+        "seer_room_pool": "{issuer}给房间{room}资金池添加{amount}",
         "seer_house_create": "{issuer}以{guaranty}保证金创建平台",
         "seer_house_update": "{issuer}更新平台{house}",
         "asset_create_market": "{issuer}创建了｛asset_id}的第{sequence}个交易对｛asset_id}/{target}"
@@ -734,7 +758,7 @@
             "seer_room_settle": "房间派奖",
             "seer_room_participate": "参与预测",
             "seer_room_close": "关闭房间",
-            "seer_room_claim": "从房间提取余额",
+            "seer_room_pool": "给房间添加资金",
             "seer_house_create": "创建平台",
             "seer_house_update": "更新平台",
             "account_authentication_apply":"申请认证",
@@ -1606,7 +1630,8 @@
             "volume": "参与量",
             "not_created": "还未创建预言机",
             "update": "更新预言机",
-            "input": "Oracle输入"
+            "input": "Oracle输入",
+            "balance": "(负数表提现,正数表增加)   当前余额："
         },
         "room": {
             "title": "房间",
@@ -1652,7 +1677,14 @@
             "abandon": "放弃",
             "add_label": "添加标签",
             "add_selection": "添加选项",
-            "add_allowed_oracles": "添加允许的预言机"
+            "add_allowed_oracles": "添加允许的预言机",
+            "confirm": "确定输入选项",
+            "show_money": "购买%(_count)s份大约需要支付%(amount)s",
+            "current_rate": "当前赔率",
+            "pool_explain": "当前余额：",
+            "update_pool": "更新资产池",
+            "pvp_owner_percent":"PVP房主提成(%)",
+            "owner_pay_fee_percent":"房主代付手续费(%)"
         }
     },
   "erc20": {
@@ -1670,8 +1702,8 @@
     "fees": "网络手续费：",
     "confirm_note": "网络手续费将从转账金额中扣除，请确保转账数额大于",
     "confirm_btn": "提交转出",
-    "transfer_in_title": "转入(ERC20)",
-    "transfer_out_title": "转出(ERC20)",
+    "transfer_in_title": "转入 SEER(ERC20)",
+    "transfer_out_title": "转出 SEER(ERC20)",
     "alert_input_address": "请输入ETH地址",
     "alert_input_amount": "请输入转出数量",
     "alert_valid_amount": "转出数量必须大于%(amount)s %(unit)s",
@@ -1680,7 +1712,11 @@
     "error_master": "网关账户异常",
     "success_info": "提交转出成功",
     "qrcode": "ETH 地址",
-    "button_generate_QR": "点击生产二维码"
+    "button_generate_QR": "点击生产二维码",
+    "transfer_opc_in_title": "转入 OPC(ERC20)",
+    "transfer_opc_out_title": "转出 OPC(ERC20)",
+    "to_require": "请填写转出账户",
+    "note_opc": "支持将以太钱包的OPC代币自动兑换至主网钱包。点击“生成地址”按钮，系统会自动为您的主网账号分配一个ETH地址。将以太钱包中的OPC代币转入该地址，Seer主网帐号即可自动获得等额OPC币。"
   },
   "bts": {
     "title": "网关",
@@ -1695,8 +1731,8 @@
     "fees": "网络手续费：",
     "confirm_note": "网络手续费将从转账金额中扣除，请确保转账数额大于",
     "confirm_btn": "提交转出",
-    "transfer_in_title": "转入(BTS代币)",
-    "transfer_out_title": "转出(BTS代币)",
+    "transfer_in_title": "转入 SEER(BTS代币)",
+    "transfer_out_title": "转出 SEER(BTS代币)",
     "alert_input_address": "请输入BTS账号",
     "alert_input_amount": "请输入转出数量",
     "alert_valid_amount": "转出数量必须大于%(amount)s %(unit)s",

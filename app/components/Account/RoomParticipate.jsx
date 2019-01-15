@@ -16,6 +16,7 @@ import FormattedAsset from "../Utility/FormattedAsset";
 import {Tabs, Tab} from "../Utility/Tabs";
 
 import AccountStore from "../../stores/AccountStore";
+import { Asset } from "../../lib/common/MarketClasses";
 let roomType =
 {
     0:"PVD",
@@ -102,8 +103,14 @@ class RoomParticipate extends React.Component {
         this.setState({checked_item: parseInt(event.currentTarget.value)});
     }
 
-    changeAmount({amount, asset}) {
-        this.setState({amount: amount});
+    changeAmount(e) {
+        let amount = e.target.value
+        if (this.state.room.room_type>0 && amount<0){
+            this.setState({amount: 0});
+        }
+        else {
+            this.setState({amount: amount});
+        }
     }
 
     renderDescription()
@@ -352,7 +359,7 @@ class RoomParticipate extends React.Component {
             options = this.state.room.running_option.selection_description.map(c => {
                 let dom = (
                     <label key={idx}>
-                        <input type="radio" name="radio" value={idx} checked={this.state.checked_item == idx} onChange={this.handleInputChange.bind(this, idx)}/> {c} (当前赔率  1:{rate[idx]} )
+                        <input type="radio" name="radio" value={idx} checked={this.state.checked_item == idx} onChange={this.handleInputChange.bind(this, idx)}/> {c} (<Translate content="seer.room.current_rate"/>  1:{rate[idx]} )
                     </label>
                 );
                 idx++;
@@ -364,7 +371,7 @@ class RoomParticipate extends React.Component {
             options = this.state.room.running_option.selection_description.map(c => {
                 let dom = (
                     <label key={idx}>
-                        <input type="radio" name="radio" value={idx} checked={this.state.checked_item == idx} onChange={this.handleInputChange.bind(this, idx)}/> {c}(当前赔率 1:{this.state.room.running_option.advanced.awards[idx]/10000})
+                        <input type="radio" name="radio" value={idx} checked={this.state.checked_item == idx} onChange={this.handleInputChange.bind(this, idx)}/> {c}(<Translate content="seer.room.current_rate"/> 1:{this.state.room.running_option.advanced.awards[idx]/10000})
                     </label>
                 );
                 idx++;
@@ -391,9 +398,18 @@ class RoomParticipate extends React.Component {
             }
 
             let money = parseInt(this.state.room.running_option.lmsr.L * (Math.log(orgin1) - Math.log(orgin0)));
-
             showMoney = (
-                <td>购买 {this.state.amount} 份大约需要支付 {money/this.state.precision} {this.state.asset}</td>
+                <td>
+                    <Translate
+                        content="seer.room.show_money"
+                        _count={this.state.amount}
+                        amount={
+                            <FormattedAsset
+                                amount={money || 0}
+                                asset={this.state.room.option.accept_asset}
+                            />}
+                    />
+                    </td>
             )
         }
 
@@ -409,7 +425,7 @@ class RoomParticipate extends React.Component {
                     <label>
                         <Translate content="transfer.amount" />
                         ({this.state.room.room_type === 0 ? <Translate content="seer.room.part"/> : this.state.asset})
-                        <input type="text" value={this.state.amount || 0} onChange={e => this.setState({amount:e.target.value})}/>
+                        <input type="text" value={this.state.amount || 0}  onChange={this.changeAmount.bind(this)}/>
                         {showMoney}
                     </label>
                     {/*<AmountSelector asset={"1.3.0"} assets={[this.props.room.option.accept_asset]} onChange={this.textChange.bind(this)}/>*/}

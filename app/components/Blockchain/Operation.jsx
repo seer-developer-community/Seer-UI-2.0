@@ -1077,10 +1077,10 @@ class Operation extends React.Component {
                 );
                 break;
 
-            case "seer_room_claim":
+            case "seer_room_pool":
                 column = (
                     <TranslateWithLinks
-                        string="operation.seer_room_claim"
+                        string="operation.seer_room_pool"
                         keys={[
                             {type: "account", value: op[1].issuer, arg: "issuer"},
                             {type: "string", value: op[1].room, arg: "room"},

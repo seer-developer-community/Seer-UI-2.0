@@ -62,7 +62,7 @@ class AccountOracleUpdate extends React.Component {
                             <label>
                                 <tr>
                                     <Translate content="seer.oracle.guaranty" />
-                                    <td>(负数表提现,正数表增加)   当前余额：</td>
+                                    <Translate content="seer.oracle.balance" />
                                     <td> <FormattedAsset amount={this.props.oracle.get("guaranty")} asset={"1.3.0"}/></td>
                                 </tr>
                                 <AmountSelector asset={"1.3.0"} assets={["1.3.0"]} amount={this.state.guaranty} onChange={this._changeGuaranty.bind(this)}/>

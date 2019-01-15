@@ -257,6 +257,9 @@ const routes = (
             <Route path="update-oracle/:oracle_id" getComponent={(location, cb) => {
                 System.import("components/Account/AccountOracleUpdate").then(loadRoute(cb)).catch(errorLoading);
             }}/>
+            <Route path="witness" getComponent={(location, cb) => {
+                System.import("components/Account/AccountWitness").then(loadRoute(cb)).catch(errorLoading);
+            }}/>
             <Redirect from="overview" to="/account/:account_name" />
             <Redirect from="dashboard" to="/account/:account_name" />
             <Redirect from="orders" to="/account/:account_name" />

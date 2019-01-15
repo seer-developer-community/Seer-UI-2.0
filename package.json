@@ -124,7 +124,7 @@
     "alt-container": "^1.0.0",
     "alt-react": "0.0.1",
     "bignumber.js": "^4.0.0",
-    "seerjs": "git+https://github.com/seer-project/seerjs.git#3843ad2c40e08e4ba94e75f43e1bace329ffa0a4",
+    "seerjs": "git+https://github.com/seer-project/seerjs.git#f32f295500de6b3d5e3e950ba54b9e46be85bc48",
     "browser-locale": "^1.0.3",
     "classnames": "^2.2.1",
     "cookies-js": "^1.2.1",
