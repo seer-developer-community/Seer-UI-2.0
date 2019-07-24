@@ -26,7 +26,7 @@ import notify from "actions/NotificationActions";
 import AccountImage from "../Account/AccountImage";
 import {ChainStore} from "seerjs";
 
-var logo = require("assets/logo-ico-blue.png");
+var logo = require("assets/logo-full.png");
 
 // const FlagImage = ({flag, width = 20, height = 20}) => {
 //     return <img height={height} width={width} src={`${__BASE_URL__}language-dropdown/${flag.toUpperCase()}.png`} />;
@@ -36,7 +36,7 @@ const SUBMENUS = {
     SETTINGS: "SETTINGS"
 };
 
-class Header extends React.Component {
+class HeaderNav extends React.Component {
 
     static contextTypes = {
         location: React.PropTypes.object.isRequired,
@@ -508,7 +508,7 @@ class Header extends React.Component {
         };
 
         return (
-            <div className="header-container" style={{minHeight:"64px"}}>
+            <div className="header-container" style={{minHeight:"59px"}}>
                 <div>
                     <div className="header menu-group primary" style={{flexWrap:"nowrap", justifyContent:"none"}}>
                         {__ELECTRON__ ? <div className="grid-block show-for-medium shrink electron-navigation">
@@ -527,14 +527,48 @@ class Header extends React.Component {
                         </div> : null}
 
                         <ul className="menu-bar">
-                            <li>{dashboard}</li>
-                            {!currentAccount || !!createAccountLink ? null :
+                            <li style={{paddingRight:"40px"}}>{dashboard}</li>
+
+
+
                             <li>
-                                <Link style={{flexFlow: "row"}} to={`/account/${currentAccount}`} className={cnames({active: active.indexOf("account/") !== -1 && active.indexOf("/account/") !== -1 && active.indexOf("/assets") === -1 && active.indexOf("/voting") === -1 && active.indexOf("/signedmessages") === -1 && active.indexOf("/member-stats") === -1 && active.indexOf("/vesting") === -1 && active.indexOf("/whitelist") === -1 && active.indexOf("/permissions") === -1})}>
-                                    <Icon size="1_5x" style={{position: "relative", top: -2, left: -8}} name="dashboard"/>
-                                    <Translate className="column-hide-small" content="header.dashboard" />
-                                </Link>
-                            </li>}
+                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("prediction") !== -1 ? null : "column-hide-xs", {active: active.indexOf("prediction") !== -1})} onClick={this._onNavigate.bind(this, "/prediction")}>
+                                    <Translate className="column-hide-small" component="span" content="header.prediction" />
+                                </a>
+                            </li>
+                            <li>
+                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("exchange") !== -1 ? null : "column-hide-xs", {active: active.indexOf("exchange") !== -1})} onClick={this._onNavigate.bind(this, "/exchange")}>
+                                    <Translate className="column-hide-small" component="span" content="header.exchange" />
+                                </a>
+                            </li>
+                            <li>
+                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("explorer") !== -1 ? null : "column-hide-xs", {active: active.indexOf("explorer") !== -1})} onClick={this._onNavigate.bind(this, "/explorer")}>
+                                    <Translate className="column-hide-small" component="span" content="header.explorer" />
+                                </a>
+                            </li>
+                            <li>
+                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("wallet") !== -1 ? null : "column-hide-xs", {active: active.indexOf("wallet") !== -1})} onClick={this._onNavigate.bind(this, "/wallet")}>
+                                    <Translate className="column-hide-small" component="span" content="header.wallet_manage" />
+                                </a>
+                            </li>
+                            <li>
+                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("account") !== -1 ? null : "column-hide-xs", {active: active.indexOf("account") !== -1})} onClick={this._onNavigate.bind(this, "/account/" + currentAccount)}>
+                                    <Translate className="column-hide-small" component="span" content="header.account_manage" />
+                                </a>
+                            </li>
+
+
+
+
+                            {!currentAccount || !!createAccountLink ? null :
+
+                                <li>
+                                    <Link style={{flexFlow: "row"}} to={`/account/${currentAccount}`} className={cnames({active: active.indexOf("account/") !== -1 && active.indexOf("/account/") !== -1 && active.indexOf("/assets") === -1 && active.indexOf("/voting") === -1 && active.indexOf("/signedmessages") === -1 && active.indexOf("/member-stats") === -1 && active.indexOf("/vesting") === -1 && active.indexOf("/whitelist") === -1 && active.indexOf("/permissions") === -1})}>
+                                        <Icon size="1_5x" style={{position: "relative", top: -2, left: -8}} name="dashboard"/>
+                                        <Translate className="column-hide-small" content="header.dashboard" />
+                                    </Link>
+                                </li>}
+
                             <li>
                                 <a style={{flexFlow: "row"}} className={cnames(active.indexOf("houses") !== -1 ? null : "column-hide-xs", {active: active.indexOf("houses") !== -1})} onClick={this._onNavigate.bind(this, "/houses")}>
                                     <Icon size="2x" style={{position: "relative", top: 0, left: -8}} name="houses"/>
@@ -794,7 +828,7 @@ class Header extends React.Component {
     }
 }
 
-export default connect(Header, {
+export default connect(HeaderNav, {
     listenTo() {
         return [AccountStore, WalletUnlockStore, WalletManagerStore, SettingsStore, GatewayStore];
     },

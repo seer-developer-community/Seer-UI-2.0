@@ -1,0 +1,88 @@
+.menu-content{
+    display:flex;
+    flexDirection:row;
+
+    .side-menu{
+        width:220px;
+        border-right: 1px solid #dcdcdc;
+
+      .user-info{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height:218px;
+
+        img.avatar{
+          width: 101px;
+          height: 101px;
+        }
+
+        .user-name{
+          margin-top: 14px;
+          color: #333333;
+          font-family: NotoSansHans-Bold;
+          font-weight: bold;
+        }
+
+        .user-uid{
+          margin-top: 14px;
+          color: #999999;
+          font-family: NotoSansHans-Regular;
+        }
+
+      }
+
+      >ul{
+        margin: 0;
+        padding: 0;
+
+        >li{
+          margin: 0;
+          padding: 0 0 0 34px;
+          list-style: none;
+          height: 50px;
+          line-height: 50px;
+          font-size: 0.88rem;
+          color:#666666;
+          font-family: NotoSansHans-Regular;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          -webkit-touch-callout: none;
+          -webkit-user-select: none;
+          -khtml-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+
+          &.active{
+            background: #F8F8FA;
+            color: #449E7B;
+          }
+
+          &.menu-separator{
+            border-bottom: 1px solid #efefef;
+            height: 1px;
+            max-height: 1px;
+          }
+
+          >.icon {
+            width: 2em; height: 2em;
+            vertical-align: -0.15em;
+            fill: currentColor;
+            overflow: hidden;
+            margin-right: 1rem;
+          }
+        }
+      }
+    }
+
+    .sub-content{
+       flex:1;
+       background:"black";
+    }
+}
+
+
+

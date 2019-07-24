@@ -178,7 +178,7 @@ const routes = (
         </Route>
 
         <Route path="/account/:account_name" getComponent={(location, cb) => {
-            System.import("components/Account/AccountPage").then(loadRoute(cb)).catch(errorLoading);
+            System.import("components/Account/Account").then(loadRoute(cb)).catch(errorLoading);
         }}>
             <IndexRoute getComponent={(location, cb) => {
                 System.import("components/Account/AccountOverview").then(loadRoute(cb)).catch(errorLoading);

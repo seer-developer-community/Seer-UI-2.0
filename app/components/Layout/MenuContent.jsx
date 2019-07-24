@@ -1,10 +1,11 @@
 import React from "react";
-import counterpart from "counterpart";
 import Translate from "react-translate-component";
+import AccountImage from "../Account/AccountImage";
 
-import _ from "lodash";
 
-class AdminContent extends React.Component {
+require("imports-loader?!lib/common/iconfont.js");
+
+class MenuContent extends React.Component {
 
     static contextTypes = {
         router: React.PropTypes.object.isRequired
@@ -17,104 +18,76 @@ class AdminContent extends React.Component {
     constructor(props) {
         super();
 
-
-
-
-
-
         let menuEntries = props.menus;//this._getMenuEntries(props);
         let activeSetting = 0;
 
-      //  let tabIndex = !!props.params.tab ? menuEntries.indexOf(props.params.tab) : props.viewSettings.get("activeSetting", 0);
-      //  if(tabIndex >= 0)
-      //      activeSetting = tabIndex;
-
         this.state = {
             activeSetting,
-            menuEntries,
-            settingEntries: {
-                general: ["locale", "unit", "browser_notifications", "showSettles", "walletLockTimeout", "themes",
-                "showAssetPercent", "passwordLogin", "reset"],
-                access: ["apiServer", "faucet_address"]
-            }
+            menuEntries
         };
-
-        this._handleNotificationChange = this._handleNotificationChange.bind(this);
-    }
-
-
-
-
-    _getMenuEntries(props) {
-        if (props.deprecated) {
-            return [
-                "wallet",
-                "backup"
-            ];
-        }
-        let menuEntries = [
-            "general",
-            "wallet",
-            "accounts",
-            "password",
-            "backup",
-            "restore",
-            "access",
-            "faucet_address",
-            "reset"
-        ];
-
-
-        return menuEntries;
     }
 
     triggerModal(e, ...args) {
         this.refs.ws_modal.show(e, ...args);
     }
 
-    _handleNotificationChange(path, value) {
-        // use different change handler because checkbox doesn't work
-        // normal with e.preventDefault()
-
-        let updatedValue = _.set(this.props.settings.get("browser_notifications"), path, value);
-
-        SettingsActions.changeSetting({
-            setting: "browser_notifications",
-            value: updatedValue
-        });
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.location.pathname !== this.props.location.pathname) {
+            this._onChangeMenu(nextProps.location.pathname);
+        }
     }
 
-
     _redirectToEntry(entry) {
-        this.context.router.push(entry);
+        this.context.router.push(entry.name);
     }
 
     _onChangeMenu(entry) {
-        let index = this.state.menuEntries.indexOf(entry);
+        let index = 0;
+        for (let i = 0; i < this.state.menuEntries.length; i++) {
+            if (entry.indexOf(this.state.menuEntries[i].name) !== -1) {
+                index = i;
+            }
+        }
+
         this.setState({
             activeSetting: index
         });
-
-        SettingsActions.changeViewSetting({activeSetting: index});
     }
 
     render() {
-        let {settings, defaults} = this.props;
-        const {menuEntries, activeSetting, settingEntries} = this.state;
-        let entries;
+        let {account_name,account } = this.props;
+        const {menuEntries, activeSetting} = this.state;
         let activeEntry = menuEntries[activeSetting] || menuEntries[0];
 
         return (
 
-        <div className="grid-block" style={style.mainContent}>
-            <div className="side-menu" style={style.sideMenu}>
+        <div className="grid-block menu-content">
+            <div className="side-menu">
+                <div className="user-info">
+                    <AccountImage
+                        size={{height: 101, width: 101}}
+                        account={account_name} custom_image={null}
+                    />
+                    {/*<img  src="https://static.oschina.net/uploads/user/0/12_200.jpg?t=1421200584000"/>*/}
+                    <div className="user-name">{account_name}</div>
+                    <div className="user-uid">UID：{account.get("id")}</div>
+                </div>
                  <ul>
                      {menuEntries.map((entry, index) => {
-                         return <li className={index === activeSetting ? "active" : ""} onClick={this._redirectToEntry.bind(this, entry.name)} key={entry.name}><Translate content={entry.text} /></li>;
+                         if(entry === "separator"){
+                             return <li key={index} className="menu-separator"></li>
+                         }else{
+                             return <li className={index === activeSetting ? "active" : ""} onClick={this._redirectToEntry.bind(this, entry)} key={entry.name}>
+                                 <svg className="icon" aria-hidden="true">
+                                     <use xlinkHref={entry.icon}></use>
+                                 </svg>
+                                 <Translate content={entry.text} />
+                             </li>;
+                        }
                      })}
                  </ul>
             </div>
-            <div className="sub-content" style={style.subContent}>
+            <div className="sub-content">
                 <activeEntry.entry {...this.props}/>
             </div>
         </div>
@@ -154,20 +127,5 @@ class AdminContent extends React.Component {
     }
 }
 
-const  style = {
-    mainContent:{
-        background:"red",
-        display:"flex",
-        flexDirection:"row"
-    },
-    sideMenu:{
-        width:"220px",
-        background:"green",
-    },
-    subContent:{
-        flex:1,
-        background:"black",
-    }
-}
 
-export default AdminContent;
+export default MenuContent;

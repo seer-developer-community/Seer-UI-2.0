@@ -32,8 +32,8 @@
         "title": "Seer 钱包",
         "account": "账户",
         "dashboard": "资产总览",
-        "explorer": "浏览",
-        "exchange": "交易",
+        "explorer": "区块浏览器",
+        "exchange": "交易中心",
         "payments": "转账",
         "payments_beta": "转账（测试版）",
         "logout": "注销",
@@ -53,7 +53,11 @@
         "account_notify": "当前活跃账户为 %(account)s",
         "account_value": "账户价值",
         "create_house": "创建平台",
-        "gateway":"网关"
+        "gateway":"网关",
+        "prediction":"预测市场",
+        "wallet_manage":"钱包管理",
+        "account_manage":"账户管理"
+
     },
     "browser_notification_messages": {
         "money_received_title": "从转移 %(from)s",
@@ -496,6 +500,14 @@
                 "operation": "操作",
                 "create":  "创建抵押"
             }
+        },
+        "menus":{
+            "account_all":"帐户总览",
+            "asset_mangage":"资产管理",
+            "my_oracle":"我的预测",
+            "my_guaranty":"我的保证金",
+            "perm_mangage":"权限管理",
+            "black_white_list":"黑白名单"
         }
     },
     "pagination": {

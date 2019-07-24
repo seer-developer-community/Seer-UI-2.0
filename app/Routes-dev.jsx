@@ -14,7 +14,7 @@ import BlocksContainer from "./components/Explorer/BlocksContainer";
 import AssetsContainer from "./components/Explorer/AssetsContainer";
 import AccountsContainer from "./components/Explorer/AccountsContainer";
 import Explorer from "components/Explorer/Explorer";
-import AccountPage from "./components/Account/AccountPage";
+import Account from "./components/Account/Account";
 import AccountOverview from "./components/Account/AccountOverview";
 import AccountAssets from "./components/Account/AccountAssets";
 import {AccountAssetCreate} from "./components/Account/AccountAssetCreate";
@@ -132,15 +132,13 @@ const routes = (
             <Route path="balance-claim" component={BalanceClaimActive} />
         </Route>
 
-
-        <Route path="/accounts" component={DashboardAccountsOnly} />
-
-        <Route path="/account/:account_name" component={AccountPage} >
+        <Route path="accounts" component={DashboardAccountsOnly} />
+        <Route path="/account/:account_name" component={Account} >
             <IndexRoute component={AccountOverview} />
-            {/* <Route path="dashboard" component={AccountOverview} /> */}
+            <Route path="dashboard" component={AccountOverview} />
             {/* <Route path="deposit-withdraw" component={AccountDepositWithdraw} /> */}
             {/* <Route path="orders" component={AccountOrders} /> */}
-
+            <Route path="accounts" component={DashboardAccountsOnly} />
             <Route path="assets" component={AccountAssets} />
             <Route path="create-asset" component={AccountAssetCreate} />
             <Route path="update-asset/:asset" component={AccountAssetUpdate} />

@@ -12,7 +12,7 @@ import {IntlProvider} from "react-intl";
 import SyncError from "./components/SyncError";
 import LoadingIndicator from "./components/LoadingIndicator";
 import BrowserNotifications from "./components/BrowserNotifications/BrowserNotificationsContainer";
-import Header from "components/Layout/Header";
+import Header from "components/Layout/HeaderNav";
 // import MobileMenu from "components/Layout/MobileMenu";
 import ReactTooltip from "react-tooltip";
 import NotificationSystem from "react-notification-system";

@@ -27,17 +27,17 @@ export const widechainAPIs = {
 };
 
 //for testnet
-/*
-export const settingsAPIs = {
-    DEFAULT_WS_NODE: "ws://192.144.171.138:8002",
-    WS_NODE_LIST: [
-        {url: "ws://192.144.171.138:8002", location: {translate: "settings.api_closest"}},
-        {url: "ws://47.101.34.244:8005", location: "cn"}
-    ],
-    DEFAULT_FAUCET: "http://47.101.34.244",  // 2017-12-infrastructure worker proposal
-    TESTNET_FAUCET: "http://47.101.34.244"
-};
-*/
+
+// export const settingsAPIs = {
+//     DEFAULT_WS_NODE: "ws://123.206.78.97:8002",
+//     WS_NODE_LIST: [
+//         {url: "ws://123.206.78.97:8002", location: {translate: "settings.api_closest"}},
+//         {url: "ws://47.101.34.244:8005", location: "cn"}
+//     ],
+//     DEFAULT_FAUCET: "http://47.101.34.244",  // 2017-12-infrastructure worker proposal
+//     TESTNET_FAUCET: "http://47.101.34.244"
+// };
+
 
 
 export const settingsAPIs = {
@@ -49,6 +49,7 @@ export const settingsAPIs = {
     DEFAULT_FAUCET: "https://www.seerapi.com",
     TESTNET_FAUCET: "http://106.14.75.91"
 };
+
 
 export const  gdexAPIs = {
     BASE: "https://api.gdex.io",

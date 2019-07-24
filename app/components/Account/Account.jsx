@@ -9,8 +9,16 @@ import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
 import { connect } from "alt-react";
 import accountUtils from "common/account_utils";
+import MenuContent from "../Layout/MenuContent"
 
-class AccountPage1 extends React.Component {
+
+
+//
+import AccountPage from "./AccountPage"
+import DashboardAccountsOnly from "../Dashboard/DashboardAccountsOnly"
+import AccountAssets from "./AccountAssets"
+
+class Account extends React.Component {
 
     static propTypes = {
         account: ChainTypes.ChainAccount.isRequired
@@ -39,6 +47,104 @@ class AccountPage1 extends React.Component {
         let {linkedAccounts, account_name, searchAccounts, settings, wallet_locked, account, hiddenAssets} = this.props;
 
         let isMyAccount = AccountStore.isMyAccount(account);
+
+        let accountName = this.props.account.get("name");
+
+        return (
+            <MenuContent
+                menus={[
+                    {
+                        name: "/account/" + accountName + "/" + "dashboard",
+                        text:"account.menus.account_all",
+                        icon:"#icon-zhanghuzonglan",
+                        entry:AccountPage
+                    },
+                    {
+                        name:"/account/" + accountName + "/" + "accounts",
+                        text:"account.mine",
+                        icon:"#icon-wodezhanghu",
+                        entry:DashboardAccountsOnly
+                    },
+                    {
+                        name:"/account/" + accountName + "/" + "vesting",
+                        text:"account.vesting.title",
+                        icon:"#icon-daijiedongyue",
+                        entry:AccountPage
+                    },
+                    {
+                        name:"/account/" + accountName + "/" + "assets",
+                        text:"account.menus.asset_mangage",
+                        icon:"#icon-zichanguanli",
+                        entry:AccountAssets
+                    },
+                        "separator",
+                    {
+                        name:"/account/" + accountName + "/" + "assets1",
+                        text:"account.menus.my_oracle",
+                        icon:"#icon-wodeyuce",
+                        entry:AccountAssets
+                    },
+                    {
+                        name:"/account/" + accountName + "/" + "assets2",
+                        text:"account.menus.my_guaranty",
+                        icon:"#icon-wodebaozhengjin",
+                        entry:AccountAssets
+                    },
+                    {
+                        name:"/account/" + accountName + "/" + "assets3",
+                        text:"seer.oracle.my",
+                        icon:"#icon-wodeyuyanji",
+                        entry:AccountAssets
+                    },
+                    {
+                        name:"/account/" + accountName + "/" + "assets4",
+                        text:"account.witness.title",
+                        icon:"#icon-wodejianzhengren",
+                        entry:AccountAssets
+                    },
+                    "separator",
+                    {
+                        name:"/account/" + accountName + "/" + "assets5",
+                        text:"gateway.gateway",
+                        icon:"#icon-wangguan",
+                        entry:AccountAssets
+                    },
+                    {
+                        name:"/account/" + accountName + "/" + "assets6",
+                        text:"account.member.stats",
+                        icon:"#icon-huiyuan",
+                        entry:AccountAssets
+                    },
+                    {
+                        name:"/account/" + accountName + "/" + "assets7",
+                        text:"account.voting",
+                        icon:"#icon-toupiao",
+                        entry:AccountAssets
+                    },
+                    "separator",
+                    {
+                        name:"/account/" + accountName + "/" + "assets8",
+                        text:"account.menus.perm_mangage",
+                        icon:"#icon-quanxianguanli",
+                        entry:AccountAssets
+                    },
+                    {
+                        name:"/account/" + accountName + "/" + "assets9",
+                        text:"account.signedmessages.menuitem",
+                        icon:"#icon-xiaoxiqianming",
+                        entry:AccountAssets
+                    },
+                    {
+                        name:"/account/" + accountName + "/" + "assets10",
+                        text:"account.menus.black_white_list",
+                        icon:"#icon-heibaimingdan",
+                        entry:AccountAssets
+                    }
+                ]}
+                {...this.props}
+            />
+        )
+
 
         return (
             <div className="grid-block page-layout">
@@ -80,13 +186,13 @@ class AccountPage1 extends React.Component {
         );
     }
 }
-AccountPage1 = BindToChainState(AccountPage1, {keep_updating: true, show_loader: true});
+Account = BindToChainState(Account, {keep_updating: true, show_loader: true});
 
 class AccountPageStoreWrapper extends React.Component {
     render () {
         let account_name = this.props.routeParams.account_name;
 
-        return <AccountPage1 {...this.props} account_name={account_name}/>;
+        return <Account {...this.props} account_name={account_name}/>;
     }
 }
 

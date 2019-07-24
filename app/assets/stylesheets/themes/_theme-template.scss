@@ -1961,7 +1961,9 @@ $main-content-margin-block-bg-color
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
-    height: 64px;
+    height: 59px;
+    border-bottom:1px solid #eeeeee;
+    overflow: hidden;
 
     .menu-bar {
         overflow: visible;
