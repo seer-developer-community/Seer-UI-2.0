@@ -26,7 +26,7 @@ export default class BackupBrainkey extends Component {
 
         var brainkey_backup_time = brainkey_backup_date ?
             <div><Translate content="wallet.brainkey_backed_up" />: <FormattedDate value={brainkey_backup_date}/></div> :
-            <Translate className="facolor-error" component="p" content="wallet.brainkey_not_backed_up" />
+            <Translate className="facolor-error" component="p" content="wallet.brainkey_not_backed_up" style={{fontSize: 14,color:"#FF972B"}}/>
 
         if(this.state.verified) {
             var sha1 = hash.sha1(this.state.brainkey).toString('hex').substring(0,4)
@@ -44,17 +44,27 @@ export default class BackupBrainkey extends Component {
         if(!content && this.state.brainkey) {
             var sha1 = hash.sha1(this.state.brainkey).toString('hex').substring(0,4)
             content = <span>
-                <h3><Translate content="wallet.brainkey" /></h3>
-                <div className="card"><div className="card-content">
-                    <h5>{this.state.brainkey}</h5></div></div>
+              <section style={{padding: "0"}} className="block-list">
+                <header><Translate content="wallet.brainkey" />:</header>
+              </section>
+                <div className="card" style={{width:"630px"}}><div className="card-content">
+                    <h6>{this.state.brainkey}</h6></div></div>
                     <div style={{padding: "10px 0"}}>
-                        <pre className="no-overflow">sha1 hash of your brainkey: {sha1}</pre>
+                        <pre className="no-overflow" style={{color:"#333"}}>sha1 hash of your brainkey: {sha1}</pre>
                     </div>
-                <hr/>
+
+                <div style={{display:"flex",marginTop:20}}>
+                      <svg className="icon" aria-hidden="true" style={{width:"18px",height:"20px",marginRight:"9px"}}>
+                        <use xlinkHref="#icon-tishi1"></use>
+                      </svg>
+                        <p style={{fontSize: 14,color:"#FF972B"}}>
+                            <Translate content="wallet.brainkey_w1" /><br/>
+                            <Translate content="wallet.brainkey_w2" /><br/>
+                            <Translate content="wallet.brainkey_w3" />
+                        </p>
+               </div>
                 <div style={{padding: "10px 0 20px 0"}}>
-                    <Translate content="wallet.brainkey_w1" /><br/>
-                    <Translate content="wallet.brainkey_w2" /><br/>
-                    <Translate content="wallet.brainkey_w3" />
+
                 </div>
 
                 <button className="button success" onClick={this.onComplete.bind(this)}><Translate content="wallet.verify" /></button>
@@ -68,14 +78,27 @@ export default class BackupBrainkey extends Component {
             content = <span>
                 <label><Translate content="wallet.enter_password" /></label>
                 <form onSubmit={this.onSubmit.bind(this)} className="name-form" noValidate>
-                    <input type="password" id="password" onChange={this.onPassword.bind(this)}/>
-                    <p>
-                        {this.state.invalid_password ?
-                            <span className="error">Invalid password</span>:
-                            <span><Translate content="wallet.pwd4brainkey" /></span>}
-                    </p>
-                    <div>{brainkey_backup_time}<br/></div>
+                    <input type="password" id="password" onChange={this.onPassword.bind(this)} style={{width:"630px",maxWidth:"630px"}}/>
+                    <div style={{display:"flex"}}>
+                      <svg className="icon" aria-hidden="true" style={{width:"18px",height:"20px",marginRight:"9px"}}>
+                        <use xlinkHref="#icon-tishi3"></use>
+                      </svg>
+                        <p style={{fontSize: 14,color:"#FF972B"}} >
+                            {this.state.invalid_password ?
+                                <span className="error">Invalid password</span>:
+                                <span><Translate content="wallet.pwd4brainkey" /></span>}
+                        </p>
+                     </div>
+
                     <button className="button success"><Translate content="wallet.show_brainkey" /></button>
+
+                     <div style={{display:"flex",marginTop:20}}>
+                      <svg className="icon" aria-hidden="true" style={{width:"18px",height:"20px",marginRight:"9px"}}>
+                        <use xlinkHref="#icon-tishi3"></use>
+                      </svg>
+                        <p style={{fontSize: 14,color:"#FF972B"}}>{brainkey_backup_time}</p>
+                     </div>
+
                 </form>
             </span>
         }

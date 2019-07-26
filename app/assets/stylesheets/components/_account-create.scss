@@ -24,9 +24,28 @@ div.account-creation {
     width: 300px;
     margin-top: 2rem;
     padding: 2rem 2rem 1rem 2rem;
+    background: #FFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    input[type="text"],input[type="password"]{
+        width: 31.25em !important;
+        max-width: 31.25em !important;
+        height: 50px;
+        line-height: 1;
+    }
+
+    progress{
+        max-width: 31.25em;
+    }
 
     p {
         max-width: 95vw;
+    }
+
+    .form-group{
+        margin-bottom: 1.5em;
     }
 
     div.confirm-checks {
@@ -43,10 +62,17 @@ div.account-creation {
             @include RobotoRegular;
             line-height: 1.2;
         }
+
+        p{
+            font-size: 14px;
+            color: #999;
+        }
     }
 
     div.sub-content {
         padding-top: 2rem;
+        width: 31.25em;
+        max-width: 31.25em;
         table {
             text-align: left;
         }
@@ -55,11 +81,18 @@ div.account-creation {
             // max-width: 30rem;
             text-align: left;
         }
+
+        button.submit-button{
+            height: 50px;
+            margin-top: 50px;
+        }
     }
     h4 {
         @include RobotoMedium;
         margin-top: 1rem;
         margin-bottom: 0;
+        color: #449E7B;
+        font-weight: bold;
     }
 
     label {
@@ -79,7 +112,6 @@ div.account-creation {
         margin-top: 3px;
         text-transform: uppercase;
         font-size: 0.875rem;
-        width: 40%;
         color: #fff;
         display: flex;
         justify-content: center;
@@ -121,6 +153,13 @@ div.account-creation {
         margin-top: 1rem;
         border-top: 1px solid #3e3e3e;
     }
+
+    .agree-check{
+        font-size: 13px;
+        color: #999;
+        display: flex;
+        align-items: center;
+    }
 }
 
 .modal-logo {
@@ -135,7 +174,7 @@ div.account-creation {
 
 
     div.account-creation {
-        width: 450px;
+        width: 680px;
         margin-top: 2rem;
 
         p {

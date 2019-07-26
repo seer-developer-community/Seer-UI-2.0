@@ -381,7 +381,7 @@ select.bts-select.full-width {
 }
 
 .windows select.bts-select {
-    height: 2.35em;
+    height: 3.125em;
 }
 
 @media screen and (max-width: 525px) {
@@ -444,7 +444,7 @@ input[type=number] {
 
 section input[type="text"], section input[type="password"] {
   border:none;
-  max-width: 30rem;
+  //max-width: 30rem;
   &:hover, &:active, &:focus {
     border:none;
   }

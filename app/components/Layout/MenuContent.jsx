@@ -1,7 +1,6 @@
 import React from "react";
 import Translate from "react-translate-component";
-import AccountImage from "../Account/AccountImage";
-
+import AccountImage from "components/Account/AccountImage";
 
 require("imports-loader?!lib/common/iconfont.js");
 
@@ -19,7 +18,7 @@ class MenuContent extends React.Component {
         super();
 
         let menuEntries = props.menus;//this._getMenuEntries(props);
-        let activeSetting = 0;
+        let activeSetting = -1;
 
         this.state = {
             activeSetting,
@@ -32,7 +31,7 @@ class MenuContent extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(nextProps.location.pathname !== this.props.location.pathname) {
+        if(nextProps.location.pathname !== this.props.location.pathname || this.state.activeSetting < 0) {
             this._onChangeMenu(nextProps.location.pathname);
         }
     }
@@ -46,6 +45,15 @@ class MenuContent extends React.Component {
         for (let i = 0; i < this.state.menuEntries.length; i++) {
             if (entry.indexOf(this.state.menuEntries[i].name) !== -1) {
                 index = i;
+                break;
+            }
+            if(this.state.menuEntries[i].subURL && this.state.menuEntries[i].subURL.length > 0) {
+              for (let j = 0; j < this.state.menuEntries[i].subURL.length; j++) {
+                if (entry.indexOf(this.state.menuEntries[i].subURL[j]) !== -1) {
+                  index = i;
+                  break;
+                }
+              }
             }
         }
 
@@ -60,7 +68,6 @@ class MenuContent extends React.Component {
         let activeEntry = menuEntries[activeSetting] || menuEntries[0];
 
         return (
-
         <div className="grid-block menu-content">
             <div className="side-menu">
                 <div className="user-info">
@@ -88,7 +95,8 @@ class MenuContent extends React.Component {
                  </ul>
             </div>
             <div className="sub-content">
-                <activeEntry.entry {...this.props}/>
+              {React.cloneElement(this.props.children, {...this.props})}
+                {/*<activeEntry.entry {...this.props}/>*/}
             </div>
         </div>
 

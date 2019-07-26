@@ -73,15 +73,17 @@ export default class SettingsEntry extends React.Component {
                     <div className="settings--notifications">
                         <div className="settings--notifications--group">
                             <div className="settings--notifications--item">
-                                <input type="checkbox" id="browser_notifications.allow" checked={!!value.allow} onChange={this.handleNotificationChange("allow")}/>
+                                <input className="cbox" type="checkbox" id="browser_notifications.allow" checked={!!value.allow} onChange={this.handleNotificationChange("allow")}/>
+                                <label className="checkbox-mask" htmlFor="browser_notifications.allow"></label>
                                 <label htmlFor="browser_notifications.allow">{ counterpart.translate("settings.browser_notifications_allow") }</label>
                             </div>
                             <div className="settings--notifications--group">
                                 <div className="settings--notifications--item">
-                                    <input type="checkbox" id="browser_notifications.additional.transferToMe"
+                                    <input className="cbox" type="checkbox" id="browser_notifications.additional.transferToMe"
                                            disabled={!value.allow}
                                            checked={!!value.additional.transferToMe}
                                            onChange={this.handleNotificationChange("additional.transferToMe")}/>
+                                    <label className="checkbox-mask" htmlFor="browser_notifications.additional.transferToMe"></label>
                                     <label htmlFor="browser_notifications.allow">{ counterpart.translate("settings.browser_notifications_additional_transfer_to_me") }</label>
                                 </div>
                             </div>

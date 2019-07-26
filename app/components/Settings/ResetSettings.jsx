@@ -44,7 +44,7 @@ export default class ResetSettings extends React.Component {
                                }}/>
                 </header>
 
-                <div style={{height: 60, width: "100%", paddingTop: 20}}
+                <div style={{height: "44px", width: "270px",marginTop: 20}}
                     className="button"
                     onClick={() => {SettingsActions.clearSettings().then(() => {this._setMessage("settings.restore_default_success");});}}
                 >

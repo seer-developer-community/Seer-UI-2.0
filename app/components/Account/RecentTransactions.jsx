@@ -268,7 +268,7 @@ class RecentTransactions extends React.Component {
                         <table className={"table table-striped " + (compactView ? "compact" : "") + (this.props.dashboard ? " dashboard-table table-hover" : "")}>
                             <thead>
                                 <tr>
-                                    <th className="column-hide-tiny" style={alignLeft}><Translate content="account.transactions.type" /></th>
+                                    <th className="column-hide-tiny" style={{...alignLeft,paddingLeft:"20px"}}><Translate content="account.transactions.type" /></th>
                                     <th style={alignLeft}><Translate content="account.transactions.info" /></th>
                                     <th style={alignLeft}><Translate content="account.transactions.time" /></th>
                                 </tr>

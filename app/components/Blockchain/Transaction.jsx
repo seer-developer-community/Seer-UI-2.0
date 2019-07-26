@@ -38,15 +38,9 @@ class OpType extends React.Component {
         let labelClass = classNames("txtlabel", this.props.color || "info");
 
         return (
-            <tr>
-                <td>
-                    <span className={labelClass}>
-                        {trxTypes[ops[this.props.type]]}
-                    </span>
-                </td>
-                <td>
-                </td>
-            </tr>
+          <div className={labelClass}>
+              {trxTypes[ops[this.props.type]]}
+          </div>
         );
     }
 }
@@ -62,24 +56,33 @@ class OperationTable extends React.Component {
     render() {
 
        let fee_row = this.props.fee.amount > 0 ? (
-            <tr>
-                <td><Translate component="span" content="transfer.fee" /></td>
-                <td><FormattedAsset color="fee" amount={this.props.fee.amount} asset={this.props.fee.asset_id} /></td>
-            </tr> ) : null;
+            <div className="fee-row">
+              <div className="fee">
+                <Translate component="span" content="transfer.fee" />&nbsp;&nbsp;
+                <FormattedAsset color="fee" amount={this.props.fee.amount} asset={this.props.fee.asset_id} />
+              </div>
+              <div className="right-component">
+                {this.props.rightComponent}
+              </div>
+            </div> ) : null;
 
-        return (
-            <div >
+      return (
+            <div>
+                <OpType type={this.props.type} color={this.props.color}/>
             {/*  <h6><Translate component="span" content="explorer.block.op" /> #{this.props.index + 1}/{this.props.opCount}</h6> */}
-                <table style={{marginBottom: "1em"}} className="table op-table">
-                    <caption></caption>
+                <div className="op-table-panel">
+                <table className="table op-table">
+                    <thead>
+
+                    </thead>
                     <tbody>
-                        <OpType type={this.props.type} color={this.props.color}/>
                         {this.props.children}
-                        {fee_row}
                     </tbody>
                 </table>
+                </div>
+                {fee_row}
             </div>
-            );
+        );
     }
 }
 
@@ -1134,7 +1137,8 @@ class Transaction extends React.Component {
             }
 
             info.push(
-                <OperationTable key={opIndex} opCount={opCount} index={opIndex} color={color} type={op[0]} fee={op[1].fee}>
+                <OperationTable key={opIndex} opCount={opCount} index={opIndex} color={color} type={op[0]} fee={op[1].fee}
+                    rightComponent={this.props.rightComponent}>
                     {rows}
                 </OperationTable>
             );
@@ -1156,7 +1160,8 @@ Transaction.defaultProps = {
 Transaction.propTypes = {
     trx: PropTypes.object.isRequired,
     index: PropTypes.number.isRequired,
-    no_links: PropTypes.bool
+    no_links: PropTypes.bool,
+    rightComponent:PropTypes.object
 };
 
 export default Transaction;

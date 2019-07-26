@@ -54,6 +54,7 @@ import Oracles from "./components/Explorer/Oracles";
 import Houses from "./components/Explorer/Houses";
 import AccountHouseCreate from "./components/Account/AccountHouseCreate";
 import AccountHouse from "./components/Account/AccountHouse";
+import AccountGuaranty from "./components/Account/AccountGuaranty";
 import AccountOracleCreate from "./components/Account/AccountOracleCreate";
 import AccountOracle from "./components/Account/AccountOracle";
 import AccountRoomCreate from "./components/Account/AccountRoomCreate";
@@ -135,7 +136,7 @@ const routes = (
         <Route path="accounts" component={DashboardAccountsOnly} />
         <Route path="/account/:account_name" component={Account} >
             <IndexRoute component={AccountOverview} />
-            <Route path="dashboard" component={AccountOverview} />
+            {/*<Route path="dashboard" component={AccountOverview} />*/}
             {/* <Route path="deposit-withdraw" component={AccountDepositWithdraw} /> */}
             {/* <Route path="orders" component={AccountOrders} /> */}
             <Route path="accounts" component={DashboardAccountsOnly} />
@@ -155,6 +156,7 @@ const routes = (
             <Route path="oracle" component={AccountOracle}/>
             <Route path="create-house" component={AccountHouseCreate}/>
             <Route path="houses" component={AccountHouse}/>
+            <Route path="guaranty" component={AccountGuaranty}/>
             <Route path="create-room/single=:ok" component={AccountRoomCreate}/>
             <Route path="rooms/:room_id/input" component={RoomInput}/>
             <Route path="rooms/:room_id/oracle-input" component={OracleInput}/>

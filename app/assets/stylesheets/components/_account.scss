@@ -225,7 +225,7 @@ ul.account-overview {
 
 table.table.dashboard-table {
     > thead > tr > th:first-of-type, > tbody > tr > td:first-of-type {
-        padding-left: 1.5rem;
+        //padding-left: 1.5rem;
     }
     > thead > tr > th {
         @include RobotoMedium;
@@ -344,6 +344,81 @@ div.tabs-container {
         button {
             min-width: 5rem;
             margin-left: 0.5rem;
+        }
+    }
+}
+
+.member{
+
+    &.lifetime{
+        .member-title{
+            border: 1px solid #FFB307;
+            background: #FFFDF7;
+            color: #FFB307;
+        }
+    }
+
+    .member-title{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        height: 58px;
+        line-height: 58px;
+        border: 1px solid #449E7B;
+        border-radius: 10px;
+        font-size: 22px;
+        color: #449E7B ;
+        background: #EEFFF9;
+    }
+
+    .help-content {
+        margin-top: 24px;
+
+        >h3{
+            font-size: 22px;
+            color:#449E7B;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        >p{
+            font-size: 14px;
+            color: #666666;
+        }
+    }
+
+    .table-title{
+        margin-bottom: 20px;
+
+        span {
+            font-weight: bold;
+        }
+    }
+
+    table.key-value-table {
+        tr{
+            height: 40px;
+        }
+        tr:nth-child(odd) {
+            background: #F8F8FA;
+        }
+
+        td:first-child{
+            width: 350px;
+            padding-left: 36px !important;
+        }
+    }
+
+    .fee-help .help-content{
+        >h4{
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 50px;
+        }
+        >p{
+            font-size: 14px;
+            color: #666;
         }
     }
 }

@@ -91,10 +91,10 @@ class Row extends React.Component {
                 <tr>
                     {hideOpLabel ? null : (
                         <td style={{textAlign: "left"}} className="left-td column-hide-tiny">
-                            <Link className="inline-block" data-place="bottom" data-tip={counterpart.translate("tooltip.show_block", {block: utils.format_number(this.props.block, 0)})} to={`/block/${this.props.block}`}><TransactionLabel color={color} type={type} /></Link>
+                            <Link className="inline-block type-label" data-place="bottom" data-tip={counterpart.translate("tooltip.show_block", {block: utils.format_number(this.props.block, 0)})} to={`/block/${this.props.block}`} ><TransactionLabel color={color} type={type} /></Link>
                         </td>)}
                     <td style={{padding: "8px 5px", textAlign: "left"}}>
-                        <div>
+                        <div className="log-detail">
                             <span>{this.props.info}</span>
                         </div>
                         <div style={{fontSize: 14, paddingTop: 5}}>
@@ -890,6 +890,7 @@ class Operation extends React.Component {
             break;
 
             case "oracle_create":
+                color = "create_oracle";
                 column = (
                     <TranslateWithLinks
                         string="operation.oracle_create"
@@ -926,6 +927,7 @@ class Operation extends React.Component {
                 break;
 
             case "seer_room_create":
+                color = "create_room";
                 column = (
                     <TranslateWithLinks
                         string="operation.seer_room_create"

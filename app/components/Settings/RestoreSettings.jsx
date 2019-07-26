@@ -63,7 +63,7 @@ export default class RestoreSettings extends React.Component {
         case "brainkey":
             content = (
                 <div>
-                    <p style={{maxWidth: "40rem", paddingBottom: 10}}><Translate content="settings.restore_brainkey_text" /></p>
+                    <p style={{fontSize:"14px",color:"#999",maxWidth: "40rem", paddingBottom: 10}}><Translate content="settings.restore_brainkey_text" /></p>
                     <CreateWalletFromBrainkey nested />
                 </div>
             );
@@ -88,7 +88,7 @@ export default class RestoreSettings extends React.Component {
                     onChange={this._changeType.bind(this)}
                     className="bts-select"
                     value={types[restoreType]}
-                >
+                    style={{width:"625px",maxWidth:"625px"}}>
                     {options}
                 </select>
 

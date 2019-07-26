@@ -52,6 +52,7 @@ export default class BackupSettings extends React.Component {
                     onChange={this._changeType.bind(this)}
                     className="bts-select"
                     value={types[restoreType]}
+                    style={{width:"630px",maxWidth:"630px"}}
                 >
                     {options}
                 </select>

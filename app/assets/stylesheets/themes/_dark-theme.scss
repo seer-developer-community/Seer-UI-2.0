@@ -53,6 +53,8 @@ $pulsate-green-start:$account-green;
 $pulsate-green-end:#aaf25c;
 $pulsate-red-start:$negative-color;
 $pulsate-red-end:#ef4040;
+$primary-highlight-color:$account-primarytext;
+$input-border:$account-border;
 
 .darkTheme {
   @include theme(
@@ -98,6 +100,8 @@ $pulsate-red-end:#ef4040;
     $settings-menu-hover-bg,
     $settings-menu-active-bg,
     $settings-api-node-border-color,
-    $main-content-margin-block-bg-color
+    $main-content-margin-block-bg-color,
+    $primary-highlight-color,
+    $input-border
   );
 }

@@ -38,6 +38,17 @@ class Settings extends React.Component {
                 general: ["locale", "unit", "browser_notifications", "showSettles", "walletLockTimeout", "themes",
                 "showAssetPercent", "passwordLogin", "reset"],
                 access: ["apiServer", "faucet_address"]
+            },
+            iconMap:{
+                "general":"#icon-shezhi1",
+                "wallet":"#icon-qianbao1",
+                "accounts":"#icon-zhanghu1",
+                "password":"#icon-mima",
+                "backup":"#icon-beifenqianyi",
+                "restore":"#icon-huifu",
+                "access":"#icon-ziyuan",
+                "faucet_address":"#icon-tubiao-",
+                "reset":"#icon-huifu"
             }
         };
 
@@ -269,21 +280,24 @@ class Settings extends React.Component {
 
         return (
             <div className={this.props.deprecated ? "" : "grid-block"}>
-                <div className="grid-block main-content margin-block wrap">
-                    <div className="grid-content shrink settings-menu" style={{paddingRight: "2rem"}}>
-                        <Translate style={{paddingBottom: 10, paddingLeft: 10}} component="h3" content="header.settings" className={"panel-bg-color"}/>
-
+                <div className="grid-block main-content menu-content margin-block wrap">
+                    <div className="grid-content shrink side-menu">
                         <ul>
                             {menuEntries.map((entry, index) => {
-                                return <li className={index === activeSetting ? "active" : ""} onClick={this._redirectToEntry.bind(this, entry)} key={entry}><Translate content={"settings." + entry} /></li>;
+                                return <li className={index === activeSetting ? "active" : ""} onClick={this._redirectToEntry.bind(this, entry)} key={entry}>
+                                  <svg className="icon" aria-hidden="true">
+                                    <use xlinkHref={this.state.iconMap[entry]}></use>
+                                  </svg>
+                                  <Translate content={"settings." + entry} />
+                                </li>;
                             })}
                         </ul>
                     </div>
 
-                    <div className="grid-content" style={{paddingLeft: "1rem", paddingRight: "1rem", maxWidth: 1000}}>
+                    <div className="grid-content" style={{paddingTop:"1em", maxWidth: 1000}}>
                         <div className="grid-block small-12 medium-10 no-margin vertical">
-                            <Translate component="h3" content={"settings." + menuEntries[activeSetting]}/>
-                            {activeEntry != "access" && <Translate unsafe style={{paddingTop: 5, marginBottom: 30}} content={`settings.${menuEntries[activeSetting]}_text`} className="panel-bg-color"/>}
+                            <Translate component="h3" content={"settings." + menuEntries[activeSetting]} style={{fontSize:"18px",color:"#333",fontWeight:"bold"}}/>
+                            {activeEntry != "access" && <Translate unsafe style={{paddingTop: 5, marginBottom: 30,fontSize:"14px",color:"#999"}} content={`settings.${menuEntries[activeSetting]}_text`} className="panel-bg-color"/>}
                             {entries}
                         </div>
                     </div>

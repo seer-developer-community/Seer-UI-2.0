@@ -17,6 +17,7 @@ import MenuContent from "../Layout/MenuContent"
 import AccountPage from "./AccountPage"
 import DashboardAccountsOnly from "../Dashboard/DashboardAccountsOnly"
 import AccountAssets from "./AccountAssets"
+import AccountGuaranty from "./AccountGuaranty";
 
 class Account extends React.Component {
 
@@ -56,89 +57,83 @@ class Account extends React.Component {
                     {
                         name: "/account/" + accountName + "/" + "dashboard",
                         text:"account.menus.account_all",
-                        icon:"#icon-zhanghuzonglan",
-                        entry:AccountPage
+                        icon:"#icon-zhanghuzonglan"
                     },
                     {
                         name:"/account/" + accountName + "/" + "accounts",
                         text:"account.mine",
-                        icon:"#icon-wodezhanghu",
-                        entry:DashboardAccountsOnly
+                        icon:"#icon-wodezhanghu"
                     },
                     {
                         name:"/account/" + accountName + "/" + "vesting",
                         text:"account.vesting.title",
-                        icon:"#icon-daijiedongyue",
-                        entry:AccountPage
+                        icon:"#icon-daijiedongyue"
                     },
                     {
                         name:"/account/" + accountName + "/" + "assets",
                         text:"account.menus.asset_mangage",
-                        icon:"#icon-zichanguanli",
-                        entry:AccountAssets
+                        icon:"#icon-zichanguanli"
                     },
                         "separator",
                     {
                         name:"/account/" + accountName + "/" + "assets1",
                         text:"account.menus.my_oracle",
-                        icon:"#icon-wodeyuce",
-                        entry:AccountAssets
+                        icon:"#icon-wodeyuce"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "assets2",
-                        text:"account.menus.my_guaranty",
-                        icon:"#icon-wodebaozhengjin",
-                        entry:AccountAssets
+                        name:"/account/" + accountName + "/" + "guaranty",
+                        subURL:[
+                          "account/" + accountName + "/create-oracle",
+                          "account/" + accountName + "/update-house"
+                        ],
+                        text:"account.guaranty.title",
+                        icon:"#icon-wodebaozhengjin"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "assets3",
+                        name:"/account/" + accountName + "/" + "oracle",
+                        subURL:[
+                          "account/" + accountName + "/create-oracle",
+                          "account/" + accountName + "/update-oracle"
+                        ],
                         text:"seer.oracle.my",
-                        icon:"#icon-wodeyuyanji",
-                        entry:AccountAssets
+                        icon:"#icon-wodeyuyanji"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "assets4",
+                        name:"/account/" + accountName + "/" + "witness",
                         text:"account.witness.title",
-                        icon:"#icon-wodejianzhengren",
-                        entry:AccountAssets
+                        icon:"#icon-wodejianzhengren"
                     },
                     "separator",
                     {
                         name:"/account/" + accountName + "/" + "assets5",
                         text:"gateway.gateway",
-                        icon:"#icon-wangguan",
-                        entry:AccountAssets
+                        icon:"#icon-wangguan"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "assets6",
+                        name:"/account/" + accountName + "/" + "member-stats",
                         text:"account.member.stats",
-                        icon:"#icon-huiyuan",
-                        entry:AccountAssets
+                        icon:"#icon-huiyuan"
                     },
                     {
                         name:"/account/" + accountName + "/" + "assets7",
                         text:"account.voting",
-                        icon:"#icon-toupiao",
-                        entry:AccountAssets
+                        icon:"#icon-toupiao"
                     },
                     "separator",
                     {
                         name:"/account/" + accountName + "/" + "assets8",
                         text:"account.menus.perm_mangage",
-                        icon:"#icon-quanxianguanli",
-                        entry:AccountAssets
+                        icon:"#icon-quanxianguanli"
                     },
                     {
                         name:"/account/" + accountName + "/" + "assets9",
                         text:"account.signedmessages.menuitem",
-                        icon:"#icon-xiaoxiqianming",
-                        entry:AccountAssets
+                        icon:"#icon-xiaoxiqianming"
                     },
                     {
                         name:"/account/" + accountName + "/" + "assets10",
                         text:"account.menus.black_white_list",
-                        icon:"#icon-heibaimingdan",
-                        entry:AccountAssets
+                        icon:"#icon-heibaimingdan"
                     }
                 ]}
                 {...this.props}
@@ -159,7 +154,6 @@ class Account extends React.Component {
                     />
                 </div> */}
                     <div className="grid-block no-padding">
-                        121
                     {React.cloneElement(
                         React.Children.only(this.props.children),
                         {

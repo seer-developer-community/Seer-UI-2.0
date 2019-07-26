@@ -32,7 +32,8 @@ class CreateAccount extends React.Component {
             loading: false,
             hide_refcode: true,
             show_identicon: false,
-            step: 1
+            step: 1,
+            agreeCheck:false
         };
         this.onFinishConfirm = this.onFinishConfirm.bind(this);
 
@@ -173,7 +174,7 @@ class CreateAccount extends React.Component {
         let my_accounts = AccountStore.getMyAccounts();
         let firstAccount = my_accounts.length === 0;
         let hasWallet = WalletDb.getWallet();
-        let valid = this.isValid();
+        let valid = this.isValid() && this.state.agreeCheck;
         let isLTM = false;
         let registrar = registrar_account ? ChainStore.getAccount(registrar_account) : null;
         if (registrar) {
@@ -182,7 +183,7 @@ class CreateAccount extends React.Component {
             }
         }
 
-        let buttonClass = classNames("submit-button button no-margin", {disabled: (!valid || (registrar_account && !isLTM))});
+        let buttonClass = classNames("submit-button button ", {disabled: (!valid || (registrar_account && !isLTM))});
 
         return (
             <form
@@ -190,7 +191,6 @@ class CreateAccount extends React.Component {
                 onSubmit={this.onSubmit.bind(this)}
                 noValidate
             >
-                <p style={{fontWeight: "normal", fontFamily: "Roboto-Medium, arial, sans-serif", fontStyle: "normal"}}>{firstAccount ? <Translate content="wallet.create_w_a" />  : <Translate content="wallet.create_a" />}</p>
                 <AccountNameInput
                     ref={(ref) => {if (ref) {this.accountNameInput = ref.refs.nameInput;}}}
                     cheapNameOnly={!!firstAccount}
@@ -226,20 +226,23 @@ class CreateAccount extends React.Component {
                     </div>)
                 }
 
-                <div className="divider" />
+                <div className="agree-check">
+                    <input className="cbox" id="ck_agree" type="checkbox" onChange={e=>this.setState({agreeCheck: !this.state.agreeCheck})}/><label className="checkbox-mask" htmlFor="ck_agree"></label><Translate content="account.agree_text"/>
+                </div>
 
                 {/* Submit button */}
-                {this.state.loading ?  <LoadingIndicator type="three-bounce"/> : <button style={{width: "100%"}} className={buttonClass}><Translate content="account.create_account" /></button>}
+                {this.state.loading ?  <LoadingIndicator type="three-bounce"/> : <button style={{width: "100%"}} className={buttonClass}><Translate content="account.create_wallet_and_account" /></button>}
 
+               <Translate component="div" content="account.existing_accounts" style={{textAlign:"left",fontSize:"14px",color:"#666",paddingTop: "40px"}}/>
                 {/* Backup restore option */}
-                <div style={{paddingTop: 40}}>
-                    <label>
+                <div style={{paddingTop: 20,textAlign:"left"}}>
+                    <label style={{display:"inline"}}>
                         <Link to="/existing-account">
                             <Translate content="wallet.restore" />
                         </Link>
                     </label>
-
-                    <label>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <label style={{display:"inline"}}>
                         <Link to="/create-wallet-brainkey">
                             <Translate content="settings.backup_brainkey" />
                         </Link>
@@ -263,7 +266,7 @@ class CreateAccount extends React.Component {
 
         return (
             <div className="confirm-checks" >
-                <h4 style={{fontWeight: "normal", fontFamily: "Roboto-Medium, arial, sans-serif", fontStyle: "normal", paddingBottom: 15, marginTop: 0}}><Translate content="wallet.wallet_browser" /></h4>
+                <h6 style={{fontSize: "14px", color:"#666", paddingBottom: 15, marginTop: 0}}><Translate content="wallet.wallet_browser" /></h6>
 
                 <p>{!hasWallet ? <Translate content="wallet.has_wallet" /> : null}</p>
 
@@ -378,7 +381,7 @@ class CreateAccount extends React.Component {
                             this._renderGetStartedText()
                         }
                     </div>
-                    <Link to="/"><button className="button primary hollow"><Translate content="wallet.back" /></button></Link>
+                    {/*<Link to="/"><button className="button primary hollow"><Translate content="wallet.back" /></button></Link>*/}
             </div>
         );
     }

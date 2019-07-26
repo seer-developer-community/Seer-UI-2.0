@@ -75,7 +75,7 @@ class BackupRestore extends Component {
 
         return (
             <div>
-                <Translate style={{textAlign: "left", maxWidth: "30rem"}} component="p" content="wallet.import_backup_choose" />
+                <Translate style={{textAlign: "left", maxWidth: "37.5rem",fontSize:"14px",color:"#999"}} component="p" content="wallet.import_backup_choose" />
                 {(new FileReader).readAsBinaryString ? null : <p className="error">Warning! You browser doesn't support some some file operations required to restore backup, we recommend you to use Chrome or Firefox browsers to restore your backup.</p>}
                 <Upload>
                     <NameSizeModified/>
@@ -85,8 +85,8 @@ class BackupRestore extends Component {
                         </NewWalletName>
                     </DecryptBackup>
                 </Upload>
-                <br />
-                <Link to="/"><button className="blue"><Translate content="wallet.back" /></button></Link>
+                {/*<br />*/}
+                {/*<Link to="/"><button className="blue"><Translate content="wallet.back" /></button></Link>*/}
             </div>
         );
     }
@@ -278,14 +278,17 @@ class Create extends Component {
         return (
             <div>
                 {this.props.noText ? null :
-                <div style={{textAlign: "left"}}>
-                    {this.props.newAccount ? <Translate component="p" content="wallet.backup_new_account"/> : null}
-                    <Translate component="p" content="wallet.backup_explain"/>
+                <div style={{display:"flex"}}>
+                  <svg className="icon" aria-hidden="true" style={{width:"34px",height:"20px",marginRight:"9px"}}>
+                    <use xlinkHref="#icon-tishi3"></use>
+                  </svg>
+                    {this.props.newAccount ? <Translate component="p" content="wallet.backup_new_account" style={{fontSize:"12px"}}/> : null}
+                    <Translate component="p" content="wallet.backup_explain" style={{fontSize:"12px"}}/>
                 </div>}
                 <div
                     onClick={this.onCreateBackup.bind(this)}
                     className={cname("button", {disabled: !ready})}
-                    style={{marginBottom: 10}}
+                    style={{marginBottom: 15,marginTop:40}}
                 >
                     <Translate content="wallet.create_backup_of" name={this.props.wallet.current_wallet} />
                 </div>
@@ -312,13 +315,24 @@ class LastBackupDate extends Component {
         let backup_date = WalletDb.getWallet().backup_date
         let last_modified = WalletDb.getWallet().last_modified
         let backup_time = backup_date ?
-            <h4><Translate content="wallet.last_backup" /> <FormattedDate value={backup_date}/></h4>:
-            <Translate style={{paddingTop: 20}} className="facolor-error" component="p" content="wallet.never_backed_up" />
+            <h4 style={{fontSize:"12px",color:"#999"}}><Translate content="wallet.last_backup" /> <FormattedDate value={backup_date}/></h4>:
+            <div style={{display:"flex",marginTop:"20px"}}>
+              <svg className="icon" aria-hidden="true" style={{width:"1.13em",height:"1.3em",marginRight:"9px"}}>
+                <use xlinkHref="#icon-tishi3"></use>
+              </svg>
+              <Translate style={{fontSize: 14,color:"#FF972B"}} className="facolor-error" component="p" content="wallet.never_backed_up" />
+            </div>
         let needs_backup = null
         if( backup_date ) {
             needs_backup = last_modified.getTime() > backup_date.getTime() ?
-                <h4 className="facolor-error"><Translate content="wallet.need_backup" /></h4>:
-                <h4 className="success"><Translate content="wallet.noneed_backup" /></h4>
+              <div style={{display:"flex",marginTop:"20px"}}>
+                <svg className="icon" aria-hidden="true" style={{width:"1.13em",height:"1.3em",marginRight:"9px"}}>
+                  <use xlinkHref="#icon-tishi3"></use>
+                </svg>
+                <Translate style={{fontSize: 14,color:"#FF972B"}} className="facolor-error" component="p" content="wallet.need_backup" />
+              </div>
+                :
+              <Translate style={{fontSize: 14}} className="success" component="p" content="wallet.noneed_backup" />
         }
         return <span>
             {backup_time}
@@ -335,13 +349,16 @@ class Upload extends Component {
         BackupActions.reset();
     }
 
+    _choseFile(){
+        this.refs.file_input.click();
+    }
+
     render() {
         let resetButton = (
             <div style={{paddingTop: 20}}>
                 <div
                     onClick={this.reset.bind(this)}
-                    className={cname("button outline", {disabled: !this.props.backup.contents})}
-                >
+                    className={cname("button outline-dark", {disabled: !this.props.backup.contents})}>
                     <Translate content="wallet.reset" />
                 </div>
             </div>
@@ -351,7 +368,7 @@ class Upload extends Component {
             this.props.backup.contents &&
             this.props.backup.public_key
         )
-            return <span>{this.props.children}{resetButton}</span>;
+            return <span>{this.props.children}</span>;
 
         let is_invalid =
             this.props.backup.contents &&
@@ -359,7 +376,11 @@ class Upload extends Component {
 
         return (
             <div>
-                <input ref="file_input" accept=".bin" type="file" id="backup_input_file" style={{ border: "solid" }}
+                <div style={{display:"flex"}}>
+                    <input type="text" style={{width:"511px"}}/>
+                  <button className="button" style={{height:50,padding:"0.85em 1.5em"}} onClick={this._choseFile.bind(this)}>选择文件</button>
+                </div>
+                <input ref="file_input" accept=".bin" type="file" id="backup_input_file" style={{ display: "none" }}
                     onChange={this.onFileUpload.bind(this)} />
                 { is_invalid ? <h5><Translate content="wallet.invalid_format" /></h5> : null }
                 {resetButton}
@@ -378,9 +399,9 @@ Upload = connect(Upload, connectObject);
 class NameSizeModified extends Component {
     render() {
         return <span>
-            <h5><b>{this.props.backup.name}</b> ({this.props.backup.size} bytes)</h5>
+            <p className="card" style={{padding:"15px 10px"}}><b>{this.props.backup.name}</b> ({this.props.backup.size} bytes)</p>
             {this.props.backup.last_modified ?
-                <div>{this.props.backup.last_modified}</div> : null }
+                <div style={{fontSize:"14px",color:"#999"}}>{this.props.backup.last_modified}</div> : null }
             <br/>
         </span>
     }
@@ -408,18 +429,24 @@ class DecryptBackup extends Component {
     render() {
         if(this.state.verified) return <span>{this.props.children}</span>
         return (
-        <form onSubmit={this.onPassword.bind(this)}>
-            <label><Translate content="wallet.enter_password" /></label>
+        <form onSubmit={this.onPassword.bind(this)} style={{marginTop:"30px"}}>
+           <Translate component="label" content="wallet.enter_password" style={{color:"#999"}}/>
             <input type="password" id="backup_password"
                 onChange={this.formChange.bind(this)}
                 value={this.state.backup_password}/>
             <Sha1/>
+            <div>
             <div
                 type="submit"
-                className="button outline"
-                onClick={this.onPassword.bind(this)}
-            >
+                className="button"
+                onClick={this.onPassword.bind(this)}>
                 <Translate content="wallet.submit" />
+            </div>
+              <div
+                onClick={e=>{BackupActions.reset();}}
+                className={cname("button outline-dark", {disabled: !this.props.backup.contents})}>
+                <Translate content="wallet.reset" />
+              </div>
             </div>
         </form>);
     }
@@ -455,7 +482,7 @@ DecryptBackup = connect(DecryptBackup, connectObject);
 class Sha1 extends Component {
     render() {
         return <div>
-            <pre className="no-overflow">{this.props.backup.sha1} * SHA1</pre>
+            <pre className="no-overflow" style={{color:"#999",fontSize:"14px"}}>{this.props.backup.sha1} * SHA1</pre>
             <br/>
         </div>;
     }

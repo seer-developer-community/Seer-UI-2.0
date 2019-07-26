@@ -141,7 +141,7 @@ class CreateNewWallet extends Component {
                     <div className="no-overflow">
                         <br/>
                         <section>
-                        <label><Translate content="wallet.name" /></label>
+                        <label><Translate content="wallet.name" style={{fontSize:"14px",color:"#999"}}/></label>
                         <input
                             tabIndex={3}
                             type="text"
@@ -157,7 +157,7 @@ class CreateNewWallet extends Component {
 
                     { this.state.custom_brainkey ? (
                     <div>
-                        <label><Translate content="wallet.brainkey" /></label>
+                        <label><Translate content="wallet.brainkey" style={{fontSize:"14px",color:"#999"}}/></label>
                         <BrainkeyInput tabIndex={4} onChange={this.onBrainkey.bind(this)} errorCallback={(warn) => {
                             let {errors} = this.state;
                             errors.validBrainkey = warn;
@@ -171,7 +171,7 @@ class CreateNewWallet extends Component {
                         <Translate content="wallet.create_wallet" />
                     </button>
 
-                    <button className="button secondary" onClick={this.onBack.bind(this)}>
+                    <button className="button outline" onClick={this.onBack.bind(this)}>
                         <Translate content="wallet.cancel" />
                     </button>
 

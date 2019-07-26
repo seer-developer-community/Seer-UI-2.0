@@ -393,7 +393,7 @@ class AccountOverview extends React.Component {
             return null;
         }
 
-            let includedBalances, hiddenBalances;
+        let includedBalances, hiddenBalances;
         let account_balances = account.get("balances");
 
         let includedBalancesList = Immutable.List(), hiddenBalancesList = Immutable.List();
@@ -514,7 +514,7 @@ class AccountOverview extends React.Component {
                             <Tab title="account.open_orders" subText={ordersValue}>
                                 <AccountOrders {...this.props}>
                                     <tbody>
-                                        <tr className="total-value">
+                                        <tr className="total-value">hiddenSubText
                                             <td colSpan="7" style={{textAlign: "right"}}>
                                                 {totalValueText}
                                             </td>

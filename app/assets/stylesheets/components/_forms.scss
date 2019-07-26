@@ -261,11 +261,17 @@ div.account-drop-down > div.dropdown-wrapper:after {
 div.input-wrapper {
     position: relative;
     width: 100%;
+    border: 1px solid #DCDCDC;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    >input{
+      border:none !important;
+    }
+
     div.floating-dropdown {
         background: transparent;
-        position: absolute;
-        right: 0;
-        text-align: right;
     }
 }
 
@@ -361,4 +367,53 @@ a.button span {
 input[type=text].input-button {
   border-top-right-radius: 0!important;
   border-bottom-right-radius: 0!important;
+}
+
+input[type="checkbox"] + label{
+  margin: 0 10px 0 0;
+  padding: 0;
+}
+
+input.cbox[type="checkbox"]{
+  display:none;
+}
+label.checkbox-mask {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #57A687;
+  position: relative;
+  border-radius: 4px;
+  background: #fff;
+}
+label.checkbox-mask::after {
+  -webkit-transition: opacity .5s ease;
+  -moz-transition: opacity .5s ease;
+  -o-transition: opacity .5s ease;
+  -ms-transition: opacity .5s ease;
+  transition: opacity .5s ease;
+  cursor: pointer;
+  position: absolute;
+  content: '';
+  opacity: 0;
+}
+
+input.cbox[type="checkbox"]:checked+label.checkbox-mask{
+  background: #57A687;
+}
+
+input.cbox[type="checkbox"]:checked+label.checkbox-mask::after{
+  border: 2px solid #fff;
+  border-top: none;
+  border-right: none;
+  -webkit-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+  width:14px;
+  height:8px;
+  top:50%;
+  margin-top:-6px;
+  left:50%;
+  margin-left:-7px;
+  opacity: 1.0;
 }

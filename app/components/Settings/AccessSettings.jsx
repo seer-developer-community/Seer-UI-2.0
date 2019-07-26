@@ -80,8 +80,8 @@ class ApiNode extends React.Component {
         */
         const isTestnet =false;
 
-        var Status =  (isTestnet && !ping) ? null : <div className="api-status" style={{position: "absolute", textAlign: "right", right: "1em", top: "0.5em"}}>
-         <Translate className={up ? "low" : "high"} style={{marginBottom: 0}} component="h3" content={"settings." + (up ? "node_up" : "node_down")} />
+        var Status =  (isTestnet && !ping) ? null : <div className="api-status" style={{position: "absolute", textAlign: "right", right: "1em", top: "0.5em",fontSize:"14px"}}>
+         <Translate className={up ? "low" : "high"} component="h3" content={"settings." + (up ? "node_up" : "node_down")} />
           {up && <span className={color}><Translate content={`settings.${latencyKey}`} /> ({friendlyPing})</span>}
           {!up && <span className="high">__</span>}
         </div>;
@@ -252,22 +252,26 @@ class AccessSettings extends React.Component {
         });
 
         return <div style={{paddingTop: "1em"}}>
-            <Translate component="p" content="settings.active_node" className="dark-text-color"/>
+            <Translate component="p" content="settings.active_node" className="dark-text-color" style={{fontSize:"14px",color:"#999"}}/>
             <div className="active-node" style={{marginBottom: "2em"}}>
                 { renderNode(activeNode, false) }
             </div>
 
             <div className="nodes" style={{position: "relative", marginBottom: "2em"}}>
                 <div className="grid-block shrink" style={{marginLeft: 0}}>
-                    <div className={availableClass} onClick={this._changeTab.bind(this, "available-nodes")}>
+                    <div className={availableClass} onClick={this._changeTab.bind(this, "available-nodes")} style={{fontSize:"14px",fontWeight:"bold",border:"none",paddingBottom:"0", marginBottom: "2em",borderRight:"1px solid #E4E4E4"}}>
                         <Translate content="settings.available_nodes" className="dark-text-color"/>
                     </div>
-                    <div className={hiddenClass} onClick={this._changeTab.bind(this, "hidden-nodes")}>
+                    <div className={hiddenClass} onClick={this._changeTab.bind(this, "hidden-nodes")} style={{fontSize:"14px",fontWeight:"bold",border:"none",paddingBottom:"0", marginBottom: "2em"}}>
                         <Translate content="settings.hidden_nodes" />
                     </div>
                 </div>
-                <span onClick={props.triggerModal.bind(this)} style={{cursor: "pointer", position: "absolute", right: 0, top: "5px", color: "#049cce"}} >
-                    <Translate id="add" component="span" content="settings.add_api" />
+
+                <span onClick={props.triggerModal.bind(this)} style={{cursor: "pointer", fontSize:"14px",position: "absolute", right: 0, top: "5px"}} >
+                      <svg className="icon" aria-hidden="true" style={{width:"18px",height:"18px",marginRight:"9px",fill:"#449E7B"}}>
+                        <use xlinkHref="#icon-chuangjian"></use>
+                      </svg>
+                     <Translate id="add" content="settings.add_api" style={{position:"relative",top:"-3px"}}/>
                 </span>
                 {
                     nodes.map((node)=>{

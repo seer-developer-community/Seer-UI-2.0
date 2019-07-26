@@ -117,20 +117,33 @@ class AccountOracle extends React.Component {
 
         return (
             <div className="grid-content app-tables no-padding" ref="appTables">
-                <div className="content-block small-12">
+                <div className="content-block small-12" style={{paddingTop:"34px"}}>
+
+                  <Translate content="seer.oracle.my" component="h5" style={{fontWeight:"bold"}}/>
+                  <Translate content="seer.oracle.explain" component="p" style={{fontSize:"14px",color:"#999"}}/>
+
                     <div className="tabs-container generic-bordered-box">
 
-                        <Tabs segmented={false} setting="issuedAssetsTab" className="account-tabs" tabsClass="account-overview bordered-header content-block"  contentClass="padding">
-
-                            <Tab title="seer.oracle.my">
                                     {
-                                        this.state.oracle.id ?
+                                      this.state.oracle && this.state.oracle.id ?
                                             <div className="content-block">
-                                                <table className="table">
+                                                <table className="table key-value-table">
                                                     <tbody>
                                                     <tr>
-                                                        <td><Translate content="seer.oracle.description"/></td>
-                                                        <td>{this.state.oracle.description}</td>
+                                                      <td><Translate content="seer.oracle.guaranty"/></td>
+                                                      <td><FormattedAsset amount={this.state.oracle.guaranty} asset={"1.3.0"}/></td>
+                                                    </tr>
+                                                    <tr>
+                                                      <td><Translate content="seer.oracle.locked_guaranty"/></td>
+                                                      <td>{this.state.oracle.locked_guaranty}</td>
+                                                    </tr>
+                                                    <tr>
+                                                      <td><Translate content="seer.oracle.reputation"/></td>
+                                                      <td>{this.state.oracle.reputation}</td>
+                                                    </tr>
+                                                    <tr>
+                                                      <td><Translate content="seer.oracle.volume"/></td>
+                                                      <td>{this.state.oracle.volume}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>
@@ -139,38 +152,31 @@ class AccountOracle extends React.Component {
                                                         <td>{this.state.oracle.script} </td>
                                                     </tr>
                                                     <tr>
-                                                        <td><Translate content="seer.oracle.guaranty"/></td>
-                                                        <td><FormattedAsset amount={this.state.oracle.guaranty} asset={"1.3.0"}/></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><Translate content="seer.oracle.locked_guaranty"/></td>
-                                                        <td>{this.state.oracle.locked_guaranty}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><Translate content="seer.oracle.reputation"/></td>
-                                                        <td>{this.state.oracle.reputation}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><Translate content="seer.oracle.volume"/></td>
-                                                        <td>{this.state.oracle.volume}</td>
+                                                      <td style={{width:"150px"}}><Translate content="seer.oracle.description"/></td>
+                                                      <td>{this.state.oracle.description}</td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
-                                                <p></p>
-                                                <div className="content-block">
-                                                    <Link to={`/account/${account_name}/update-oracle/${this.state.oracle.id}`}><button className="button"><Translate content="seer.oracle.update" /></button></Link>
+                                                <div className="content-block" style={{marginTop:"48px"}}>
+                                                    <Link className="button primary" to={`/account/${account_name}/update-oracle/${this.state.oracle.id}`}>
+                                                      <Translate content="seer.oracle.update" />
+                                                    </Link>
                                                 </div>
                                             </div>
                                             :
-                                            <div className="content-block">
-                                                <p><Translate content="seer.oracle.not_created"/></p>
-                                                <Link to={`/account/${account_name}/create-oracle/`}><button className="button"><Translate content="seer.oracle.create" /></button></Link>
+                                            <div className="content-block" style={{textAlign:"center",marginTop:"10em"}}>
+                                              <svg className="icon" aria-hidden="true" style={{width:"5.19em",height:"4.35em",marginBottom:"10px"}}>
+                                                <use xlinkHref="#icon-zanwujilu1-copy"></use>
+                                              </svg>
+                                                <p><Translate content="seer.oracle.not_created" style={{fontSize:"14px",color:"#999999"}}/></p>
+                                                <br/>
+                                                <Link className="button primary" to={`/account/${account_name}/create-oracle/`}>
+                                                  <Translate content="seer.oracle.create" />
+                                                </Link>
                                             </div>
 
                                     }
 
-                            </Tab>
-                        </Tabs>
                     </div>
 
                     <BaseModal id="issue_asset" overlay={true}>

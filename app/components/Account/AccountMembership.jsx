@@ -9,7 +9,7 @@ import AccountActions from "actions/AccountActions";
 import TimeAgo from "../Utility/TimeAgo";
 import HelpContent from "../Utility/HelpContent";
 import accountUtils from "common/account_utils";
-import {Tabs, Tab} from "../Utility/Tabs";
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 class FeeHelp extends React.Component {
     static propTypes = {
@@ -89,41 +89,51 @@ class AccountMembership extends React.Component {
         else if( expiration_date === "1970-01-01T00:00:00" )
             expiration_date = "N/A";
 
+        let className = member_status === "lifetime" ? "lifetime" : "";
+
         return (
             <div className="grid-content app-tables no-padding" ref="appTables">
-                <div className="content-block small-12">
-                    <div className="tabs-container generic-bordered-box">
-                        <Tabs segmented={false} setting="membershipTab" className="account-tabs" tabsClass="account-overview bordered-header content-block" contentClass="padding">
-                            <Tab title="account.member.membership">
+                <div className={"content-block small-12 member " + className} style={{marginTop:"48px"}}>
+                    <h3 className="member-title">
+                      <svg className="icon" aria-hidden="true" style={{width:"50px",height:"39.12px",marginRight:"14px"}}>
+                        <use xlinkHref={member_status=== "lifetime" ? "#icon-tubiao-huiyuan-lifttime" : "#icon-tubiao-huiyuan"}></use>
+                      </svg>
+                      <Translate content={membership}/> {expiration}
+                      </h3>
 
-                                <h3><Translate content={membership}/> {expiration}</h3>
-                                { member_status=== "lifetime" ? null : (
-                                <div>
-                                    <div className="large-6 medium-8">
-                                        <HelpContent path="components/AccountMembership" section="lifetime" feesCashback={100 - network_fee} price={{amount: lifetime_cost, asset: core_asset}}/>
-                                        <div className="button no-margin" onClick={this.upgradeAccount.bind(this, account.id, true)}>
-                                            <Translate content="account.member.upgrade_lifetime"/>
-                                        </div> &nbsp; &nbsp;
-                                        {true || member_status === "annual" ? null :
-                                        <div className="button" onClick={this.upgradeAccount.bind(this, account.id, false)}>
-                                            <Translate content="account.member.subscribe"/>
-                                        </div>}
-                                        </div>
-                                    <br/><hr/>
-                                </div>
-                                )}
+                    { member_status=== "lifetime" ? (
+                      <div>
+                        <h4 style={{fontSize:"18px",color:"#333",fontWeight:"bold",marginTop:"54px"}}><Translate content="account.member.referral_link"/></h4>
+                          <div style={{display:"flex",alignItems:"center",marginBottom:"1rem"}}>
+                            <input id="copy-link" type="text" value={`https://www.seer.best/?r=${account.name}`} style={{width:"37.5em",color:"#666",margin:"0 1rem 0 0"}}/>
 
-                                <div className="content-block no-margin">
+                            <CopyToClipboard text={`https://www.seer.best/?r=${account.name}`}>
+                              <Translate content="account.member.copy_link" style={{fontSize:"14px",color:"#449E7B",cursor:"pointer"}}/>
+                            </CopyToClipboard>
+                          </div>
+                            <Translate content="account.member.referral_text" style={{fontSize:"14px",color:"#666"}}/>
+                      </div>
+                      ) : (
+                    <div>
+                        <HelpContent path="components/AccountMembership" section="lifetime" feesCashback={100 - network_fee} price={{amount: lifetime_cost, asset: core_asset}}/>
+
+                      <button onClick={this.upgradeAccount.bind(this, account.id, true)} className="button primary" style={{marginTop:"16px"}}>
+                        <Translate content="account.member.upgrade_lifetime"/>
+                      </button>
+                      &nbsp; &nbsp;
+                        {true || member_status === "annual" ? null :
+                          <button onClick={this.upgradeAccount.bind(this, account.id, false)} className="button primary" style={{marginTop:"16px"}}>
+                            <Translate content="account.member.subscribe"/>
+                          </button>
+                        }
+                    </div>
+                    )}
+
+                                <div className="content-block no-margin" style={{padding:"75px 0 0 0"}}>
                                     <div className="no-margin grid-block vertical large-horizontal">
-                                        <div className="no-margin grid-block large-5">
-                                            <div className="grid-content">
-                                                {member_status=== "lifetime" ? (
-                                                <div>
-                                                    <h4><Translate content="account.member.referral_link"/></h4>
-                                                    <Translate content="account.member.referral_text"/>:
-                                                    <h5>{`https://www.seer.best/?r=${account.name}`}</h5>
-                                                </div>) : null}
-                                                <h4><Translate content="account.member.fee_allocation"/></h4>
+                                        <div className="no-margin grid-block large-6">
+                                            <div className="grid-content" style={{padding:"0 15px 0 0"}}>
+                                                <h5 className="table-title"><Translate content="account.member.fee_allocation"/></h5>
                                                 <table className="table key-value-table">
                                                     <tbody>
                                                         <tr>
@@ -155,32 +165,32 @@ class AccountMembership extends React.Component {
                                                     </tbody>
                                                 </table>
 
-                                                <h4 style={{paddingTop: "1rem"}}><Translate content="account.member.fees_cashback"/></h4>
-                                                <table className="table key-value-table">
-                                                    <Statistics stat_object={account.statistics}/>
-                                                </table>
+
                                             </div>
                                         </div>
-                                        <div className="grid-block large-7">
-                                            <div className="grid-content">
-                                                <FeeHelp
-                                                    account={account_name}
-                                                    networkFee={network_fee}
-                                                    referrerFee={referrer_fee}
-                                                    registrarFee={registrar_fee}
-                                                    lifetimeFee={lifetime_fee}
-                                                    referrerTotalFee={referrer_total_fee}
-                                                    maintenanceInterval={gprops.getIn(["parameters", "maintenance_interval"])}
-                                                    vestingThreshold={{amount: gprops.getIn(["parameters", "cashback_vesting_threshold"]) , asset: core_asset}}
-                                                    vestingPeriod={gprops.getIn(["parameters", "cashback_vesting_period_seconds"]) /60/60/24}
-                                                />
+                                        <div className="no-margin grid-block large-6">
+                                            <div className="grid-content" style={{padding:"0 0 0 15px"}}>
+                                              <h5 className="table-title"><Translate content="account.member.fees_cashback"/></h5>
+                                              <table className="table key-value-table">
+                                                <Statistics stat_object={account.statistics}/>
+                                              </table>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </Tab>
-                        </Tabs>
-                    </div>
+                  <div className="fee-help">
+                      <FeeHelp
+                        account={account_name}
+                        networkFee={network_fee}
+                        referrerFee={referrer_fee}
+                        registrarFee={registrar_fee}
+                        lifetimeFee={lifetime_fee}
+                        referrerTotalFee={referrer_total_fee}
+                        maintenanceInterval={gprops.getIn(["parameters", "maintenance_interval"])}
+                        vestingThreshold={{amount: gprops.getIn(["parameters", "cashback_vesting_threshold"]) , asset: core_asset}}
+                        vestingPeriod={gprops.getIn(["parameters", "cashback_vesting_period_seconds"]) /60/60/24}
+                      />
+                  </div>
                 </div>
             </div>
         );

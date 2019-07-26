@@ -5,6 +5,8 @@ import classnames from "classnames";
 import WalletApi from "../../api/WalletApi";
 import {Apis} from "seerjs-ws";
 import SeerActions from "../../actions/SeerActions";
+import counterpart from "counterpart";
+import AmountSelector from "../Utility/AmountSelector";
 
 class AccountHouseCreate extends React.Component {
 
@@ -36,6 +38,11 @@ class AccountHouseCreate extends React.Component {
     _changeDescription(e) {
         this.setState({description: e.target.value});
     }
+
+      _changeGuaranty({amount, asset}) {
+        this.setState({guaranty: amount});
+      }
+
     render() {
         var isValid = true;
         let tabIndex;
@@ -48,28 +55,28 @@ class AccountHouseCreate extends React.Component {
         );
         return (
             <div className="grid-content app-tables no-padding" ref="appTables">
-                <div className="content-block small-12">
-                    <div className="tabs-container generic-bordered-box">
-                        <div className="tabs-header">
-                            <h3><Translate content="seer.house.create" /></h3>
-                        </div>
-                        <div className="small-12 grid-content" style={{padding: "15px"}}>
-                            <div className="content-block">
-                                <Translate component="label" content="seer.oracle.description" />
-                                <input type="text"  onChange={e => this.setState({description: e.target.value})} tabIndex={tabIndex++}/>
-                            </div>
+                <div className="content-block small-12" style={{paddingTop:"34px",maxWidth:"37.5em"}}>
+                    <Translate content="account.guaranty.title" component="h5" style={{fontWeight:"bold"}}/>
+                    <Translate content="account.guaranty.explain" component="p" style={{fontSize:"14px",color:"#999"}}/>
 
-                            <label><Translate content="seer.oracle.guaranty" />
-                                <input type="text" onChange={e => this.setState({guaranty: e.target.value})} tabIndex={tabIndex++} />
-                            </label>
-
-                            <label><Translate content="seer.oracle.script" />
-                                <input type="text" onChange={e => this.setState({script: e.target.value})} tabIndex={tabIndex++} />
-                            </label>
-
-                            <button className="button" onClick={this._createHouse.bind(this)}><Translate content="seer.house.create"/></button>
-                        </div>
+                    <div className="content-block" style={{marginTop:"48px"}}>
+                        <Translate component="label" content="seer.oracle.description"/>
+                        <textarea onChange={e => this.setState({description: e.target.value})} tabIndex={tabIndex++} style={{height:"6.69em",resize: "none"}}/>
                     </div>
+
+                  <div className="content-block">
+                        <Translate component="label"  content="seer.oracle.guaranty" />
+                        <AmountSelector asset={"1.3.0"} assets={["1.3.0"]} amount={this.state.guaranty} tabIndex={tabIndex++} onChange={this._changeGuaranty.bind(this)} />
+                    </div>
+
+                  <div className="content-block">
+                        <Translate component="label"  content="seer.oracle.script" />
+                        <input type="text" onChange={e => this.setState({script: e.target.value})} tabIndex={tabIndex++} placeholder={counterpart.translate("account.guaranty.script_explain")}/>
+                  </div>
+
+                  <button onClick={this._createHouse.bind(this, false)} className="button primary" style={{marginTop:"48px"}}>
+                    <Translate content="account.guaranty.submit"/>
+                  </button>
                 </div>
             </div>
         );

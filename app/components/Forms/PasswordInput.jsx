@@ -3,6 +3,7 @@ import {PropTypes, Component} from "react";
 import cname from "classnames";
 import Translate from "react-translate-component";
 import pw from "zxcvbn";
+import counterpart from "counterpart";
 
 class PasswordInput extends Component {
 
@@ -101,13 +102,13 @@ class PasswordInput extends Component {
                 <div className={password_class_name}>
                     {/* {noLabel ? null : <Translate component="label" content="wallet.password" />} */}
                     <section>
-                        <label className="left-label"><Translate content="wallet.enter_password" /></label>
                         <input
                             style={{marginBottom: this.props.checkStrength ? 0 : null}}
                             name="password"
                             type="password"
                             ref="password"
                             autoComplete="off"
+                            placeholder={counterpart.translate("wallet.enter_password")}
                             onChange={this.handleChange}
                             onKeyDown={this.onKeyDown}
                         />
@@ -121,16 +122,16 @@ class PasswordInput extends Component {
                 { this.props.confirmation ?
                 <div className={password_confirmation_class_name}>
                     {/* {noLabel ? null : <Translate component="label" content="wallet.confirm" />} */}
-                    <label className="left-label"><Translate content="wallet.confirm_password" /></label>
                     <section style={{position: "relative", maxWidth: "30rem"}}>
                         <input
                             name="confirm_password"
                             type="password"
                             ref="confirm_password"
                             autoComplete="off"
+                            placeholder={counterpart.translate("wallet.confirm_password")}
                             onChange={this.handleChange}
                         />
-                        {confirmMatch ? <div className={"ok-indicator success"}>OK</div> : null}
+                        {/*{confirmMatch ? <div className={"ok-indicator success"}>OK</div> : null}*/}
                     </section>
                     {confirmation_error}
                 </div> : null}

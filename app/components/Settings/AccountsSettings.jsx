@@ -34,7 +34,7 @@ class AccountsSettings extends React.Component {
         }
 
         return (
-            <table className="table">
+            <table className="table account-table">
                 <tbody>
                     {accounts.map(account => {
                         let isIgnored = ignoredAccounts.has(account);

@@ -547,7 +547,7 @@ class HeaderNav extends React.Component {
                                 </a>
                             </li>
                             <li>
-                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("wallet") !== -1 ? null : "column-hide-xs", {active: active.indexOf("wallet") !== -1})} onClick={this._onNavigate.bind(this, "/wallet")}>
+                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("wallet") !== -1 ? null : "column-hide-xs", {active: active.indexOf("wallet") !== -1})} onClick={this._onNavigate.bind(this, "/settings")}>
                                     <Translate className="column-hide-small" component="span" content="header.wallet_manage" />
                                 </a>
                             </li>
@@ -556,51 +556,6 @@ class HeaderNav extends React.Component {
                                     <Translate className="column-hide-small" component="span" content="header.account_manage" />
                                 </a>
                             </li>
-
-
-
-
-                            {!currentAccount || !!createAccountLink ? null :
-
-                                <li>
-                                    <Link style={{flexFlow: "row"}} to={`/account/${currentAccount}`} className={cnames({active: active.indexOf("account/") !== -1 && active.indexOf("/account/") !== -1 && active.indexOf("/assets") === -1 && active.indexOf("/voting") === -1 && active.indexOf("/signedmessages") === -1 && active.indexOf("/member-stats") === -1 && active.indexOf("/vesting") === -1 && active.indexOf("/whitelist") === -1 && active.indexOf("/permissions") === -1})}>
-                                        <Icon size="1_5x" style={{position: "relative", top: -2, left: -8}} name="dashboard"/>
-                                        <Translate className="column-hide-small" content="header.dashboard" />
-                                    </Link>
-                                </li>}
-
-                            <li>
-                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("houses") !== -1 ? null : "column-hide-xs", {active: active.indexOf("houses") !== -1})} onClick={this._onNavigate.bind(this, "/houses")}>
-                                    <Icon size="2x" style={{position: "relative", top: 0, left: -8}} name="houses"/>
-                                    <Translate className="column-hide-small" component="span" content="seer.house.title" />
-                                </a>
-                            </li>
-                            <li>
-                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("market/") !== -1 ? null : "column-hide-xxs", {active: active.indexOf("market/") !== -1})} onClick={this._onNavigate.bind(this, tradeUrl)}>
-                                    <Icon size="1_5x" style={{position: "relative", top: -2, left: -8}} name="trade"/>
-                                    <Translate className="column-hide-small" component="span" content="header.exchange" />
-                                </a>
-                            </li>
-                            <li>
-                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("explorer") !== -1 ? null : "column-hide-xs", {active: active.indexOf("explorer") !== -1})} onClick={this._onNavigate.bind(this, "/explorer/blocks")}>
-                                    <Icon size="2x" style={{position: "relative", top: 0, left: -8}} name="server"/>
-                                    <Translate className="column-hide-small" component="span" content="header.explorer" />
-                                </a>
-                            </li>
-                            {!!createAccountLink ? null : <li className="column-hide-small">
-                                <a style={{flexFlow: "row"}} onClick={this._showSend.bind(this)}>
-                                    <Icon size="1_5x" style={{position: "relative", top: 0, left: -8}} name="transfer"/>
-                                    <span><Translate content="header.payments" /></span>
-                                </a>
-                            </li>}
-                            <li className="column-hide-small">
-                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("gateway") !== -1 ? null : "column-hide-xs", {active: active.indexOf("gateway") !== -1})} onClick={this._onNavigate.bind(this, "/erc20-gateway")}>
-                                    <Icon size="1_5x" style={{position: "relative", top: 0, left: -8}} name="gateway"/>
-                                    <span><Translate content="header.gateway" /></span>
-                                </a>
-                            </li>
-                            {/* Dynamic Menu Item */}
-                            <li>{dynamicMenuItem}</li>
                         </ul>
                     </div>
                 </div>

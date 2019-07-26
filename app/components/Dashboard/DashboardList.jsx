@@ -16,6 +16,8 @@ import AccountStore from "stores/AccountStore";
 import counterpart from "counterpart";
 import WalletDb from "stores/WalletDb";
 
+require("imports-loader?!lib/common/iconfont.js");
+
 const starSort = function(a, b, inverse, starredAccounts) {
 	let aName = a.get("name");
 	let bName = b.get("name");
@@ -224,12 +226,14 @@ class DashboardList extends React.Component {
 				let isMyAccount = AccountStore.isMyAccount(account) || accountName === passwordAccount;
 
 				let isStarred = starredAccounts.has(accountName);
-				let starClass = isStarred ? "gold-star" : "grey-star";
+				let starIcon = isStarred ? "#icon-shoucang-checked" : "#icon-shoucang";
 
 				return (
 					<tr key={accountName}>
-						<td className="clickable" onClick={this._onStar.bind(this, accountName, isStarred)}>
-							<Icon className={starClass} name="fi-star"/>
+						<td className="clickable" onClick={this._onStar.bind(this, accountName, isStarred)} style={{textAlign: "left",paddingLeft:"15px"}}>
+              <svg aria-hidden="true" style={{width:"28px",height:"28px"}}>
+                <use xlinkHref={starIcon}></use>
+              </svg>
 						</td>
 						{!showMyAccounts ? (isHiddenAccountsList && (
                                 <td onClick={this._onLinkAccount.bind(this, accountName)}>
@@ -247,16 +251,16 @@ class DashboardList extends React.Component {
 						<td style={{textAlign: "left", paddingLeft: 10}} onClick={this._goAccount.bind(this, accountName, 0)} className={"clickable" + (isMyAccount ? " my-account" : "")}>
 							<span className={isLTM ? "lifetime" : ""}>{accountName}</span>
 						</td>
-						<td className="clickable" onClick={this._goAccount.bind(this, accountName, 1)} style={{textAlign: "right"}}>
+						<td className="clickable" onClick={this._goAccount.bind(this, accountName, 1)} style={{textAlign: "left"}}>
 							<TotalBalanceValue noTip balances={[]} openOrders={openOrders}/>
 						</td>
-						{width >= 750 ? <td className="clickable" onClick={this._goAccount.bind(this, accountName, 2)} style={{textAlign: "right"}}>
+						{width >= 750 ? <td className="clickable" onClick={this._goAccount.bind(this, accountName, 2)} style={{textAlign: "left"}}>
 							<TotalBalanceValue noTip balances={[]} collateral={collateral}/>
 						</td> : null}
-						{width >= 1200 ? <td className="clickable" onClick={this._goAccount.bind(this, accountName, 2)} style={{textAlign: "right"}}>
+						{width >= 1200 ? <td className="clickable" onClick={this._goAccount.bind(this, accountName, 2)} style={{textAlign: "left"}}>
 							<TotalBalanceValue noTip balances={[]} debt={debt}/>
 						</td> : null}
-						<td className="clickable" onClick={this._goAccount.bind(this, accountName, 0)} style={{textAlign: "right"}}>
+						<td className="clickable" onClick={this._goAccount.bind(this, accountName, 0)} style={{textAlign: "left"}}>
 							<TotalBalanceValue noTip balances={balanceList} collateral={collateral} debt={debt} openOrders={openOrders}/>
 						</td>
 					</tr>
@@ -275,34 +279,39 @@ class DashboardList extends React.Component {
 		let hiddenAccounts = this._renderList(this.props.ignoredAccounts, true);
 
 		let filterText = (showMyAccounts) ? counterpart.translate("explorer.accounts.filter") : counterpart.translate("explorer.accounts.filter_contacts");
-		filterText += "...";
 
 		let hasLocalWallet = !!WalletDb.getWallet();
 
 		return (
 			<div style={this.props.style}>
 				{!this.props.compact ? (
-					<section style={{paddingTop: "1rem", paddingLeft: "2rem"}}>
-						<input placeholder={filterText} style={{maxWidth: "20rem", display:"inline-block"}} type="text" value={dashboardFilter} onChange={this._onFilter.bind(this)} />
-							{hasLocalWallet ? (<div onClick={this._createAccount.bind(this)} style={{display: "inline-block", marginLeft: 5, marginBottom: "1rem"}} className="button small">
+					<section style={{paddingTop: "1.2em"}}>
+							{hasLocalWallet ? (<div onClick={this._createAccount.bind(this)} style={{display: "inline-block", marginBottom: "1rem",paddingLeft:"32px",paddingRight:"32px"}} className="button">
 							<Translate content="header.create_account" />
 						</div>):null}
-                        {hiddenAccounts && hiddenAccounts.length ? <div onClick={this.props.onToggleIgnored} style={{display: "inline-block",float:"right",marginRight:"20px"}} className="button small">
+                        {hiddenAccounts && hiddenAccounts.length ? <div onClick={this.props.onToggleIgnored} style={{display: "inline-block", marginBottom: "1rem"}} className="button">
 							<Translate content={`account.${ this.props.showIgnored ? "hide_ignored" : "show_ignored" }`} />
 						</div>:null}
+
+						<div className="input-search" style={{marginBottom: "1rem",maxWidth: "15rem",float:"right"}} >
+						  <input placeholder={filterText} type="text" value={dashboardFilter} onChange={this._onFilter.bind(this)} />
+              <svg className="icon" aria-hidden="true">
+                <use xlinkHref="#icon-sousuo"></use>
+              </svg>
+            </div>
 					</section>) : null}
 				<table className="table table-hover dashboard-table" style={{fontSize: "0.85rem"}}>
 					{!this.props.compact ? (
 					<thead>
 						<tr>
-							<th onClick={this._setSort.bind(this, "star")} className="clickable"><Icon className="grey-star" name="fi-star"/></th>
+							<th onClick={this._setSort.bind(this, "star")} className="clickable" style={{width:"86px"}}></th>
 							{!showMyAccounts ? <th><Icon name="user"/></th> : null}
 							<th style={{textAlign: "left"}}>ID</th>
 							<th style={{textAlign: "left", paddingLeft: 10}} onClick={this._setSort.bind(this, "name")} className="clickable"><Translate content="header.account" /></th>
-							<th style={{textAlign: "right"}}><Translate content="account.open_orders" /></th>
-							{width >= 750 ? <th style={{textAlign: "right"}}><Translate content="account.as_collateral" /></th> : null}
-							{width >= 1200 ? <th style={{textAlign: "right"}}><Translate content="transaction.borrow_amount" /></th> : null}
-							<th style={{textAlign: "right", marginRight: 20}}><Translate content="account.total_value" /></th>
+							<th style={{textAlign: "left"}}><Translate content="account.open_orders" /></th>
+							{width >= 750 ? <th style={{textAlign: "left"}}><Translate content="account.as_collateral" /></th> : null}
+							{width >= 1200 ? <th style={{textAlign: "left"}}><Translate content="transaction.borrow_amount" /></th> : null}
+							<th style={{textAlign: "left", marginRight: 20}}><Translate content="account.total_value" /></th>
 						</tr>
 					</thead>) : null}
 					<tbody>

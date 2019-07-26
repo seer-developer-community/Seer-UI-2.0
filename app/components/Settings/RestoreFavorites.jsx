@@ -60,17 +60,26 @@ class RestoreFavorites extends React.Component {
         });
     }
 
+  _choseFile(){
+    this.refs.file_input.click();
+  }
+
     render(){
         const { state } = this;
 
         return <div>
+
+          <div style={{display:"flex"}}>
+            <input type="text" style={{width:"511px"}}/>
+            <button className="button" style={{height:50,padding:"0.85em 1.5em"}} onClick={this._choseFile.bind(this)}>选择文件</button>
+          </div>
             <input
+              ref="file_input"
               type="file"
               id="file_input"
               accept=".json"
               style={{
-                  border: "solid" ,
-                  marginBottom: 15
+                  display: "none"
               }}
               onChange={this.upload.bind(this)}
             />

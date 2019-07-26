@@ -36,7 +36,7 @@ export default class PasswordConfirm extends Component {
             <div
                 className={cname({"has-error": errors.size})}
             >
-                    <Translate component="label" content={newPassword ? "wallet.new_password" : "wallet.password"} />
+                    <Translate component="label" content={newPassword ? "wallet.new_password" : "wallet.password"} style={{fontSize:"14px",color:"#999"}}/>
                     <section>
                     <input
                         type="password"
@@ -48,7 +48,7 @@ export default class PasswordConfirm extends Component {
                     />
                     </section>
 
-                    <Translate component="label" content={newPassword ? "wallet.new_confirm" : "wallet.confirm"} />
+                    <Translate component="label" content={newPassword ? "wallet.new_confirm" : "wallet.confirm"} style={{fontSize:"14px",color:"#999"}}/>
                     <section>
                     <input
                         type="password"

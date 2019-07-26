@@ -3,6 +3,7 @@
     text-transform: lowercase;
     font-variant: small-caps;
     div.footer-status {
+        display: none;
         position: absolute;
         right: 0;
         > span {
@@ -17,13 +18,14 @@
             position: relative;
             top: 7px;
             font-size: 0.95rem;
+            color: #999;
             > .footer-block-title {
                 font-size: 0.85rem;
             }
         }
     }
     background-color: #777;
-    height: 36px;
+    height: 59px;
     line-height: 36px;
     vertical-align: middle;
     color: #fff;
@@ -34,9 +36,9 @@
     }
 
     .logo {
-        padding-right: 0.5rem;
-        border-right: 1px solid $border-color;
-        line-height: 2rem;
+        display: flex;
+        align-items: center;
+
         .version {
             font-size: 75%;
             vertical-align: baseline;
@@ -44,9 +46,14 @@
     }
 
     > div > div:last-of-type {
-        padding-left: 1rem;
-        border-left: 1px solid $border-color;
-        overflow: hidden;
+        margin-right: 46px;
+        .footer-block{
+            top:5px;
+        }
+    }
+
+    .introjs-launcher{
+        display: none;
     }
 }
 

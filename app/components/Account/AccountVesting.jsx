@@ -59,7 +59,7 @@ class VestingBalance extends React.Component {
 
         return (
             <div>
-                <Translate component="h5" content="account.vesting.balance_number" id={vb.id}/>
+                <Translate component="h5" content="account.vesting.balance_number" id={vb.id} style={{fontSize: "14px",color: "#666",marginTop:"52px",marginBottom:"42px"}}/>
 
                 <table className="table key-value-table">
                     <tbody>
@@ -88,14 +88,11 @@ class VestingBalance extends React.Component {
                         <td>{utils.format_number(availablePercent * 100, 2)}% / <FormattedAsset
                             amount={availablePercent * vb.balance.amount} asset={cvbAsset.get("id")}/></td>
                     </tr>
-                    <tr>
-                        <td colSpan="2" style={{textAlign: "right"}}>
-                            <button onClick={this._onClaim.bind(this, false)} className="button">
-                                <Translate content="account.member.claim"/></button>
-                        </td>
-                    </tr>
                     </tbody>
                 </table>
+                <button onClick={this._onClaim.bind(this, false)} className="button primary" style={{marginTop:"48px"}}>
+                    <Translate content="account.member.claim"/>
+                </button>
             </div>
         );
     }
@@ -153,19 +150,14 @@ class AccountVesting extends React.Component {
 
         return (
             <div className="grid-content app-tables no-padding" ref="appTables">
-                <div className="content-block small-12">
-                    <div className="tabs-container generic-bordered-box">
-                        <Tabs segmented={false} setting="vestingTab" className="account-tabs" tabsClass="account-overview bordered-header content-block" contentClass="padding">
-                            <Tab title="account.vesting.title">
-                                <Translate content="account.vesting.explain" component="p" />
+                <div className="content-block small-12" style={{paddingTop:"34px"}}>
+                  <Translate content="account.vesting.title" component="h5" style={{fontWeight:"bold"}}/>
+                  <Translate content="account.vesting.explain" component="p" style={{fontSize:"14px",color:"#999"}}/>
 
-                                {!balances.length ? (
-                                    <h4 style={{paddingTop: "1rem"}}>
-                                        <Translate content={"account.vesting.no_balances"}/>
-                                    </h4>) : balances}
-                            </Tab>
-                        </Tabs>
-                    </div>
+                  {!balances.length ? (
+                    <h4 style={{paddingTop: "1rem"}}>
+                      <Translate content={"account.vesting.no_balances"}/>
+                    </h4>) : balances}
                 </div>
             </div>    
         );

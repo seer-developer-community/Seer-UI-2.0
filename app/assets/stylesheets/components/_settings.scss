@@ -20,10 +20,15 @@
         cursor: pointer;
     }
     .settings--notifications--group {
-        margin: 15px 10px;
+        margin: 15px 30px;
         .settings--notifications--item {
+            display: flex;
+            align-items: center;
+
             label {
+                display: inline-block;
                 text-transform: none;
+                margin-bottom:0 !important;
             }
         }
     }
@@ -42,4 +47,16 @@
     border-bottom-style: solid;
     transition: border-color 0.3s ease 0s;
     overflow:hidden;
+}
+
+.account-table{
+    tr{
+        height: 48px;
+        background: #F8F8FA;
+        border-bottom: 15px solid #fff;
+
+        td{
+            padding-left: 42px !important;
+        }
+    }
 }

@@ -56,7 +56,7 @@ export default class WalletSettings extends React.Component {
                 <div style={{paddingBottom: 10}}>
                     <Translate content="settings.lookup_text" />:
                 </div>
-                <div className="button outline" onClick={this.onLookup.bind(this)}>
+                <div className="button" onClick={this.onLookup.bind(this)}>
                     <Translate content="wallet.balance_claim_lookup" />
                 </div>
 
@@ -68,7 +68,7 @@ export default class WalletSettings extends React.Component {
                 <div style={{paddingBottom: 10}}>
 
                     <p><Translate unsafe content="wallet.brainkey_seq_reset_text" /></p>
-                    <div className="button outline" onClick={this.onResetBrainkeySequence.bind(this)}>
+                    <div className="button" onClick={this.onResetBrainkeySequence.bind(this)}>
                             <Translate content="wallet.brainkey_seq_reset_button" />
                     </div>
                     {this.state.resetMessage ? <p style={{paddingTop: 10}} className="facolor-success">{this.state.resetMessage}</p> : null}

@@ -67,7 +67,7 @@ export default class WalletChangePassword extends Component {
                     onValid={this.onNewPassword.bind(this)}
                 >
                     <button
-                        className={cname("button outline", {disabled: ! ready})}
+                        className={cname("button", {disabled: ! ready})}
                         type="submit"
                         onClick={this.onAccept.bind(this)}
                     >
@@ -122,7 +122,7 @@ class WalletPassword extends Component {
 
     render() {
         if(this.state.verified) {
-            return <div className="grid-content">{this.props.children}</div>;
+            return <div className="grid-content" style={{padding:"0"}}>{this.props.children}</div>;
         } else {
             return (
                 <form onSubmit={this.onPassword.bind(this)}>
@@ -138,7 +138,7 @@ class WalletPassword extends Component {
                         />
                     </section>
                     <button
-                        className="button outline"
+                        className="button"
                     >
                         <Translate content="wallet.submit" />
                     </button>

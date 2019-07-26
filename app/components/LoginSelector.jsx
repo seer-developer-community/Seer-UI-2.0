@@ -77,10 +77,9 @@ class LoginSelector extends React.Component {
         </ActionSheet>;
         
         return (
-            <div className="grid-block align-center">
+            <div className="grid-block align-center" style={{background:"#F2F2F2"}}>
                 <div className="grid-block shrink vertical">
                     <div className="grid-content shrink text-center account-creation">
-                        <div><img src={logo}/></div>
                         {childCount == 0 ? null :
                             <div>
                                 <Translate content="header.create_account" component="h4"/>

@@ -27,11 +27,19 @@
 }
 
 .key-value-table {
+  tr{
+    height: 53px;
+    border-bottom: 1px solid #EFEFEF;
+  }
   tr > td:first-child {
     padding-left: 0 !important;
+    font-size: 14px;
+    color:#666;
   }
   tr > td:last-child {
-    text-align: right;
+    text-align: left;
+    font-size: 14px;
+    color: #383838;
   }
 }
 

@@ -5,6 +5,8 @@
     .side-menu{
         width:220px;
         border-right: 1px solid #dcdcdc;
+        padding: 0;
+        height: 100%;
 
       .user-info{
         display: flex;
@@ -36,6 +38,7 @@
       >ul{
         margin: 0;
         padding: 0;
+        width: 100%;
 
         >li{
           margin: 0;
@@ -55,10 +58,12 @@
           -moz-user-select: none;
           -ms-user-select: none;
           user-select: none;
+          border-left: 2px solid #fff;
 
           &.active{
             background: #F8F8FA;
             color: #449E7B;
+            border-left: 2px solid #449E7B;
           }
 
           &.menu-separator{
@@ -80,7 +85,7 @@
 
     .sub-content{
        flex:1;
-       background:"black";
+       padding: 1px 23px;
     }
 }
 

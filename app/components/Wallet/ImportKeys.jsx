@@ -599,7 +599,7 @@ class ImportKeys extends Component {
 
 
         let cancelButton = (
-            <div className="button success" onClick={this.onCancel.bind(this)}>
+            <div className="button outline" onClick={this.onCancel.bind(this)}>
                 <Translate content="wallet.cancel" />
             </div>
         );
@@ -652,7 +652,7 @@ class ImportKeys extends Component {
                             {privateKey ? (
                             <form onSubmit={this.onWif.bind(this)}>
                                     <Translate component="label" content="wallet.paste_private" />
-                                    <input ref="wifInput" type="password" id="wif" tabIndex={tabIndex++} />
+                                    <input ref="wifInput" type="password" id="wif" tabIndex={tabIndex++} style={{width:"625px"}}/>
 
                                     <button className="button" type="submit"><Translate content="wallet.submit" /></button>
                                     {cancelButton}

@@ -152,20 +152,29 @@ class TransactionConfirm extends React.Component {
             );
             button_group = (
                 <div className="button-group">
-                    <div className="grid-block full-width-content">
-                        <div className={confirmButtonClass} onClick={this.onConfirmClick.bind(this)}>
-                            {this.props.propose ?
-                                <Translate content="propose" />:
-                                <Translate content="transfer.confirm" />
-                            }
-                        </div>
-                        <div className="button" onClick={this.onCloseClick.bind(this)}>
+                      <div className="button clean" onClick={this.onCloseClick.bind(this)}>
                             <Translate content="account.perm.cancel" />
                         </div>
+                      <div className={confirmButtonClass} onClick={this.onConfirmClick.bind(this)}>
+                        {this.props.propose ?
+                          <Translate content="propose" />:
+                          <Translate content="transfer.confirm" />
+                        }
                     </div>
                 </div>
             );
         }
+
+        let comSwitch = !this.props.transaction.has_proposed_operation() && !(broadcast || broadcasting) ?
+        <div className="align-right grid-block">
+          <label style={{paddingRight: "0.5rem"}}><Translate content="propose" />:</label>
+          <div className="switch" onClick={this.onProposeClick.bind(this)}>
+            <input type="checkbox" checked={this.props.propose} />
+            <label />
+          </div>
+        </div>
+        :null;
+
 
         return (
             <div ref="transactionConfirm">
@@ -173,12 +182,13 @@ class TransactionConfirm extends React.Component {
                 <div style={{minHeight: 350}} className="grid-block vertical no-padding no-margin">
                     {!broadcasting ? <div className="close-button" onClick={this.onCloseClick.bind(this)}>&times;</div> : null}
                     {header}
-                    <div className="grid-content shrink" style={{maxHeight: "60vh", overflowY: "auto", overflowX: "hidden"}}>
+                    <div className="grid-content shrink" style={{height: "200px", overflowY: "auto", overflowX: "hidden"}}>
                         <Transaction
                             key={Date.now()}
                             trx={this.props.transaction.serialize()}
                             index={0}
                             no_links={true}
+                            rightComponent={comSwitch}
                         />
                     </div>
 
@@ -197,15 +207,7 @@ class TransactionConfirm extends React.Component {
                         {button_group}
 
                         {/* P R O P O S E   T O G G L E */}
-                        { !this.props.transaction.has_proposed_operation() && !(broadcast || broadcasting) ?
-                            <div className="align-right grid-block">
-                                <label style={{paddingTop: "0.5rem", paddingRight: "0.5rem"}}><Translate content="propose" />:</label>
-                                <div className="switch" onClick={this.onProposeClick.bind(this)}>
-                                    <input type="checkbox" checked={this.props.propose} />
-                                    <label />
-                                </div>
-                            </div>
-                        :null}
+
                     </div>
                     </div>
 

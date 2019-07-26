@@ -100,7 +100,7 @@ class Accounts extends React.Component {
     }
 
     render() {
-        let { linkedAccounts, myIgnoredAccounts, accountsReady, passwordAccount } = this.props;
+        let { account ,linkedAccounts, myIgnoredAccounts, accountsReady, passwordAccount } = this.props;
         let {width, showIgnored, featuredMarkets, newAssets, currentEntry} = this.state;
 
         if (passwordAccount && !linkedAccounts.has(passwordAccount)) {
@@ -144,6 +144,19 @@ class Accounts extends React.Component {
                                 </div>
                             </div>
                         </Tab>
+
+                      <Tab title="account.activity">
+                        <RecentTransactions
+                          accountsList={Immutable.fromJS([account.get("id")])}
+                          compactView={false}
+                          showMore={true}
+                          fullHeight={true}
+                          limit={15}
+                          showFilters={true}
+                          dashboard
+                        />
+                      </Tab>
+
                         <Tab title="account.contacts">
                             <div className="generic-bordered-box">
                                 <div className="box-content">

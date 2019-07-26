@@ -117,7 +117,8 @@ class AccountWitness extends React.Component {
             witness: null,
             collateralAmount: "0",
             signingKey: "",
-            witnessUrl: ""
+            witnessUrl: "",
+            viewStatus:null,
         };
         this.update = this.update.bind(this);
     }
@@ -168,12 +169,6 @@ class AccountWitness extends React.Component {
         this.closeWitnessUpdateModal();
     }
 
-    openWitnessCreateModal() {
-        ZfApi.publish("witness_create", "open");
-    }
-    closeWitnessCreateModal() {
-        ZfApi.publish("witness_create", "close");
-    }
     createWitness() {
         var args = {
             witness_account:  this.props.account.get("id"),
@@ -181,7 +176,6 @@ class AccountWitness extends React.Component {
             block_signing_key: this.state.signingKey,
         };
         WitnessActions.create(args);
-        this.closeWitnessCreateModal();
     }
 
     claimProfit(witnessId) {
@@ -296,53 +290,54 @@ class AccountWitness extends React.Component {
                 </BaseModal>
             </div>)
         } else {
-            children = (<div className="content-block">
-                <p>
-                    <Translate content="account.witness.not_created"/>
-                </p>
-                <button className={`button ${isLifetimeMember ? '' : 'disabled'}`} onClick={this.openWitnessCreateModal}><Translate content="account.witness.create" /></button>
-                {!isLifetimeMember && <Link to={`/account/${account_name}/member-stats`}><Translate content="account.witness.not_lifetime_member"/></Link>}
-                <BaseModal id="witness_create" overlay={true}>
-                    <h5><Translate content="account.witness.create" /></h5>
-                    <div className="grid-container " style={{paddingTop: "2rem"}}>
-                        <label>
-                            <span><Translate content="account.witness.signing_key"/></span>
-                            <input
-                                type='text'
-                                value={this.state.signingKey}
-                                onChange={(e) => this.setState({signingKey: e.target.value})}
-                             />
-                        </label>
-                        {
-                            <label>
-                                <span>URL</span>
-                                 <input
-                                     type='text'
-                                     value={this.state.witnessUrl}
-                                     onChange={(e) => this.setState({witnessUrl: e.target.value})}
-                                  />
-                            </label>
-                        }
-                        <br/>
-                        <div className="content-block button-group">
-                            <button className="button" onClick={this.createWitness.bind(this)}>{counterpart.translate("submit")}</button>
-                            <button className="button" onClick={this.closeWitnessCreateModal}>{counterpart.translate("cancel")}</button>
-                        </div>
+            if(this.state.viewStatus === "witness_create"){
+                children = (
+                  <div>
+                    <div className="content-block">
+                      <Translate component="label" content="account.witness.signing_key"/>
+                      <textarea onChange={(e) => this.setState({signingKey: e.target.value})} style={{height:"6.69em",resize: "none"}}>{this.state.signingKey}</textarea>
                     </div>
-                </BaseModal>
-            </div>)
+
+                    <div className="content-block">
+                      <label>URL</label>
+                      <input
+                        type='text'
+                        value={this.state.witnessUrl}
+                        onChange={(e) => this.setState({witnessUrl: e.target.value})}
+                      />
+                    </div>
+
+                    <button onClick={this.createWitness.bind(this)} className="button primary" style={{marginTop:"48px"}}>
+                      <Translate content="account.witness.create"/>
+                    </button>
+                  </div>
+                );
+            }else{
+              children = (<div className="content-block">
+                <div className="content-block" style={{textAlign:"center",marginTop:"8em"}}>
+                  <svg className="icon" aria-hidden="true" style={{width:"5.19em",height:"4.35em",marginBottom:"10px"}}>
+                    <use xlinkHref="#icon-zanwujilu1-copy"></use>
+                  </svg>
+                  <p>
+                    <Translate content="account.witness.not_created" style={{fontSize:"14px",color:"#999999"}}/>
+                    {!isLifetimeMember && <Link to={`/account/${account_name}/member-stats`} style={{fontSize:"14px"}}><Translate content="account.witness.not_lifetime_member"/></Link>}
+                  </p>
+                  <br/>
+                  <button className={`button  primary ${isLifetimeMember ? '' : 'disabled'}`} onClick={e=>this.setState({viewStatus:"witness_create"})}><Translate content="account.witness.create" /></button>
+                </div>
+              </div>)
+            }
         }
 
         return (
             <div className="grid-content app-tables no-padding" ref="appTables">
-                <div className="content-block small-12">
-                    <div className="tabs-container generic-bordered-box">
-                        <Tabs segmented={false} setting="issuedAssetsTab" className="account-tabs" tabsClass="account-overview bordered-header content-block"  contentClass="padding">
-                            <Tab title="account.witness.title">
-                                {children}
-                            </Tab>
-                        </Tabs>
-                    </div>
+              <div className="content-block small-12" style={{paddingTop:"34px"}}>
+                <Translate content="account.witness.title" component="h5" style={{fontWeight:"bold"}}/>
+                <Translate content="account.witness.explain" component="p" style={{fontSize:"14px",color:"#999"}}/>
+                <Link to={""}> <Translate content="account.witness.tips"/></Link>
+                <div style={{marginTop:"48px"}}>
+                  {children}
+                </div>
                 </div>
             </div>
         );
