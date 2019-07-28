@@ -14,6 +14,7 @@ import Translate from "react-translate-component";
 import {ChainConfig} from "seerjs-ws";
 import {PrivateKey} from "seerjs/es";
 import SettingsActions from "actions/SettingsActions";
+import counterpart from "counterpart";
 
 const connectObject = {
     listenTo() {
@@ -28,17 +29,49 @@ const connectObject = {
 
 //The default component is WalletManager.jsx
 class BackupCreate extends Component {
+
+    constructor() {
+      super();
+      this.state = {
+        agreeDown: false
+      }
+    }
+
     render() {
-        return (
-            <div style={{maxWidth: "40rem"}}>
-            <Create noText={this.props.noText} newAccount={this.props.location ? this.props.location.query.newAccount : null}>
+        if(!this.props.inRegister) {
+          return (
+            <div style={{ maxWidth: "40rem" }}>
+              <Create noText={this.props.noText}
+                      newAccount={this.props.location ? this.props.location.query.newAccount : null}>
                 <NameSizeModified/>
                 {this.props.noText ? null : <Sha1/>}
                 <Download downloadCb={this.props.downloadCb}/>
-            </Create>
+              </Create>
+            </div>
+          );
+        }else{
 
-        </div>
-    );
+          let className = "";
+          if(!this.state.agreeDown){
+            className = "disabled";
+          }
+
+            return (
+              <div style={{ maxWidth: "40rem",textAlign:"left" }}>
+                <Create noText={this.props.noText} inRegister={this.props.inRegister}
+                        newAccount={this.props.location ? this.props.location.query.newAccount : null}>
+                  <NameSizeModified inRegister={this.props.inRegister}/>
+                  <Download downloadCb={this.props.downloadCb} cname={className} style={{width:"31.25em",height:"3.13em",marginBottom:"2em"}}/>
+                  <Sha1/>
+                  <div style={{display:"flex",margin:"2em 0 20em 0"}}>
+                    <input className="cbox" id="ck_agree" type="checkbox" onChange={e=>this.setState({agreeDown: !this.state.agreeDown})}/>
+                    <label className="checkbox-mask" htmlFor="ck_agree" style={{width:"24px",position:"relative",top:"4px"}}></label>
+                    <Translate component="p" unsafe content="wallet.download_bin_agree_text" style={{fontSize:"14px",color:"#999"}}/>
+                  </div>
+                </Create>
+              </div>
+            );
+        }
     }
 }
 BackupCreate = connect(BackupCreate, connectObject);
@@ -73,22 +106,33 @@ class BackupRestore extends Component {
         let has_new_wallet = this.props.wallet.wallet_names.has(new_wallet)
         let restored = has_new_wallet
 
-        return (
+        if(this.props.inRegister) {
+          return (
             <div>
-                <Translate style={{textAlign: "left", maxWidth: "37.5rem",fontSize:"14px",color:"#999"}} component="p" content="wallet.import_backup_choose" />
-                {(new FileReader).readAsBinaryString ? null : <p className="error">Warning! You browser doesn't support some some file operations required to restore backup, we recommend you to use Chrome or Firefox browsers to restore your backup.</p>}
-                <Upload>
-                    <NameSizeModified/>
-                    <DecryptBackup saveWalletObject={true}>
-                        <NewWalletName>
-                            <Restore/>
-                        </NewWalletName>
-                    </DecryptBackup>
-                </Upload>
-                {/*<br />*/}
-                {/*<Link to="/"><button className="blue"><Translate content="wallet.back" /></button></Link>*/}
+              <Upload2 />
             </div>
-        );
+          );
+        }else{
+          return (
+            <div>
+              <Translate style={{ textAlign: "left", maxWidth: "37.5rem", fontSize: "14px", color: "#999" }}
+                         component="p" content="wallet.import_backup_choose"/>
+              {(new FileReader).readAsBinaryString ? null :
+                <p className="error">Warning! You browser doesn't support some some file operations required to restore
+                  backup, we recommend you to use Chrome or Firefox browsers to restore your backup.</p>}
+              <Upload>
+                <NameSizeModified/>
+                <DecryptBackup saveWalletObject={true}>
+                  <NewWalletName>
+                    <Restore/>
+                  </NewWalletName>
+                </DecryptBackup>
+              </Upload>
+              {/*<br />*/}
+              {/*<Link to="/"><button className="blue"><Translate content="wallet.back" /></button></Link>*/}
+            </div>
+          );
+        }
     }
 }
 
@@ -230,8 +274,12 @@ class Download extends Component {
     }
 
     render() {
-        return <div className="button"
-            onClick={this.onDownload.bind(this)}><Translate content="wallet.download" /></div>
+        let className = "button";
+        if(this.props.cname){
+          className = className + " " + this.props.cname;
+        }
+        return <div className={className}
+            onClick={this.onDownload.bind(this)} style={this.props.style}><Translate content="wallet.download" /></div>
     }
 
     onDownload() {
@@ -251,6 +299,13 @@ class Download extends Component {
 Download = connect(Download, connectObject);
 
 class Create extends Component {
+
+  constructor() {
+    super();
+    this.state = {
+      agreeExport:false,
+    };
+  }
 
     getBackupName() {
         let name = this.props.wallet.current_wallet
@@ -275,26 +330,54 @@ class Create extends Component {
 
         let ready = WalletDb.getWallet() != null
 
-        return (
+        if(!this.props.inRegister) {
+          return (
             <div>
-                {this.props.noText ? null :
-                <div style={{display:"flex"}}>
-                  <svg className="icon" aria-hidden="true" style={{width:"34px",height:"20px",marginRight:"9px"}}>
+              {this.props.noText ? null :
+                <div style={{ display: "flex" }}>
+                  <svg className="icon" aria-hidden="true"
+                       style={{ width: "34px", height: "20px", marginRight: "9px" }}>
                     <use xlinkHref="#icon-tishi3"></use>
                   </svg>
-                    {this.props.newAccount ? <Translate component="p" content="wallet.backup_new_account" style={{fontSize:"12px"}}/> : null}
-                    <Translate component="p" content="wallet.backup_explain" style={{fontSize:"12px"}}/>
+                  {this.props.newAccount ?
+                    <Translate component="p" content="wallet.backup_new_account" style={{ fontSize: "12px" }}/> : null}
+                  <Translate component="p" content="wallet.backup_explain" style={{ fontSize: "12px" }}/>
                 </div>}
-                <div
-                    onClick={this.onCreateBackup.bind(this)}
-                    className={cname("button", {disabled: !ready})}
-                    style={{marginBottom: 15,marginTop:40}}
-                >
-                    <Translate content="wallet.create_backup_of" name={this.props.wallet.current_wallet} />
-                </div>
-                <LastBackupDate/>
+              <div
+                onClick={this.onCreateBackup.bind(this)}
+                className={cname("button", { disabled: !ready })}
+                style={{ marginBottom: 15, marginTop: 40 }}
+              >
+                <Translate content="wallet.create_backup_of" name={this.props.wallet.current_wallet}/>
+              </div>
+              {this.props.noText ? null : <LastBackupDate/>}
             </div>
-        );
+          );
+        }else{
+            return (
+              <div>
+                <div style={{display:"flex",alignItems:"center",marginTop:"80px"}}>
+                  <svg className="icon" aria-hidden="true" style={{width:"26px",height:"26px",marginRight:"7px"}}>
+                    <use xlinkHref="#icon-tishi3"></use>
+                  </svg>
+                  <Translate content="wallet.need_backup" style={{fontSize:"12px"}} style={{fontSize:"18px",color:"#FF972B"}}/>
+                </div>
+                <div style={{display:"flex",marginTop:"31px"}}>
+                  <input className="cbox" id="ck_agree" type="checkbox" onChange={e=>this.setState({agreeExport: !this.state.agreeExport})}/>
+                  <label className="checkbox-mask" htmlFor="ck_agree" style={{width:"26px",position:"relative",top:"4px"}}></label>
+                  <Translate component="p" unsafe content="wallet.export_bin_agree_text" style={{fontSize:"14px",color:"#999"}}/>
+                </div>
+                <div style={{margin:"1em 0 20em 0"}}>
+                  <div
+                    onClick={this.onCreateBackup.bind(this)}
+                    className={cname("button", { disabled: !ready || !this.state.agreeExport })}
+                    style={{ marginBottom: 15, marginTop: 40 ,width:"31.25em",height:"3.13em"}}>
+                    <Translate content="wallet.create_backup_of" name={this.props.wallet.current_wallet}/>
+                  </div>
+                </div>
+              </div>
+            );
+        }
     }
 
     onCreateBackup() {
@@ -346,6 +429,7 @@ class Upload extends Component {
     reset() {
         // debugger;
         // this.refs.file_input.value = "";
+        this.refs.file_input_txt.value = "";
         BackupActions.reset();
     }
 
@@ -377,8 +461,8 @@ class Upload extends Component {
         return (
             <div>
                 <div style={{display:"flex"}}>
-                    <input type="text" style={{width:"511px"}}/>
-                  <button className="button" style={{height:50,padding:"0.85em 1.5em"}} onClick={this._choseFile.bind(this)}>选择文件</button>
+                    <input ref="file_input_txt" type="text" style={{flex:1,maxWidth:510}}/>
+                    <button className="button" style={{height:50,width:115,padding:"0.85em 1.5em"}} onClick={this._choseFile.bind(this)}>选择文件</button>
                 </div>
                 <input ref="file_input" accept=".bin" type="file" id="backup_input_file" style={{ display: "none" }}
                     onChange={this.onFileUpload.bind(this)} />
@@ -390,20 +474,118 @@ class Upload extends Component {
 
     onFileUpload(evt) {
         let file = evt.target.files[0];
+        this.refs.file_input_txt.value  = evt.target.value;
         BackupActions.incommingWebFile(file);
         this.forceUpdate();
     }
 }
 Upload = connect(Upload, connectObject);
 
+class Upload2 extends Component {
+
+  constructor() {
+    super();
+    this.state = {
+      agreeRestore:false,
+    };
+  }
+
+  reset() {
+    // debugger;
+    // this.refs.file_input.value = "";
+    this.refs.file_input_txt.value = "";
+    BackupActions.reset();
+  }
+
+  _choseFile(){
+    this.refs.file_input.click();
+  }
+
+  render() {
+    let isRestore = this.props.backup.contents && this.props.backup.public_key;
+
+      // return <span>{this.props.children}</span>;
+
+    let is_invalid =
+      this.props.backup.contents &&
+      ! this.props.backup.public_key;
+
+    return (
+      <div>
+        <div style={{display:"flex"}}>
+          <input ref="file_input_txt" type="text" style={{flex:1,maxWidth:510}} placeholder={counterpart.translate("wallet.placeholder_chose_bin")}/>
+          <button className="button" style={{height:50,width:115,padding:"0.85em 1.5em"}} onClick={this._choseFile.bind(this)}>选择文件</button>
+        </div>
+        <input ref="file_input" accept=".bin" type="file" id="backup_input_file" style={{ display: "none" }}
+               onChange={this.onFileUpload.bind(this)} />
+        { is_invalid ? <h5><Translate content="wallet.invalid_format" /></h5> : null }
+        { isRestore ? null :
+        <div style={{display:"flex",marginTop:"0.5em"}}>
+          <input className="cbox" id="ck_agree" type="checkbox" onChange={e=>this.setState({agreeRestore: e.target.checked})} checked={this.state.agreeRestore}/>
+          <label className="checkbox-mask" htmlFor="ck_agree" style={{width:"26px",position:"relative",top:"4px"}}></label>
+          <Translate component="p" unsafe content="wallet.agree_restore" style={{fontSize:"14px",color:"#999"}}/>
+        </div>}
+
+        { !isRestore ? null :
+          <div>
+            <NameSizeModified inRegisterRestore/>
+            <DecryptBackup saveWalletObject={true} inRegisterRestore>
+              <NewWalletName>
+                <Restore/>
+              </NewWalletName>
+            </DecryptBackup>
+          </div>}
+
+        <div style={{paddingTop: 20}}>
+          <div
+            onClick={this.restore.bind(this)}
+            className={cname("button", {disabled: !this.state.agreeRestore})}
+            style={{width:"100%",height:"3.13em",marginTop:"1em"}} >
+            <Translate content="wallet.restore_wallet" />
+          </div>
+        </div>
+        <div style={{fontSize:"14px",margin:"2em 0 20em 0",textAlign:"center"}}>
+          <Translate content="wallet.no_account" style={{color:"#999"}}/>
+          <Link onClick={()=>{location.reload()}}>
+            <Translate content="wallet.to_register" />
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  restore(){
+    BackupActions.incommingWebFile(this.refs.file_input.files[0]);
+    this.forceUpdate();
+  }
+
+  onFileUpload(evt) {
+    let file = evt.target.files[0];
+    this.refs.file_input_txt.value  = evt.target.value;
+    this.forceUpdate();
+  }
+}
+Upload2 = connect(Upload2, connectObject);
+
 class NameSizeModified extends Component {
     render() {
-        return <span>
-            <p className="card" style={{padding:"15px 10px"}}><b>{this.props.backup.name}</b> ({this.props.backup.size} bytes)</p>
-            {this.props.backup.last_modified ?
-                <div style={{fontSize:"14px",color:"#999"}}>{this.props.backup.last_modified}</div> : null }
-            <br/>
-        </span>
+        if(this.props.inRegisterRestore){
+          return <div>
+            <p style={{color:"#999"}}><b>{this.props.backup.name}</b> ({this.props.backup.size} bytes)</p>
+          </div>
+        }else if(this.props.inRegister) {
+          return <div style={{marginTop:"3em"}}>
+                    <p><b>{this.props.backup.name}</b> ({this.props.backup.size} bytes)</p>
+                </div>
+        }else{
+          return <span>
+                    <p className="card"
+                       style={{ padding: "15px 10px" }}><b>{this.props.backup.name}</b> ({this.props.backup.size} bytes)</p>
+                    {this.props.backup.last_modified ?
+                      <div style={{ fontSize: "14px", color: "#999" }}>{this.props.backup.last_modified}</div> : null}
+                    <br/>
+                </span>
+        }
     }
 }
 NameSizeModified = connect(NameSizeModified, connectObject);
@@ -427,28 +609,63 @@ class DecryptBackup extends Component {
     }
 
     render() {
+      if(this.state.verified) return <span>{this.props.children}</span>
+
+      if(this.props.inRegisterRestore){
         if(this.state.verified) return <span>{this.props.children}</span>
         return (
-        <form onSubmit={this.onPassword.bind(this)} style={{marginTop:"30px"}}>
-           <Translate component="label" content="wallet.enter_password" style={{color:"#999"}}/>
+          <form onSubmit={this.onPassword.bind(this)} style={{marginTop:"30px"}}>
             <input type="password" id="backup_password"
-                onChange={this.formChange.bind(this)}
-                value={this.state.backup_password}/>
+                   onChange={this.formChange.bind(this)}
+                   value={this.state.backup_password}
+                   placeholder={counterpart.translate("wallet.placeholder_enter_password")}
+            />
+
+            <Sha1/>
+            <div
+              type="submit"
+              className="button"
+              style={{width:"100%",height:"3.13em",marginTop:"2em"}}
+              onClick={this.onPassword.bind(this)}>
+              <Translate content="wallet.submit" />
+            </div>
+            <div style={{fontSize:"14px",margin:"2em 0 20em 0",textAlign:"center"}}>
+              <Link onClick={e=>{BackupActions.reset();}}>
+                <Translate content="wallet.reset" />
+              </Link>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+              <Translate content="wallet.no_account" style={{color:"#999"}}/>
+              &nbsp;&nbsp;
+              <Link onClick={()=>{location.reload()}}>
+                <Translate content="wallet.to_register" />
+              </Link>
+            </div>
+          </form>);
+      }else{
+        return (
+          <form onSubmit={this.onPassword.bind(this)} style={{marginTop:"30px"}}>
+            <Translate component="label" content="wallet.enter_password" style={{ color: "#999" }}/>
+            <input type="password" id="backup_password"
+                   onChange={this.formChange.bind(this)}
+                   value={this.state.backup_password}
+            />
+
             <Sha1/>
             <div>
-            <div
+              <div
                 type="submit"
                 className="button"
                 onClick={this.onPassword.bind(this)}>
                 <Translate content="wallet.submit" />
-            </div>
+              </div>
               <div
                 onClick={e=>{BackupActions.reset();}}
                 className={cname("button outline-dark", {disabled: !this.props.backup.contents})}>
                 <Translate content="wallet.reset" />
               </div>
             </div>
-        </form>);
+          </form>);
+      }
     }
 
     onPassword(e) {

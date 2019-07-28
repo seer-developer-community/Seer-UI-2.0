@@ -15,11 +15,15 @@ import LoadingIndicator from "../LoadingIndicator";
 import WalletActions from "actions/WalletActions";
 import Translate from "react-translate-component";
 import {ChainStore, FetchChain} from "seerjs/es";
-import {BackupCreate} from "../Wallet/Backup";
+import { BackupCreate, BackupRestore } from "../Wallet/Backup";
 import ReactTooltip from "react-tooltip";
 import utils from "common/utils";
 import SettingsActions from "actions/SettingsActions";
 import counterpart from "counterpart";
+import ChainTypes from "../Utility/ChainTypes";
+import Immutable from "immutable";
+import BindToChainState from "../Utility/BindToChainState";
+import AccountInfo from "./AccountInfo";
 
 class CreateAccount extends React.Component {
     constructor() {
@@ -32,8 +36,9 @@ class CreateAccount extends React.Component {
             loading: false,
             hide_refcode: true,
             show_identicon: false,
-            step: 1,
-            agreeCheck:false
+            agreeCheck:false,
+            agreeAuxiliaries:false,
+            step:1,
         };
         this.onFinishConfirm = this.onFinishConfirm.bind(this);
 
@@ -53,6 +58,13 @@ class CreateAccount extends React.Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         return !utils.are_equal_shallow(nextState, this.state);
+    }
+
+    _setStep(step){
+        AccountActions.setRegisterStep(step);
+        this.setState({
+          step:step
+        });
     }
 
     isValid() {
@@ -101,21 +113,22 @@ class CreateAccount extends React.Component {
                 // User registering his own account
                 if(this.state.registrar_account) {
                     FetchChain("getAccount", name, undefined, {[name]: true}).then(() => {
+                        this._setStep(2);
                         this.setState({
-                            step: 2,
                             loading: false
                         });
                     });
                     TransactionConfirmStore.listen(this.onFinishConfirm);
                 } else { // Account registered by the faucet
                     FetchChain("getAccount", name, undefined, {[name]: true}).then(() => {
+                      this._setStep(2);
                         this.setState({
-                            step: 2,
                             loading: false
                         });
                     });
 
                 }
+
             }).catch(error => {
                 console.log("ERROR AccountActions.createAccount", error);
                 let error_msg = error.base && error.base.length && error.base.length > 0 ? error.base[0] : "unknown error";
@@ -237,7 +250,7 @@ class CreateAccount extends React.Component {
                 {/* Backup restore option */}
                 <div style={{paddingTop: 20,textAlign:"left"}}>
                     <label style={{display:"inline"}}>
-                        <Link to="/existing-account">
+                        <Link onClick={()=> {this._setStep(9) }}>
                             <Translate content="wallet.restore" />
                         </Link>
                     </label>
@@ -252,7 +265,7 @@ class CreateAccount extends React.Component {
                 {/* Skip to step 3 */}
                 {(!hasWallet || firstAccount ) ? null :<div style={{paddingTop: 20}}>
                     <label>
-                        <a onClick={() => {this.setState({step: 3});}}><Translate content="wallet.go_get_started" /></a>
+                        <a onClick={() => { this._setStep(4) }}><Translate content="wallet.go_get_started" /></a>
                     </label>
                 </div>}
             </form>
@@ -289,25 +302,21 @@ class CreateAccount extends React.Component {
     _renderBackup() {
         return (
             <div className="backup-submit">
-                <p><Translate unsafe content="wallet.wallet_crucial" /></p>
-                <div className="divider" />
-                <BackupCreate noText downloadCb={this._onBackupDownload}/>
+              <BackupCreate inRegister noText downloadCb={this._onBackupDownload} />
             </div>
         );
     }
 
     _onBackupDownload = () => {
-        this.setState({
-            step: 3
-        });
+      this._setStep(4);
     }
 
     _renderBackupText() {
         return (
             <div>
-                <p style={{fontWeight: "normal", fontFamily: "Roboto-Medium, arial, sans-serif", fontStyle: "normal"}}><Translate content="footer.backup" /></p>
-                <p><Translate content="wallet.wallet_move" unsafe /></p>
-                <p className="txtlabel warning"><Translate unsafe content="wallet.wallet_lose_warning" /></p>
+                {/*<p style={{fontWeight: "normal", fontFamily: "Roboto-Medium, arial, sans-serif", fontStyle: "normal"}}><Translate content="footer.backup" /></p>*/}
+                {/*<p><Translate content="wallet.wallet_move" unsafe /></p>*/}
+                {/*<p className="txtlabel warning"><Translate unsafe content="wallet.wallet_lose_warning" /></p>*/}
             </div>
         );
     }
@@ -360,32 +369,96 @@ class CreateAccount extends React.Component {
         );
     }
 
+    _renderAccountInfo(){
+        let className = "button" + (this.state.agreeAuxiliaries ? "" : " disabled");
+        //accountName
+        let account = AccountStore.getState().currentAccount;
+
+        return (
+            <div className="account-info">
+                <div className="account-names" style={{marginTop:"2em"}}>
+                  <AccountNames account={account}/>
+                </div>
+                <Translate unsafe component="p" content="wallet.auxiliaries_text" style={{margin:"3em 0 1em 0"}}/>
+                <div className="card">
+                    <p className="card-content" style={{padding:"0.5em", lineHeight:"2em"}}>
+                      {WalletDb.getBrainKey()}
+                    </p>
+                </div>
+
+                <div className="agree-auxiliaries">
+                    <input className="cbox" id="ck_agree" type="checkbox" onChange={e=>this.setState({agreeAuxiliaries: !this.state.agreeAuxiliaries})}/>
+                    <label className="checkbox-mask" htmlFor="ck_agree" style={{width:"26px"}}></label>
+                    <Translate component="p" content="wallet.auxiliaries_agree_text" style={{display:"inline"}}/>
+                </div>
+
+                <button className={className} style={{width:"100%",height:"3.13em",margin:"4em 0 12em 0"}} onClick={() => {this._setStep(3)}}>
+                  <Translate content="wallet.next_step" style={{display:"inline"}}/>
+                </button>
+            </div>
+        );
+    }
+
+    _renderResoteWallet(){
+
+        return(
+            <div style={{textAlign:"left"}}>
+                <BackupRestore inRegister />
+            </div>
+        );
+    }
+
     render() {
-        let {step} = this.state;
+        let step = AccountStore.getState().registerStep;
 
         return (
             <div className="sub-content">
+                <div style={{maxWidth: "95vw"}}>
+                    {step !== 1 && step !== 2 && step !== 3 && step !== 9 ? <p style={{fontWeight: "normal", fontFamily: "Roboto-Medium, arial, sans-serif", fontStyle: "normal"}}>
+                        <Translate content={"wallet.step_" + step} />
+                    </p> : null}
 
-                    <div style={{maxWidth: "95vw"}}>
-                        {step !== 1 ? <p style={{fontWeight: "normal", fontFamily: "Roboto-Medium, arial, sans-serif", fontStyle: "normal"}}>
-                            <Translate content={"wallet.step_" + step} />
-                        </p> : null}
+                    {step === 1 ? this._renderAccountCreateForm() : step === 2 ? this._renderAccountInfo() : step === 3 ? this._renderBackup() :
+                        step === 9 ? this._renderResoteWallet() :
+                        this._renderGetStarted()
+                    }
+                </div>
 
-                        {step === 1 ? this._renderAccountCreateForm() : step === 2 ? this._renderBackup() :
-                            this._renderGetStarted()
-                        }
-                    </div>
-
-                    <div style={{maxWidth: "95vw", paddingTop: "2rem"}}>
-                        {step === 1 ? this._renderAccountCreateText() : step === 2 ? this._renderBackupText() :
-                            this._renderGetStartedText()
-                        }
-                    </div>
-                    {/*<Link to="/"><button className="button primary hollow"><Translate content="wallet.back" /></button></Link>*/}
+                <div style={{maxWidth: "95vw", paddingTop: "2rem"}}>
+                    {step === 1 ? this._renderAccountCreateText() : step === 2 ? null : step === 3 ? this._renderBackupText() :
+                        step === 9 ? null :
+                        this._renderGetStartedText()
+                    }
+                </div>
+                {/*<Link to="/"><button className="button primary hollow"><Translate content="wallet.back" /></button></Link>*/}
             </div>
         );
     }
 }
+
+class AccountNames extends React.Component {
+
+  static propTypes = {
+    account: ChainTypes.ChainAccount.isRequired
+  };
+
+  constructor() {
+    super();
+  }
+
+  render(){
+      let { account } = this.props;
+
+      return (
+        <div>
+          <div>您的SEER账号：{account.get("name")}</div>
+          <div>您的SEER数字账号：{account.get("id")}</div>
+        </div>
+      );
+  }
+}
+
+AccountNames = BindToChainState(AccountNames);
 
 export default connect(CreateAccount, {
     listenTo() {

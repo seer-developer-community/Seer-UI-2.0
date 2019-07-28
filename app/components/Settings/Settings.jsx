@@ -40,15 +40,15 @@ class Settings extends React.Component {
                 access: ["apiServer", "faucet_address"]
             },
             iconMap:{
-                "general":"#icon-shezhi1",
-                "wallet":"#icon-qianbao1",
-                "accounts":"#icon-zhanghu1",
-                "password":"#icon-mima",
-                "backup":"#icon-beifenqianyi",
-                "restore":"#icon-huifu",
-                "access":"#icon-ziyuan",
-                "faucet_address":"#icon-tubiao-",
-                "reset":"#icon-huifu"
+                "general":"#icon-tongyongshezhi",
+                "wallet":"#icon-bendiqianbao",
+                "accounts":"#icon-zhanghu2",
+                "password":"#icon-mima1",
+                "backup":"#icon-beifen1",
+                "restore":"#icon-huifudaoru",
+                "access":"#icon-jierudian1",
+                "faucet_address":"#icon-shuilongtou",
+                "reset":"#icon-huifudaoru"
             }
         };
 

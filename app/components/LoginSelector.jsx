@@ -10,6 +10,7 @@ import WalletUnlockActions from "actions/WalletUnlockActions";
 import ActionSheet from "react-foundation-apps/src/action-sheet";
 import SettingsStore from "stores/SettingsStore";
 import IntlActions from "actions/IntlActions";
+import AccountActions from "../actions/AccountActions";
 
 const FlagImage = ({flag, width = 50, height = 50}) => {
      return <img height={height} width={width} src={`${__BASE_URL__}language-dropdown/${flag.toUpperCase()}.png`} />;
@@ -20,8 +21,8 @@ class LoginSelector extends React.Component {
     constructor(props){
         super(props);
 
+        AccountActions.setRegisterStep(1);
         this.state = {
-            step: 1,
             locales: SettingsStore.getState().defaults.locale,
             currentLocale: SettingsStore.getState().settings.get("locale")
         };
@@ -75,14 +76,21 @@ class LoginSelector extends React.Component {
                 </ul>
             </ActionSheet.Content>
         </ActionSheet>;
-        
+
+        let formTitle = "header.create_account";
+        if(AccountStore.getState().registerStep === 3){
+          formTitle = "header.backup_bin";
+        }else if(AccountStore.getState().registerStep === 9){
+          formTitle = "header.restore_bin";
+        }
+
         return (
             <div className="grid-block align-center" style={{background:"#F2F2F2"}}>
                 <div className="grid-block shrink vertical">
                     <div className="grid-content shrink text-center account-creation">
                         {childCount == 0 ? null :
                             <div>
-                                <Translate content="header.create_account" component="h4"/>
+                                <Translate content={formTitle} component="h4"/>
                             </div>
                         }
 

@@ -159,6 +159,10 @@ class AccountActions {
     setPasswordAccount(account) {
         return account;
     }
+
+    setRegisterStep(registerStep){
+        return registerStep;
+    }
 }
 
 export default alt.createActions(AccountActions);

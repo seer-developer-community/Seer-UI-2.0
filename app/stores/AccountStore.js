@@ -34,7 +34,8 @@ class AccountStore extends BaseStore {
             onChangeSetting: SettingsActions.changeSetting,
             onSetWallet: WalletActions.setWallet,
             onAddStarAccount: AccountActions.addStarAccount,
-            onRemoveStarAccount: AccountActions.removeStarAccount
+            onRemoveStarAccount: AccountActions.removeStarAccount,
+            onSetRegisterStep:AccountActions.setRegisterStep,
             // onNewPrivateKeys: [ PrivateKeyActions.loadDbData, PrivateKeyActions.addKey ]
         });
 
@@ -60,7 +61,8 @@ class AccountStore extends BaseStore {
             passwordAccount: null,
             starredAccounts: Immutable.Map(),
             searchAccounts: Immutable.Map(),
-            referralAccount
+            referralAccount,
+            registerStep:1
         };
 
         this.getMyAccounts = this.getMyAccounts.bind(this);
@@ -137,7 +139,8 @@ class AccountStore extends BaseStore {
             searchAccounts: Immutable.Map(),
             searchTerm: "",
             wallet_name,
-            starredAccounts
+            starredAccounts,
+            registerStep:1
         };
     }
 
@@ -390,6 +393,12 @@ class AccountStore extends BaseStore {
         if (this.state.linkedAccounts.size) {
             return this.setCurrentAccount(this.state.linkedAccounts.first());
         }
+    }
+
+    onSetRegisterStep(payload){
+        this.setState({
+          registerStep:payload
+        });
     }
 
     setCurrentAccount(name) {

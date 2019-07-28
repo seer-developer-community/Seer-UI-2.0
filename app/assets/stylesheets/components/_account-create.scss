@@ -160,6 +160,51 @@ div.account-creation {
         display: flex;
         align-items: center;
     }
+
+    .account-info{
+
+        .account-names {
+            border: 1px solid #449E7B;
+            width: 31.25em;
+            height: 6.88em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            > div {
+                display: inline-block;
+                font-size: 1.13em;
+                color: #333;
+                font-weight: bold;
+                text-align: left;
+
+                > div:first-child {
+                    margin-bottom: 1.2em;
+                }
+            }
+        }
+
+        p{
+            font-size: 14px;
+            color: #666;
+        }
+
+        .agree-auxiliaries{
+            display: flex;
+            justify-content: start;
+            align-items: flex-start;
+
+            .checkbox-mask{
+                position: relative;
+                top: 6px;
+            }
+
+            p{
+                margin: 0;
+                padding: 0;
+            }
+        }
+    }
 }
 
 .modal-logo {

@@ -192,7 +192,9 @@ const routes = (
             {/* <Route path="orders" getComponent={(location, cb) => {
                 System.import("components/Account/AccountOrders").then(loadRoute(cb)).catch(errorLoading);
             }}/> */}
-
+            <Route path="accounts" getComponent={(location, cb) => {
+              System.import("components/Dashboard/DashboardAccountsOnly").then(loadRoute(cb)).catch(errorLoading);
+            }}/>
             <Route path="assets" getComponent={(location, cb) => {
                 System.import("components/Account/AccountAssets").then(loadRoute(cb)).catch(errorLoading);
             }}/>
@@ -232,6 +234,9 @@ const routes = (
             }}/>
             <Route path="houses" getComponent={(location, cb) => {
                 System.import("components/Account/AccountHouse").then(loadRoute(cb)).catch(errorLoading);
+            }}/>
+            <Route path="guaranty" getComponent={(location, cb) => {
+              System.import("components/Account/AccountGuaranty").then(loadRoute(cb)).catch(errorLoading);
             }}/>
             <Route path="create-room/single=:ok" getComponent={(location, cb) => {
                 System.import("components/Account/AccountRoomCreate").then(loadRoute(cb)).catch(errorLoading);

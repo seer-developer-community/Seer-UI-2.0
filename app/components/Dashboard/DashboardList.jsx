@@ -329,6 +329,8 @@ DashboardList = BindToChainState(DashboardList);
 class AccountsListWrapper extends React.Component {
 
 	render () {
+		console.log("******************");
+		console.log(this.props);
 		return (
 			<DashboardList
 				{...this.props}
