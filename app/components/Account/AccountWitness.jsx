@@ -197,7 +197,7 @@ class AccountWitness extends React.Component {
         if (witness) {
             // let last_aslot_time = new Date(Date.now() - ((dynGlobalObject.get("current_aslot") - witness.last_aslot ) * globalObject.getIn( ["parameters","block_interval"] )*1000));
             children = (<div className="card-content">
-                <table className="table" style={{width: "100%"}}>
+                <table className="table key-value-table" style={{width: "100%"}}>
                     <tbody>
                         <tr>
                             <td><Translate content="explorer.witnesses.total_collateral" /></td>
@@ -224,16 +224,18 @@ class AccountWitness extends React.Component {
                         <tr>
                             <td><Translate content="explorer.witnesses.collateral_profit" /></td>
                             <td>
-                                <FormattedAsset amount={witness.collateral_profit} asset="1.3.0" decimalOffset={5} />
-                                &nbsp;&nbsp;
-                                <button onClick={this.claimProfit.bind(this, witness.id)} className="button small right"><Translate content="account.witness.collateral.claim"/></button>
+                                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                                    <FormattedAsset amount={witness.collateral_profit} asset="1.3.0" decimalOffset={5} />
+                                    <button onClick={this.claimProfit.bind(this, witness.id)} className="button small" ><Translate content="account.witness.collateral.claim"/></button>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 <br/>
                 <div className="content-block">
-                    <button className="button" onClick={this.openWitnessUpdateModal}><Translate content="account.witness.update" /></button>
+                    <button className="button large" onClick={this.openWitnessUpdateModal}><Translate content="account.witness.update" /></button>
+
                 </div>
                 <h4><Translate content="account.witness.collateral.title"/></h4>
                 <CollateralList witnessId={witness.id} collaterals={witness.collaterals}/>
@@ -333,8 +335,8 @@ class AccountWitness extends React.Component {
             <div className="grid-content app-tables no-padding" ref="appTables">
               <div className="content-block small-12" style={{paddingTop:"34px"}}>
                 <Translate content="account.witness.title" component="h5" style={{fontWeight:"bold"}}/>
-                <Translate content="account.witness.explain" component="p" style={{fontSize:"14px",color:"#999"}}/>
-                <Link to={""}> <Translate content="account.witness.tips"/></Link>
+                <Translate content="account.witness.explain" component="p" style={{fontSize:"14px",color:"#999",marginBottom:"0.5em"}}/>
+                <Link to={""} style={{fontSize:"14px"}}> <Translate content="account.witness.tips"/></Link>
                 <div style={{marginTop:"48px"}}>
                   {children}
                 </div>
