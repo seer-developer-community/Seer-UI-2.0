@@ -82,13 +82,13 @@ class CollateralList extends React.Component {
         return (
             <table className="table dashboard-table table-hover">
                 <thead>
-                <tr>
-                    <th>ID</th>
-                    <th><Translate content="account.witness.collateral.date"/></th>
-                    <th><Translate content="account.witness.collateral.amount"/></th>
-                    <th><Translate content="account.witness.collateral.expiration"/></th>
-                    <th><Translate content="account.witness.collateral.status"/></th>
-                    <th><Translate content="account.witness.collateral.operation"/></th>
+                <tr style={{height:"3em"}}>
+                    <th style={{background:"#F8F8FA"}}>ID</th>
+                    <th style={{background:"#F8F8FA"}}><Translate content="account.witness.collateral.date"/></th>
+                    <th style={{background:"#F8F8FA"}}><Translate content="account.witness.collateral.amount"/></th>
+                    <th style={{background:"#F8F8FA"}}><Translate content="account.witness.collateral.expiration"/></th>
+                    <th style={{background:"#F8F8FA"}}><Translate content="account.witness.collateral.status"/></th>
+                    <th style={{background:"#F8F8FA"}}><Translate content="account.witness.collateral.operation"/></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -234,14 +234,14 @@ class AccountWitness extends React.Component {
                 </table>
                 <br/>
                 <div className="content-block">
-                    <button className="button large" onClick={this.openWitnessUpdateModal}><Translate content="account.witness.update" /></button>
-
+                    <button className="button large" onClick={this.openWitnessUpdateModal} style={{marginTop:"2em",marginBottom:"2em"}}><Translate content="account.witness.update" /></button>
                 </div>
-                <h4><Translate content="account.witness.collateral.title"/></h4>
+
+
                 <CollateralList witnessId={witness.id} collaterals={witness.collaterals}/>
                 <br/>
                 <div className="content-block">
-                    <button className="button" onClick={this.openCreateCollateralModal}><Translate content="account.witness.collateral.create" /></button>
+                    <button className="button large" onClick={this.openCreateCollateralModal} style={{marginTop:"2em"}}><Translate content="account.witness.collateral.create" /></button>
                 </div>
 
 

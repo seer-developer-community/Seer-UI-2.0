@@ -39,16 +39,29 @@ export const widechainAPIs = {
 // };
 
 
+//
+// export const settingsAPIs = {
+//     DEFAULT_WS_NODE: "wss://www.seertalk.org",
+//     WS_NODE_LIST: [
+//         {url: "wss://www.seertalk.org", location: {translate: "settings.api_closest"}},
+//         {url: "wss://www.seerapi.org", location: "China"}
+//     ],
+//     DEFAULT_FAUCET: "https://www.seerapi.com",
+//     TESTNET_FAUCET: "http://106.14.75.91"
+// };
 
 export const settingsAPIs = {
-    DEFAULT_WS_NODE: "wss://www.seertalk.org",
+    DEFAULT_WS_NODE: "wss://seernode.gedoumi.com",
     WS_NODE_LIST: [
-        {url: "wss://www.seertalk.org", location: {translate: "settings.api_closest"}},
-        {url: "wss://www.seerapi.org", location: "China"}
+        {url: "wss://seernode.gedoumi.com", location: "China Mainland"},
+        {url: "wss://sg1.seerchain.org", location: "Singapore"},
+        {url: "wss://tw1.seerchain.org", location: "Taiwan"},
+        {url: "wss://uk2.seerchain.org", location: "United Kindom"},
     ],
     DEFAULT_FAUCET: "https://www.seerapi.com",
     TESTNET_FAUCET: "http://106.14.75.91"
 };
+
 
 
 export const  gdexAPIs = {

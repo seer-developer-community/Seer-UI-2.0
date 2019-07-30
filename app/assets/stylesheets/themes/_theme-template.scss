@@ -2072,7 +2072,7 @@ $input-border
   }
   .button{
 
-    &:not(.tiny):not(.small) {
+    &:not(.tiny):not(.small):not(.large) {
       padding: 0.85em 2.5em;
       font-size: 16px;
     }
@@ -2088,6 +2088,13 @@ $input-border
       font-size: 0.88em;
       padding-left: 1.6em;
       padding-right: 1.6em;
+    }
+
+    &.large{
+      font-size: 1.13em;
+      font-weight: bold;
+      padding-left: 3.5em;
+      padding-right: 3.5em;
     }
   }
 }
