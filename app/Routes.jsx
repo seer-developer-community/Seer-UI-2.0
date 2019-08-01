@@ -265,8 +265,11 @@ const routes = (
             <Route path="witness" getComponent={(location, cb) => {
                 System.import("components/Account/AccountWitness").then(loadRoute(cb)).catch(errorLoading);
             }}/>
+            <Route path="dashboard" getComponent={(location, cb) => {
+                System.import("components/Account/AccountDashboard").then(loadRoute(cb)).catch(errorLoading);
+            }}/>
+
             <Redirect from="overview" to="/account/:account_name" />
-            <Redirect from="dashboard" to="/account/:account_name" />
             <Redirect from="orders" to="/account/:account_name" />
         </Route>
         <Route path="deposit-withdraw" getComponent={(location, cb) => {

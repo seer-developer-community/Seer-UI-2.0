@@ -67,6 +67,8 @@ import AccountRoomUpdateWrapper from "./components/Account/AccountRoomUpdateWrap
 import OracleInput from "./components/Account/OracleInput";
 import ERC20Gateway from "./components/Balances/ERC20Gateway";
 import AccountWitness from "./components/Account/AccountWitness";
+import AccountDashboard from "./components/Account/AccountDashboard";
+
 
 const history = __HASH_HISTORY__ ? hashHistory : browserHistory;
 
@@ -150,8 +152,8 @@ const routes = (
             <Route path="whitelist" component={AccountWhitelist} />
             <Route path="signedmessages" component={AccountSignedMessages} />
             <Redirect from="overview" to="/account/:account_name" />
-            <Redirect from="dashboard" to="/account/:account_name" />
             <Redirect from="orders" to="/account/:account_name" />
+            <Route path="dashboard" component={AccountDashboard} />
             <Route path="create-oracle" component={AccountOracleCreate}/>
             <Route path="oracle" component={AccountOracle}/>
             <Route path="create-house" component={AccountHouseCreate}/>
