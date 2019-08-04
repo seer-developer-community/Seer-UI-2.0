@@ -28,12 +28,85 @@ import SimpleDepositBlocktradesBridge from "../Dashboard/SimpleDepositBlocktrade
 import { Apis } from "seerjs-ws";
 import GatewayActions from "actions/GatewayActions";
 import {Tabs, Tab} from "../Utility/Tabs";
-import AccountOrders from "./AccountOrders";
+import AccountOrdersSimple from "./AccountOrdersSimple";
 import cnames from "classnames";
 import TranslateWithLinks from "../Utility/TranslateWithLinks";
 import { checkMarginStatus } from "common/accountHelper";
 import SendModal from "../Modal/SendModal";
 import PulseIcon from "../Icon/PulseIcon";
+import WitnessActions from "../../actions/WitnessActions";
+import FormattedAsset from "../Utility/FormattedAsset";
+import AccountStore from "../../stores/AccountStore";
+
+class CollateralRows extends React.Component {
+  static defaultProps = {
+  };
+
+  static propTypes = {
+    collaterals: ChainTypes.ChainObjectsList.isRequired,
+    witnessId: ChainTypes.ChainObject.isRequired,
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      collaterals: [],
+    };
+  }
+
+  componentWillMount() {
+    Apis.instance().db_api().exec("get_objects", [this.props.collaterals]).then(r => {
+      this.setState({collaterals: r})
+    });
+  }
+
+  cancelCollateral(accountId, collateralId) {
+    var args = {
+      witness: this.props.witnessId,
+      witness_account: accountId,
+      collateral_id: collateralId,
+    };
+    WitnessActions.cancelCollateral(args);
+  }
+
+  claimCollateral(accountId, collateralId) {
+    var args = {
+      witness: this.props.witnessId,
+      witness_account: accountId,
+      collateral_id: collateralId,
+    };
+    WitnessActions.claimCollateral(args);
+  }
+
+  render(){
+    const now =  new Date().valueOf() + new Date().getTimezoneOffset() * 60000;
+
+    const collateralRows = this.state.collaterals.map(r => <tr key={r.id}>
+      <td><Translate content="account.witness.collateral.title" /></td>
+      {
+        r.status ? <td><FormattedAsset amount={r.amount} asset="1.3.0" decimalOffset={5} /></td> : <td>0</td>
+      }
+      {
+        r.status ? <td>0</td> :
+          <td><FormattedAsset amount={r.amount} asset="1.3.0" decimalOffset={5} /></td>
+      }
+      <td>
+        {
+          r.status
+            ? <button onClick={this.claimCollateral.bind(this, r.owner, r.id)} className={`button tiny fillet ${now > new Date(r.expiration).valueOf() ? '' : 'disabled'}`}>
+                <Translate content="account.witness.collateral.claim"/>
+              </button>
+            : <button onClick={this.cancelCollateral.bind(this, r.owner, r.id)} className="button tiny fillet"><Translate content="account.witness.collateral.cancel"/></button>
+        }
+      </td>
+    </tr>)
+    return (
+      <tbody>
+      {collateralRows}
+      </tbody>
+    )
+  }
+}
 
 class AccountDashboard extends React.Component {
 
@@ -49,25 +122,37 @@ class AccountDashboard extends React.Component {
     constructor(props) {
         super();
         this.state = {
-            sortKey: props.viewSettings.get("portfolioSort", "totalValue"),
-            sortDirection: props.viewSettings.get("portfolioSortDirection", true), // alphabetical A -> B, numbers high to low
-            settleAsset: "1.3.0",
-            showHidden: false,
-            depositAsset: null,
-            withdrawAsset: null,
-            bridgeAsset: null,
-            alwaysShowAssets: [
-                "SEER",
-                // "USD",
-                // "CNY",
-                // "OPEN.BTC",
-                // "OPEN.USDT",
-                // "OPEN.ETH",
-                // "OPEN.MAID",
-                // "OPEN.STEEM",
-                // "OPEN.DASH"
-            ]
-        };
+          sortKey: props.viewSettings.get("portfolioSort", "totalValue"),
+          sortDirection: props.viewSettings.get("portfolioSortDirection", true), // alphabetical A -> B, numbers high to low
+          settleAsset: "1.3.0",
+          showHidden: false,
+          depositAsset: null,
+          withdrawAsset: null,
+          bridgeAsset: null,
+          alwaysShowAssets: [
+            "SEER",
+            // "USD",
+            // "CNY",
+            // "OPEN.BTC",
+            // "OPEN.USDT",
+            // "OPEN.ETH",
+            // "OPEN.MAID",
+            // "OPEN.STEEM",
+            // "OPEN.DASH"
+          ],
+          oracle: {
+            description: "",
+            guaranty: 0,
+            id: "",
+            locked_guaranty: 0,
+            owner: null,
+            reputation: 0,
+            script: "",
+            volume: 0
+          },
+          witness: null
+        }
+
 
         this.priceRefs = {};
         this.valueRefs = {};
@@ -75,6 +160,8 @@ class AccountDashboard extends React.Component {
         for (let key in this.sortFunctions) {
             this.sortFunctions[key] = this.sortFunctions[key].bind(this);
         }
+
+        this.update = this.update.bind(this);
     }
 
     sortFunctions = {
@@ -87,6 +174,21 @@ class AccountDashboard extends React.Component {
 
     componentWillMount() {
         this._checkMarginStatus();
+        ChainStore.subscribe(this.update);
+        this.update();
+
+        Apis.instance().db_api().exec("get_oracle_by_account", [this.props.account.get("id")]).then((results) => {
+            this.setState({oracle: results})
+        });
+    }
+
+    componentWillUnmount() {
+        ChainStore.unsubscribe(this.update);
+    }
+
+    update(obj) {
+        let witness = ChainStore.getWitnessById(this.props.account.get("id"));
+        if (witness) this.setState({witness: witness.toJS()})
     }
 
     _checkMarginStatus(props = this.props) {
@@ -206,7 +308,8 @@ class AccountDashboard extends React.Component {
         };
 
         let balances = [];
-        const emptyCell = "-";
+        // const emptyCell = "-";
+        const emptyCell = "";
         balanceList.forEach( balance => {
             let balanceObject = ChainStore.getObject(balance);
             let asset_type = balanceObject.get("asset_type");
@@ -229,10 +332,16 @@ class AccountDashboard extends React.Component {
 
             /* Table content */
             directMarketLink = notCore ?
-                <Link to={`/market/${asset.get("symbol")}_${preferredMarket}`}><Icon name="trade" className="icon-14px" /></Link> :
-                notCorePrefUnit ? <Link to={`/market/${asset.get("symbol")}_${preferredUnit}`}><Icon name="trade" className="icon-14px" /></Link> :
+                <Link className="button tiny fillet" to={`/market/${asset.get("symbol")}_${preferredMarket}`}>
+                  <Translate content="account.trade"/>
+                </Link> :
+                notCorePrefUnit ? <Link className="button tiny fillet" to={`/market/${asset.get("symbol")}_${preferredUnit}`}>
+                    <Translate content="account.trade"/>
+                  </Link> :
                 emptyCell;
-            transferLink = <a onClick={this.triggerSend.bind(this, asset.get("id"))}><Icon name="transfer" className="icon-14px" /></a>;
+            transferLink = <a className="button tiny fillet" onClick={this.triggerSend.bind(this, asset.get("id"))}>
+                <Translate content="wallet.link_transfer"/>
+            </a>;
 
             let {isBitAsset, borrowModal, borrowLink} = renderBorrow(asset, this.props.account);
 
@@ -262,7 +371,7 @@ class AccountDashboard extends React.Component {
                     <td style={{textAlign: "left"}}>
                         <LinkToAssetById asset={asset.get("id")} />
                     </td>
-                    <td style={{textAlign: "right"}}>
+                    <td style={{textAlign: "left"}}>
                         {hasBalance || hasOnOrder ? <BalanceComponent balance={balance} hide_asset /> : null}
                     </td>
                     {showAssetPercent ? <td style={{textAlign: "right"}}>
@@ -270,15 +379,14 @@ class AccountDashboard extends React.Component {
                     </td> : null}
                     <td>
                         {transferLink}
-                    </td>
-                    <td>
                         {directMarketLink}
                     </td>
-                    <td style={{textAlign: "center"}} className="column-hide-small" data-place="bottom" data-tip={counterpart.translate("tooltip." + (includeAsset ? "hide_asset" : "show_asset"))}>
-                        <a style={{marginRight: 0}} className={includeAsset ? "order-cancel" : "action-plus"} onClick={this._hideAsset.bind(this, asset_type, includeAsset)}>
-                            <Icon name={includeAsset ? "cross-circle" : "plus-circle"} className="icon-14px" />
-                        </a>
-                    </td>
+
+                    {/*<td style={{textAlign: "center"}} className="column-hide-small" data-place="bottom" data-tip={counterpart.translate("tooltip." + (includeAsset ? "hide_asset" : "show_asset"))}>*/}
+                        {/*<a style={{marginRight: 0}} className={includeAsset ? "order-cancel" : "action-plus"} onClick={this._hideAsset.bind(this, asset_type, includeAsset)}>*/}
+                            {/*<Icon name={includeAsset ? "cross-circle" : "plus-circle"} className="icon-14px" />*/}
+                        {/*</a>*/}
+                    {/*</td>*/}
                 </tr>
             );
         });
@@ -398,7 +506,6 @@ class AccountDashboard extends React.Component {
 
         let includedBalancesList = Immutable.List(), hiddenBalancesList = Immutable.List();
 
-
         if (account_balances) {
             // Filter out balance objects that have 0 balance or are not included in open orders
             account_balances = account_balances.filter((a, index) => {
@@ -447,13 +554,6 @@ class AccountDashboard extends React.Component {
             />;
 
         const preferredUnit = settings.get("unit") || this.props.core_asset.get("symbol");
-        const totalValueText = <TranslateWithLinks
-            noLink
-            string="account.total"
-            keys={[
-                {type: "asset", value: preferredUnit, arg: "asset"}
-            ]}
-        />;
 
          let showAssetPercent = settings.get("showAssetPercent", false);
 
@@ -476,78 +576,76 @@ class AccountDashboard extends React.Component {
 
         return (
             <div className="grid-content app-tables no-padding" ref="appTables">
-                <div className="content-block small-12">
-                    <div className="tabs-container generic-bordered-box">
-                        <Tabs defaultActiveTab={0} segmented={false} setting="overviewTab" className="account-tabs" tabsClass="account-overview no-padding bordered-header content-block">
-                            <Tab title="account.portfolio" subText={portfolioActiveAssetsBalance}>
-                                <div className="header-selector">
-                                    <div className="selector">
-                                        <div className={cnames("inline-block", {inactive: showHidden && hiddenBalances.length})} onClick={showHidden ? this._toggleHiddenAssets.bind(this) : () => {}}>
-                                            <Translate content="account.hide_hidden" />
-                                        </div>
-                                        {hiddenBalances.length ? <div className={cnames("inline-block", {inactive: !showHidden})} onClick={!showHidden ? this._toggleHiddenAssets.bind(this) : () => {}}>
-                                            <Translate content="account.show_hidden" />
-                                        </div> : null}
-                                    </div>
-                                </div>
+                <div className="content-block small-12" style={{paddingTop:"34px"}}>
 
-                                {/* Send Modal */}
-                                <SendModal id="send_modal_portfolio" ref="send_modal" from_name={this.props.account.get("name")} asset_id={this.state.send_asset || "1.3.0"}/>
+                  {/* Send Modal */}
+                  <SendModal id="send_modal_portfolio" ref="send_modal" from_name={this.props.account.get("name")} asset_id={this.state.send_asset || "1.3.0"}/>
 
-                                <table className="table dashboard-table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th style={{textAlign: "left"}} className="clickable" onClick={this._toggleSortOrder.bind(this, "alphabetic")}><Translate component="span" content="account.asset" /></th>
-                                            <th style={{textAlign: "right"}}><Translate content="account.qty" /></th>
-                                            {showAssetPercent ? <th style={{textAlign: "right"}}><Translate component="span" content="account.percent" /></th> : null}
-                                            <th><Translate content="header.payments" /></th>
-                                            <th><Translate content="account.trade" /></th>
-                                            <th className="column-hide-small"><Translate content={!showHidden ? "exchange.hide" : "account.perm.show"} /></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {showHidden && hiddenBalances.length ? hiddenBalances : includedBalances}
-                                    </tbody>
-                                </table>
-                            </Tab>
+                  <table className="table dashboard-table close-border table-hover">
+                    <thead>
+                    <tr>
+                      <th colSpan="3" className="dashboard-table-title">
+                        <div style={{display:"flex",flexDirection:"row",justifyContent:"space-between",alignContent:"center"}}>
+                          <Translate component="span" content="account.portfolio" />
+                          <span style={{fontSize:"14px",color:"#666",fontWeight:"normal"}}>
+                            <Translate component="span" content="account.total_assets" />
+                            {portfolioActiveAssetsBalance} SEER
+                          </span>
+                        </div>
+                      </th>
+                    </tr>
+                    <tr>
+                      <th width="33%"><Translate content="account.currency_type" /></th>
+                      <th width="33%"><Translate content="gateway.balance" /></th>
+                      <th><Translate content="account.perm.action" /></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {showHidden && hiddenBalances.length ? hiddenBalances : includedBalances}
+                    </tbody>
+                  </table>
 
-                            <Tab title="account.open_orders" subText={ordersValue}>
-                                <AccountOrders {...this.props}>
-                                    <tbody>
-                                        <tr className="total-value">hiddenSubText
-                                            <td colSpan="7" style={{textAlign: "right"}}>
-                                                {totalValueText}
-                                            </td>
-                                            <td colSpan="2" style={{textAlign: "left"}}>{ordersValue}</td>
-                                            {this.props.isMyAccount ? <td></td> : null}
-                                        </tr>
-                                    </tbody>
-                                </AccountOrders>
-                            </Tab>
+                  <table className="table dashboard-table close-border table-hover" style={{marginTop:"34px"}}>
+                    <thead>
+                    <tr>
+                      <th colSpan="4" className="dashboard-table-title">
+                        <Translate component="span" content="account.collateral_and_deposit" />
+                      </th>
+                    </tr>
+                    <tr>
+                      <th width="25%"><Translate content="account.collateral_types" /></th>
+                      <th width="25%"><Translate content="account.qty" /></th>
+                      <th width="25%"><Translate content="account.release_collateral_qty"/></th>
+                      <th><Translate content="account.perm.action" /></th>
+                    </tr>
+                    </thead>
+                    {
+                      this.state.witness ? <CollateralRows witnessId={this.state.witness.id} collaterals={this.state.witness.collaterals}/> : null
+                    }
+                    <tbody>
 
-                            <Tab title="account.activity" subText={hiddenSubText}>
-                                <RecentTransactions
-                                    accountsList={Immutable.fromJS([account.get("id")])}
-                                    compactView={false}
-                                    showMore={true}
-                                    fullHeight={true}
-                                    limit={15}
-                                    showFilters={true}
-                                    dashboard
-                                />
-                            </Tab>
+                    { this.state.oracle ?
+                        <tr>
+                            <td><Translate content="seer.oracle.oracle_guaranty" /></td>
+                            <td>{this.state.oracle.guaranty}</td>
+                            <td>{this.state.oracle.locked_guaranty}</td>
+                            <td>
+                              <Link to={"/account/" + this.props.account.get("id")+ "/update-oracle/" + this.state.oracle.id} className="button tiny fillet"><Translate content="account.witness.collateral.cancel"/></Link>
+                            </td>
+                        </tr>
+                      : null
+                    }
+                    </tbody>
+                  </table>
 
-                            {account.get("proposals") && account.get("proposals").size ?
-                            <Tab title="explorer.proposals.title" subText={account.get("proposals") ? account.get("proposals").size : 0}>
+                  <AccountOrdersSimple {...this.props}>
+                    <span style={{fontSize:"14px",color:"#666",fontWeight:"normal"}}>
+                        <Translate component="span" content="account.total_order_amount" />
+                             {ordersValue} SEER
+                    </span>
+                  </AccountOrdersSimple>
 
-                                    <Proposals className="dashboard-table" account={account.get("id")}/>
-                            </Tab> : null}
-                        </Tabs>
-
-
-
-                        <SettleModal ref="settlement_modal" asset={this.state.settleAsset} account={account.get("name")}/>
-                    </div>
+                  <SettleModal ref="settlement_modal" asset={this.state.settleAsset} account={account.get("name")}/>
                 </div>
 
                 {/* Deposit Modal */}
@@ -644,8 +742,10 @@ class BalanceWrapper extends React.Component {
             }
         }
 
+        let isMyAccount = AccountStore.isMyAccount(this.props.account);
+
         return (
-            <AccountDashboard {...this.state} {...this.props} orders={ordersByAsset} balanceAssets={Immutable.List(balanceAssets)} />
+            <AccountDashboard {...this.state} {...this.props} orders={ordersByAsset} balanceAssets={Immutable.List(balanceAssets)} isMyAccount={isMyAccount}/>
         );
     };
 }

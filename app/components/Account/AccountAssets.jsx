@@ -217,25 +217,21 @@ class AccountAssets extends React.Component {
             return (
                     <tr key={asset.symbol}>
                         <td><Link to={`/asset/${asset.symbol}`}>{asset.symbol}</Link></td>
-                        <td style={{maxWidth: "250px"}}>{desc}</td>
-                        <td><FormattedAsset amount={current_supply} asset={asset.id} /></td>
-                        <td><FormattedAsset amount={parseInt(asset.options.max_supply, 10)} asset={asset.id} /></td>
-                        <td>
+                        <td>{desc}</td>
+                        <td style={{textAlign:"right"}}><FormattedAsset amount={current_supply} asset={asset.id} /></td>
+                        <td style={{textAlign:"right"}}><FormattedAsset amount={parseInt(asset.options.max_supply, 10)} asset={asset.id} /></td>
+                        <td style={{paddingLeft:"50px"}}>
                             {!asset.bitasset_data_id ? (
-                            <button onClick={this._issueButtonClick.bind(this, asset.id, asset.symbol)} className="button">
+                            <button onClick={this._issueButtonClick.bind(this, asset.id, asset.symbol)} className="button tiny fillet outline">
                                 <Translate content="transaction.trxTypes.asset_issue" />
                             </button>) : null}
-                        </td>
 
-                        <td>
                             {!asset.bitasset_data_id ? (
-                            <button onClick={this._reserveButtonClick.bind(this, asset.id)} className="button">
+                            <button onClick={this._reserveButtonClick.bind(this, asset.id)} className="button tiny fillet outline">
                                 <Translate content="transaction.trxTypes.asset_reserve" />
                             </button>) : null}
-                        </td>
 
-                        <td>
-                            <button onClick={this._editButtonClick.bind(this, asset.symbol, account_name)} className="button">
+                            <button onClick={this._editButtonClick.bind(this, asset.symbol, account_name)} className="button tiny fillet outline">
                                 <Translate content="transaction.trxTypes.asset_update" />
                             </button>
                         </td>
@@ -245,35 +241,25 @@ class AccountAssets extends React.Component {
 
         return (
             <div className="grid-content app-tables no-padding" ref="appTables">
-                <div className="content-block small-12">
-                    <div className="tabs-container generic-bordered-box">
+                  <div className="content-block small-12" style={{paddingTop:"34px"}}>
+                    <Translate content="account.user_issued_assets.issued_assets" component="h5" style={{fontWeight:"bold"}}/>
 
-                        <Tabs segmented={false} setting="issuedAssetsTab" className="account-tabs" tabsClass="account-overview bordered-header content-block"  contentClass="padding">
+                    <table className="table dashboard-table table-hover" style={{marginTop:"1em"}}>
+                      <thead>
+                      <tr>
+                        <th width="10%"><Translate content="account.user_issued_assets.symbol" /></th>
+                        <th width="25%"><Translate content="account.user_issued_assets.description" /></th>
+                        <th width="20%" style={{textAlign:"right"}}><Translate content="markets.supply" /></th>
+                        <th width="20%" style={{textAlign:"right"}}><Translate content="account.user_issued_assets.max_supply" /></th>
+                        <th style={{paddingLeft:"50px"}}><Translate content="account.perm.action" /></th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      {myAssets}
+                      </tbody>
+                    </table>
 
-                            <Tab title="account.user_issued_assets.issued_assets">
-                                <div className="content-block">
-                                    <table className="table dashboard-table table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th><Translate content="account.user_issued_assets.symbol" /></th>
-                                            <th style={{maxWidth: "200px"}}><Translate content="account.user_issued_assets.description" /></th>
-                                            <Translate component="th" content="markets.supply" />
-                                            <th><Translate content="account.user_issued_assets.max_supply" /></th>
-                                            <th style={{textAlign: "center"}} colSpan="3"><Translate content="account.perm.action" /></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                            {myAssets}
-                                        </tbody>
-                                    </table>
-                                </div>
 
-                                <div className="content-block">
-                                    <Link to={`/account/${account_name}/create-asset/`}><button className="button"><Translate content="transaction.trxTypes.asset_create" /></button></Link>
-                                </div>
-                            </Tab>
-                        </Tabs>
-                    </div>
 
                     <BaseModal id="issue_asset" overlay={true}>
                         <br/>

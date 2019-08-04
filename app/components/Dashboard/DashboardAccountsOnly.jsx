@@ -172,16 +172,16 @@ class Accounts extends React.Component {
                                 </div>
                             </div>
                         </Tab>
-                        <Tab title="account.recent">
-                            <RecentTransactions
-                                accountsList={linkedAccounts}
-                                limit={10}
-                                compactView={false}
-                                fullHeight={true}
-                                showFilters={true}
-                                dashboard
-                            />
-                        </Tab>
+                        {/*<Tab title="account.recent">*/}
+                            {/*<RecentTransactions*/}
+                                {/*accountsList={linkedAccounts}*/}
+                                {/*limit={10}*/}
+                                {/*compactView={false}*/}
+                                {/*fullHeight={true}*/}
+                                {/*showFilters={true}*/}
+                                {/*dashboard*/}
+                            {/*/>*/}
+                        {/*</Tab>*/}
                     </Tabs>
                 </div>
             </div>

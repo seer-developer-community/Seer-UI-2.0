@@ -1793,12 +1793,25 @@ $input-border
     table.table.dashboard-table {
       > thead > tr, > tbody > tr{
         height: 56px;
+        border-bottom:1px solid #EFEFEF;
+
+        th.dashboard-table-title{
+          text-align: left;
+          font-size: 16px;
+          font-weight: bold;
+          color: #333333;
+        }
+
+        th,td{
+          padding-left: 15px;
+          padding-right: 15px;
+          text-align: left;
+        }
       }
         > thead > tr > th {
             background-color: $account-header;
-            color: $account-primarytext;
-            border-bottom: 1px solid $account-border;
-            padding: 0;
+            color: #666;
+            font-size: 14px;
         }
         > tbody > tr.dashboard-table--hiddenAccounts {
             > td {
@@ -1813,8 +1826,6 @@ $input-border
             > td {
                 background-color: $account-cells;
                 color: $account-primarytext;
-                border-bottom: 1px solid $account-border;
-                padding: 0;
 
                 .icon > svg > path {
                     fill: $account-primarytext;
@@ -1847,6 +1858,19 @@ $input-border
                 }
             }
         }
+
+      &.close-border{
+        > thead > tr, > tbody > tr {
+          border: 1px solid #EFEFEF !important;
+        }
+
+        > thead > tr > th {
+          background-color: $account-header;
+          color: #333;
+          font-weight: bold;
+          font-size: 16px;
+        }
+      }
     }
 
     div.account-creation {
@@ -2084,6 +2108,11 @@ $input-border
       font-family: NotoSansHans-Bold;
     }
 
+    &.tiny{
+      font-size: 0.88em;
+      padding: 0.5em 0.8em;
+    }
+
     &.small{
       font-size: 0.88em;
       padding-left: 1.6em;
@@ -2095,6 +2124,10 @@ $input-border
       font-weight: bold;
       padding-left: 3.5em;
       padding-right: 3.5em;
+    }
+
+    &.fillet{
+      border-radius: 5px;
     }
   }
 }

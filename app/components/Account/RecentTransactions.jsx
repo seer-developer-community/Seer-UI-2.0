@@ -252,7 +252,7 @@ class RecentTransactions extends React.Component {
                         <div className="selector">
                             <div className={cnames("inline-block")}>
                                 {this.props.showFilters ? (
-                                    <select data-place="left" data-tip={counterpart.translate("tooltip.filter_ops")} style={{paddingTop: 5, width: "auto"}} className="bts-select no-margin" value={this.state.filter} onChange={this._onChangeFilter.bind(this)}>{options}</select>
+                                    <select style={{width:"20.81em",height:"2.5em",paddingTop: 5}} data-place="left" data-tip={counterpart.translate("tooltip.filter_ops")} className="bts-select no-margin" value={this.state.filter} onChange={this._onChangeFilter.bind(this)}>{options}</select>
                                 ) : null}
                             </div>
                         </div>
