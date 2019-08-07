@@ -766,6 +766,9 @@ $input-border
         &:focus {
             border-color: #aaa;
         }
+        &.w600{
+          width:600px;
+        }
     }
 
   ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
@@ -2190,6 +2193,22 @@ $input-border
 }
 .market-filter-input:not(:valid) ~ .clear-text {
     display: none;
+}
+
+.wrap{
+  word-break:break-all;
+}
+
+.desc-text{
+    font-size: 14px;
+    color: #999;
+    line-height: 25px;
+}
+
+.label-text{
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 12px;
 }
 
 .header-container {

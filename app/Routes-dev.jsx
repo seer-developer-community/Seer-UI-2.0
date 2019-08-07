@@ -113,7 +113,6 @@ const routes = (
         <Route path="create-wallet-brainkey" component={CreateWalletFromBrainkey} />
 
         <Route path="transfer" component={Transfer}/>
-        <Route path="erc20-gateway" component={ERC20Gateway}/>
 
         <Route path="invoice/:data" component={Invoice} />
         <Route path="explorer/markets" component={MarketsContainer} />
@@ -137,7 +136,8 @@ const routes = (
 
         <Route path="accounts" component={DashboardAccountsOnly} />
         <Route path="/account/:account_name" component={Account} >
-            <IndexRoute component={AccountOverview} />
+            {/*<IndexRoute component={AccountOverview} />*/}
+            <IndexRoute component={AccountDashboard} />
             {/*<Route path="dashboard" component={AccountOverview} />*/}
             {/* <Route path="deposit-withdraw" component={AccountDepositWithdraw} /> */}
             {/* <Route path="orders" component={AccountOrders} /> */}
@@ -166,6 +166,7 @@ const routes = (
             <Route path="update-house/:house_id" component={AccountHouseUpdate}/>
             <Route path="update-oracle/:oracle_id" component={AccountOracleUpdate}/>
             <Route path="witness" component={AccountWitness}/>
+            <Route path="erc20-gateway" component={ERC20Gateway}/>
         </Route>
 
         <Route path="deposit-withdraw" component={AccountDepositWithdraw} />

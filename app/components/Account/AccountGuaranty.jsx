@@ -135,7 +135,7 @@ class AccountHouse extends React.Component {
             <table className="table key-value-table" style={{width: "100%"}}>
               <tbody>
               <tr>
-                <td><Translate content="seer.oracle.description"/></td>
+                <td width="8%"><Translate content="seer.oracle.description"/></td>
                 <td>{this.state.house.description}</td>
               </tr>
               <tr>
@@ -154,7 +154,11 @@ class AccountHouse extends React.Component {
                 <td>
                   <span><Translate content="seer.oracle.script"/></span>
                 </td>
-                <td>{this.state.house.script}</td>
+                <td>
+                  <p className="wrap">
+                  {this.state.house.script}
+                  </p>
+                  </td>
               </tr>
               </tbody>
             </table>

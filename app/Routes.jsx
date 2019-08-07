@@ -118,9 +118,6 @@ const routes = (
         <Route path="transfer" getComponent={(location, cb) => {
             System.import("components/Transfer/Transfer").then(loadRoute(cb)).catch(errorLoading);
         }}/>
-        <Route path="erc20-gateway" getComponent={(location, cb) => {
-            System.import("components/Balances/ERC20Gateway").then(loadRoute(cb)).catch(errorLoading);
-        }}/>
         <Route path="invoice/:data" getComponent={(location, cb) => {
             System.import("components/Transfer/Invoice").then(loadRoute(cb)).catch(errorLoading);
         }}/>
@@ -181,7 +178,7 @@ const routes = (
             System.import("components/Account/Account").then(loadRoute(cb)).catch(errorLoading);
         }}>
             <IndexRoute getComponent={(location, cb) => {
-                System.import("components/Account/AccountOverview").then(loadRoute(cb)).catch(errorLoading);
+                System.import("components/Account/AccountDashboard").then(loadRoute(cb)).catch(errorLoading);
             }}/>
             {/* <Route path="dashboard" getComponent={(location, cb) => {
                 System.import("components/Account/AccountOverview").then(loadRoute(cb)).catch(errorLoading);
@@ -267,6 +264,9 @@ const routes = (
             }}/>
             <Route path="dashboard" getComponent={(location, cb) => {
                 System.import("components/Account/AccountDashboard").then(loadRoute(cb)).catch(errorLoading);
+            }}/>
+            <Route path="erc20-gateway" getComponent={(location, cb) => {
+              System.import("components/Balances/ERC20Gateway").then(loadRoute(cb)).catch(errorLoading);
             }}/>
 
             <Redirect from="overview" to="/account/:account_name" />

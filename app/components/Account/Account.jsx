@@ -105,7 +105,7 @@ class Account extends React.Component {
                     },
                     "separator",
                     {
-                        name:"/account/" + accountName + "/" + "assets5",
+                        name:"/account/" + accountName + "/" + "erc20-gateway",
                         text:"gateway.gateway",
                         icon:"#icon-wangguan"
                     },
@@ -115,7 +115,7 @@ class Account extends React.Component {
                         icon:"#icon-huiyuan"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "assets7",
+                        name:"/account/" + accountName + "/" + "voting",
                         text:"account.voting",
                         icon:"#icon-toupiao"
                     },

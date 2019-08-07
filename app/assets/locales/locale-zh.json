@@ -1748,7 +1748,7 @@
     "note": "支持将以太钱包的SEER代币自动兑换至主网钱包。点击“生成地址”按钮，系统会自动为您的主网账号分配一个ETH地址。将以太钱包中的SEER代币转入该地址，Seer主网帐号即可自动获得等额SEER币。",
     "current_account": "当前帐号：",
     "bind_eth": "绑定ETH地址：",
-    "btn_generate": "点击生成",
+    "btn_generate": "生成地址",
     "transfer_out_note": "网关自动充提，到账时间视以太网络确认速度而定。",
     "transfer_out_to": "转出至：",
     "placeholder_out_address": "请输入ETH地址",
