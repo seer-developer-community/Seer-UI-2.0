@@ -1,6 +1,7 @@
 import React from "react";
 import Translate from "react-translate-component";
 import AccountImage from "components/Account/AccountImage";
+import AccountStore from "../../stores/AccountStore";
 
 require("imports-loader?!lib/common/iconfont.js");
 
@@ -63,7 +64,9 @@ class MenuContent extends React.Component {
     }
 
     render() {
-        let {account_name,account } = this.props;
+        let {linkedAccounts, account_name, searchAccounts, settings, wallet_locked, account, hiddenAssets} = this.props;
+        let isMyAccount = AccountStore.isMyAccount(account);
+
         const {menuEntries, activeSetting} = this.state;
         let activeEntry = menuEntries[activeSetting] || menuEntries[0];
 
@@ -95,7 +98,30 @@ class MenuContent extends React.Component {
                  </ul>
             </div>
             <div className="sub-content">
-              {React.cloneElement(this.props.children, {...this.props})}
+              {/*{React.cloneElement(this.props.children, {...this.props})}*/}
+
+              {React.cloneElement(
+                React.Children.only(this.props.children),
+                {
+                  account_name,
+                  linkedAccounts,
+                  searchAccounts,
+                  settings,
+                  wallet_locked,
+                  account,
+                  isMyAccount,
+                  hiddenAssets,
+                  contained: true,
+                  balances: account.get("balances", null),
+                  orders: account.get("orders", null),
+                  backedCoins: this.props.backedCoins,
+                  bridgeCoins: this.props.bridgeCoins,
+                  gatewayDown: this.props.gatewayDown,
+                  viewSettings: this.props.viewSettings,
+                  proxy: account.getIn(["options", "voting_account"])
+                }
+              )}
+
                 {/*<activeEntry.entry {...this.props}/>*/}
             </div>
         </div>

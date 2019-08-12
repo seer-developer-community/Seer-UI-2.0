@@ -11,6 +11,7 @@ import ps from "perfect-scrollbar";
 import counterpart from "counterpart";
 import Icon from "../Icon/Icon";
 import cnames from "classnames";
+import { Link } from "react-router";
 
 const {operations} = grapheneChainTypes;
 const alignLeft = {textAlign: "left"};
@@ -60,20 +61,6 @@ class RecentTransactions extends React.Component {
         if (!this.props.fullHeight) {
             let t = this.refs.transactions;
             ps.initialize(t);
-
-            this._setHeaderHeight();
-
-        }
-
-    }
-
-    _setHeaderHeight() {
-        let height = this.refs.header.offsetHeight;
-
-        if (height !== this.state.headerHeight) {
-            this.setState({
-                headerHeight: height
-            });
         }
     }
 
@@ -119,9 +106,6 @@ class RecentTransactions extends React.Component {
         if (!this.props.fullHeight) {
             let t = this.refs.transactions;
             ps.update(t);
-
-            this._setHeaderHeight();
-
         }
 
     }
@@ -195,8 +179,7 @@ class RecentTransactions extends React.Component {
             });
         }
 
-        let display_history = history.length ?
-            history.slice(0, limit)
+        let display_history = history.slice(0, limit)
             .map(o => {
                 return (
                     <Operation
@@ -211,7 +194,7 @@ class RecentTransactions extends React.Component {
                         hideOpLabel={compactView}
                     />
                 );
-            }) : [<tr key="no_recent"><td colSpan={compactView ? "2" : "3"}><Translate content="operation.no_recent" /></td></tr>];
+            });
         display_history.push(
             <tr className="total-value" key="total_value">
                 <td className="column-hide-tiny">
@@ -243,11 +226,6 @@ class RecentTransactions extends React.Component {
         return (
             <div className="recent-transactions no-overflow" style={style}>
                 <div className="generic-bordered-box">
-                    {this.props.dashboard ? null : <div ref="header">
-                        <div className="block-content-header">
-                            <span>{this.props.title ? this.props.title : <Translate content="account.recent" />}</span>
-                        </div>
-                    </div>}
                     <div className="header-selector">
                         <div className="selector">
                             <div className={cnames("inline-block")}>
@@ -265,12 +243,12 @@ class RecentTransactions extends React.Component {
                         ref="transactions">
                         
 
-                        <table className={"table table-striped " + (compactView ? "compact" : "") + (this.props.dashboard ? " dashboard-table table-hover" : "")}>
+                        <table className="table compact dashboard-table">
                             <thead>
                                 <tr>
-                                    <th className="column-hide-tiny" style={{...alignLeft,paddingLeft:"20px"}}><Translate content="account.transactions.type" /></th>
-                                    <th style={alignLeft}><Translate content="account.transactions.info" /></th>
-                                    <th style={alignLeft}><Translate content="account.transactions.time" /></th>
+                                    <th className="column-hide-tiny" style={{...alignLeft,paddingLeft:"20px",backgroundColor:"#F8F8FA"}}><Translate content="account.transactions.type" /></th>
+                                    <th style={{...alignLeft,backgroundColor:"#F8F8FA"}}><Translate content="account.transactions.info" /></th>
+                                    <th style={{...alignLeft,backgroundColor:"#F8F8FA"}}><Translate content="account.transactions.time" /></th>
                                 </tr>
                             </thead>
                             <TransitionWrapper
@@ -280,6 +258,16 @@ class RecentTransactions extends React.Component {
                                 {display_history}
                             </TransitionWrapper>
                         </table>
+                      {
+                          history.length === 0 ?
+                            <div className="content-block" style={{textAlign:"center",margin:"5em auto"}}>
+                              <svg className="icon" aria-hidden="true" style={{width:"5.19em",height:"4.35em",marginBottom:"10px"}}>
+                                <use xlinkHref="#icon-zanwujilu1-copy"></use>
+                              </svg>
+                              <p><Translate content="operation.no_recent" style={{fontSize:"14px",color:"#999999"}}/></p>
+                            </div>
+                            : null
+                      }
                     </div>
                 {
                     historyCount > 0 && this.state.csvExport &&

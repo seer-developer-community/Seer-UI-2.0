@@ -25,10 +25,12 @@ class AccountRow extends React.Component {
 
         return (
             <tr>
-                <td>{this.props.index}</td>
-                <td>{account.get("id")}</td>
+                <td style={{textAlign:"center"}}>{this.props.index}</td>
+                <td style={{textAlign:"center"}}>{account.get("id")}</td>
                 <td><LinkToAccountById account={account.get("id")} /></td>
-                {onRemove ? <td><button onClick={onRemove.bind(this, account.get("id"))} className="button outline">Remove</button></td> : null}
+                {onRemove ? <td><button onClick={onRemove.bind(this, account.get("id"))} className="button small">
+                  <Translate content="account.perm.remove_text" />
+                </button></td> : null}
             </tr>
         );
     }
@@ -85,10 +87,10 @@ class AccountList extends React.Component {
                 {showHeaders ? (
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th><Translate content="account.id" /></th>
-                            <th><Translate content="account.name" /></th>
-                            {removeButton ? <th></th> : null}
+                            <th width="13%" style={{backgroundColor:"#F8F8FA",textAlign:"center"}}>#</th>
+                            <th width="30%" style={{backgroundColor:"#F8F8FA",textAlign:"center"}}><Translate content="account.id" /></th>
+                            <th width="25%" style={{backgroundColor:"#F8F8FA"}}><Translate content="account.name" /></th>
+                            {removeButton ? <th style={{backgroundColor:"#F8F8FA"}}><Translate content="account.perm.action" /></th> : null}
                         </tr>
                     </thead>) : null}
                 <tbody>
@@ -180,7 +182,29 @@ class AccountWhitelist extends React.Component {
                             segmented={false}
                         >
                             <Tab title="account.whitelist.title">
-                                <div style={{paddingBottom: "1rem"}} className="small-12">
+                                <div className="small-12">
+                                  <div style={{padding: "2rem 0"}}>
+                                    <AccountSelector
+                                      style={{width: 600, maxWidth: 600}}
+                                      label={"account.whitelist.add"}
+                                      accountName={accountName}
+                                      onAccountChanged={this._onAccountFound.bind(this)}
+                                      onChange={this._onAccountChanged.bind(this)}
+                                      account={accountName}
+                                      tabIndex={2}
+                                      white={false}
+                                      hideImage={true}
+                                      wrapperStyle={{border:"none"}}
+                                      inputStyle={{paddingLeft:12}}
+                                      inputClassName="force-border"
+                                    />
+                                  </div>
+                                    <button className="button large" onClick={this._onAdd.bind(this, "white_listed")}>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                      <Translate content="account.perm.confirm_add"/>
+                                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </button>
+                                    <br/><br/><br/><br/><br/>
                                     <div>
                                         <AccountList
                                             emptyText="account.whitelist.empty"
@@ -192,24 +216,32 @@ class AccountWhitelist extends React.Component {
                                         />
                                     </div>
                                     {!account.get("whitelisted_accounts") ? <p className="has-error">Please note, whitelisting is not working yet due to unresolved backend issue.</p> : null}
-                                    <div style={{padding: "2rem 0"}}>
-                                        <AccountSelector
-                                            label={"account.whitelist.add"}
-                                            accountName={accountName}
-                                            onAccountChanged={this._onAccountFound.bind(this)}
-                                            onChange={this._onAccountChanged.bind(this)}
-                                            account={accountName}
-                                            tabIndex={2}
-                                            onAction={this._onAdd.bind(this, "white_listed")}
-                                            action_label="account.perm.confirm_add"
-                                            white={false}
-                                        />
-                                    </div>
                                 </div>
                             </Tab>
 
                             <Tab title="account.whitelist.black">
                                 <div style={{paddingBottom: "1rem"}} className="small-12">
+                                  <div style={{padding: "2rem 0"}}>
+                                    <AccountSelector
+                                      style={{width: 600, maxWidth: 600}}
+                                      label={"account.whitelist.add_black"}
+                                      accountName={accountName}
+                                      onAccountChanged={this._onAccountFound.bind(this)}
+                                      onChange={this._onAccountChanged.bind(this)}
+                                      account={accountName}
+                                      tabIndex={2}
+                                      hideImage={true}
+                                      wrapperStyle={{border:"none"}}
+                                      inputStyle={{paddingLeft:12}}
+                                      inputClassName="force-border"
+                                    />
+                                  </div>
+                                  <button className="button large" onClick={this._onAdd.bind(this, "black_listed")}>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <Translate content="account.perm.confirm_add"/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                  </button>
+                                  <br/><br/><br/><br/><br/>
                                     <div>
                                         <AccountList
                                             emptyText="account.whitelist.empty_black"
@@ -219,23 +251,11 @@ class AccountWhitelist extends React.Component {
                                             removeButton
                                         />
                                     </div>
-                                    <div style={{padding: "2rem 1rem"}}>
-                                        <AccountSelector
-                                            label={"account.whitelist.add_black"}
-                                            accountName={accountName}
-                                            onAccountChanged={this._onAccountFound.bind(this)}
-                                            onChange={this._onAccountChanged.bind(this)}
-                                            account={accountName}
-                                            tabIndex={2}
-                                            onAction={this._onAdd.bind(this, "black_listed")}
-                                            action_label="account.perm.confirm_add"
-                                        />
-                                    </div>
                                 </div>
                             </Tab>
 
                             <Tab title="account.whitelist.white_by">
-                                <div style={{paddingBottom: "1rem"}} className="small-12">
+                                <div style={{padding: "2rem 0"}} className="small-12">
                                     <div>
                                         <AccountList
                                             emptyText="account.whitelist.empty_white_by"
@@ -247,7 +267,7 @@ class AccountWhitelist extends React.Component {
                             </Tab>
 
                             <Tab title="account.whitelist.black_by">
-                                <div style={{paddingBottom: "1rem"}} className="small-12">
+                                <div style={{padding: "2rem 0"}} className="small-12">
                                     <div>
                                         <AccountList
                                             emptyText="account.whitelist.empty_black_by"

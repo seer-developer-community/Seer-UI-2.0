@@ -36,7 +36,10 @@ class AccountSelector extends React.Component {
         tabIndex: React.PropTypes.number, // tabindex property to be passed to input tag
         disableActionButton: React.PropTypes.bool, // use it if you need to disable action button,
         allowUppercase: React.PropTypes.bool, // use it if you need to allow uppercase letters
-        typeahead: React.PropTypes.array
+        typeahead: React.PropTypes.array,
+        inputStyle:React.PropTypes.object,
+        wrapperStyle:React.PropTypes.object,
+        inputClassName:React.PropTypes.string
     };
 
     static defaultProps = {
@@ -160,7 +163,7 @@ class AccountSelector extends React.Component {
 
         let linked_status = !this.props.accountName ? null : (linkedAccounts.has(this.props.accountName)) ?
             <span className="tooltip" data-place="top" data-tip={counterpart.translate("tooltip.follow_user")} onClick={this.onUnLinkAccount.bind(this)}><Icon className={""+(isGreenAccount? " green":"")} style={{position:"absolute",top:"-0.15em",right:".2em"}} name="user" /></span>
-            : <span className="tooltip" data-place="top" data-tip={counterpart.translate("tooltip.follow_user_add")} onClick={this.onLinkAccount.bind(this)}><Icon style={{position:"absolute",top:"-0.05em",right:".2em"}} name="plus-circle" /></span>;
+            : <span className="tooltip" data-place="top" data-tip={counterpart.translate("tooltip.follow_user_add")} onClick={this.onLinkAccount.bind(this)}><Icon size="1_5x" style={{position:"absolute",top:"-0.45em",right:".2em"}} name="plus-circle" className="color-primary"/></span>;
 
         return (
             <div className="account-selector" style={this.props.style}>
@@ -169,12 +172,12 @@ class AccountSelector extends React.Component {
                     <div className={"header-area" + (this.props.hideImage ? " no-margin" : "")}>
                         {error && !lookup_display ?
                             <label className="right-label"><span style={{color: "#ff3950"}}>Unknown Account</span></label> :
-                            <label className={"right-label"+(isGreenAccount? " green":"")}><span>{member_status}</span>&nbsp;<span style={{marginRight:"1.5em"}}> {lookup_display}</span> &nbsp; {linked_status}</label>
+                            <label className={"right-label"+(isGreenAccount? " green":"")} ><span>{member_status}</span>&nbsp;<span style={{marginRight:"1.5em"}}> {lookup_display}</span> &nbsp; {linked_status}</label>
                         }
-                        <Translate className="left-label" component="label" content={this.props.label}/>
+                        <Translate className="label-text" content={this.props.label}/>
                     </div>) : null}
                     <div className="input-area">
-                        <div className="inline-label input-wrapper">
+                        <div className="inline-label input-wrapper" style={this.props.wrapperStyle}>
                             {type === "pubkey" ? <div className="account-image"><Icon name="key" size="4x"/></div> :
                             this.props.hideImage ? null : <AccountImage size={{height: this.props.size || 80, width: this.props.size || 80}}
                                 account={this.props.account ? this.props.account.get("name") : null} custom_image={null}/>}
@@ -192,7 +195,8 @@ class AccountSelector extends React.Component {
                                     tabIndex={this.props.tabIndex}
                                     inputProps={{placeholder: "Search for an account"}}
                                 />
-                            :<input style={{textTransform: "lowercase", fontVariant: "initial"}}
+                            :<input style={{textTransform: "lowercase", fontVariant: "initial", ...this.props.inputStyle}}
+                                    className={this.props.inputClassName}
                                     name="username"
                                     id="username"
                                     type="text"
@@ -221,7 +225,7 @@ class AccountSelector extends React.Component {
                                 </div>
                             </div>
 
-                            {error ? <div className="error-area">
+                            {error ? <div className={"error-area " + (this.props.hideImage ? " no-padding" : "")} >
                                 <span>{error}</span>
                             </div> : null}
                         </div>

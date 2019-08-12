@@ -768,6 +768,10 @@ $input-border
         }
         &.w600{
           width:600px;
+          flex: none;
+        }
+        &.force-border{
+          border: 1px solid $input-border !important;
         }
     }
 
@@ -1211,30 +1215,6 @@ $input-border
             border-radius: 2px;
         }
     }
-
-    .menu-group.primary, .menu-group.primary .menu-bar {
-        background-color: $account-background;
-
-        li {
-
-            > a {
-                color: $account-dimmed;
-                .icon > svg > path {
-                  fill: $account-dimmed;
-                }
-            }
-
-            > a:hover, > a.active{
-                background-color: $bg-color !important;
-                color: $primary-text-color;
-
-                .icon > svg > path {
-                  fill: $primary-text-color;
-                }
-            }
-        }
-    }
-
 
     // Asset Detail
 
@@ -1813,7 +1793,7 @@ $input-border
       }
         > thead > tr > th {
             background-color: $account-header;
-            color: #666;
+            color: #333;
             font-size: 14px;
         }
         > tbody > tr.dashboard-table--hiddenAccounts {
@@ -1834,8 +1814,16 @@ $input-border
                     fill: $account-primarytext;
                 }
 
-                .icon.locked > svg > path {
+                .icon.locked > svg > path,.icon.key > svg > path  {
                     fill: $button-bg-color;
+                }
+
+                .icon.checkmark-circle > svg > path {
+                  fill: #93D879;
+                }
+
+                .icon.minus-circle > svg > path {
+                  fill: #ED5E5E;
                 }
             }
             &.total-value {
@@ -1985,7 +1973,6 @@ $input-border
     }
 
     .header-container {
-        background-color: $account-background;
 
         .menu-dropdown-wrapper {
             &.active {
@@ -2133,6 +2120,12 @@ $input-border
       border-radius: 5px;
     }
   }
+
+  .icon{
+      &.color-primary > svg > path {
+        fill: $button-bg-color;
+      }
+  }
 }
 
 .midnightTheme .gate_fee .amount-selector {
@@ -2203,12 +2196,20 @@ $input-border
     font-size: 14px;
     color: #999;
     line-height: 25px;
+
+    *{
+      font-size: 14px;
+    }
 }
 
 .label-text{
   font-size: 14px;
   color: #666;
   margin-bottom: 12px;
+
+  &.color-8e8e8e{
+    color: #8e8e8e;
+  }
 }
 
 .header-container {
@@ -2219,9 +2220,56 @@ $input-border
     border-bottom:2px solid #eeeeee;
     overflow: hidden;
 
-    .menu-bar {
-        overflow: visible;
+
+    &.dark{
+      background: #262932;
+
+      .menu-bar{
+        background-color: #262932 !important;
+        li {
+          > a {
+            color: #8E8E8E;
+            .icon > svg > path {
+              fill: #8E8E8E;
+            }
+          }
+          > a:hover, > a.active{
+            background-color: #262932 !important;
+            color: #fff;
+
+            .icon > svg > path {
+              fill: #fff;
+            }
+          }
+        }
+      }
     }
+
+  &.light{
+    background-color: #fff;
+
+    .menu-bar {
+      background-color: #fff !important;
+      overflow: visible;
+      li {
+        > a {
+          color: #666;
+          .icon > svg > path {
+            fill: #666;
+          }
+        }
+
+        > a:hover, > a.active{
+          background-color: #fff !important;
+          color: #222;
+
+          .icon > svg > path {
+            fill: #222;
+          }
+        }
+      }
+    }
+  }
 
     .logo {
         padding-top: .7rem;
@@ -2279,6 +2327,16 @@ $input-border
     overflow: hidden;
     text-overflow: ellipsis;
     text-align: right;
+  }
+}
+
+.flex-align-middle{
+  display: flex;
+  align-items: center;
+  align-content: center;
+
+  &.align-right{
+    justify-content: flex-end;
   }
 }
 

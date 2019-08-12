@@ -13,6 +13,7 @@ import SyncError from "./components/SyncError";
 import LoadingIndicator from "./components/LoadingIndicator";
 import BrowserNotifications from "./components/BrowserNotifications/BrowserNotificationsContainer";
 import Header from "components/Layout/HeaderNav";
+import HeaderExplorer from "components/Layout/HeaderExplorer";
 // import MobileMenu from "components/Layout/MobileMenu";
 import ReactTooltip from "react-tooltip";
 import NotificationSystem from "react-notification-system";
@@ -21,6 +22,7 @@ import WalletUnlockModal from "./components/Wallet/WalletUnlockModal";
 import BrowserSupportModal from "./components/Modal/BrowserSupportModal";
 import Footer from "./components/Layout/Footer";
 import Deprecate from "./Deprecate";
+import  _ from "lodash"
 // import Incognito from "./components/Layout/Incognito";
 // import { isIncognito } from "feature_detect";
 
@@ -147,8 +149,6 @@ class App extends React.Component {
                 theme: settings.get("themes")
             });
         }
-
-
     }
 
     _getWindowHeight() {
@@ -187,7 +187,13 @@ class App extends React.Component {
         } else {
             content = (
                 <div className="grid-frame vertical">
-                    <Header height={this.state.height}/>
+                  {
+                    _.startsWith(this.props.location.pathname,"/explorer") ?
+                      <HeaderExplorer  height={this.state.height}/>
+                      :
+                      <Header height={this.state.height}/>
+                  }
+
                     <div className="grid-block">
                         <div className="grid-block vertical">
                             {this.props.children}

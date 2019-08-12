@@ -320,12 +320,15 @@
             "type": "类型",
             "key": "公钥/账户名",
             "weight": "权重",
+            "input_weight":"请输入权重",
             "threshold": "阈值",
             "confirm_add": "增加",
             "cancel": "取消",
-            "add_permission_label": "输入账户名/公钥以及权重",
-            "account_name_or_key": "账户名或公钥",
+            "add_permission_label": "公钥/账户名",
+            "input_threshold":"请输入阈值",
+            "account_name_or_key": "请输入公钥或账户名",
             "memo_public_key": "备注公钥",
+            "input_public_key":"请输入公钥",
             "warning1": "资金权限权重总和 %(weights_total)s 应不小于阈值设定 %(threshold)s",
             "warning2": "账户权限权重总和 %(weights_total)s 应不小于阈值设定 %(threshold)s",
             "warning3": "账户名已经在列表中",
@@ -366,7 +369,7 @@
           "sign": "签名",
           "verify": "验证",
           "automaticcreation": "签名后的消息会自动生成",
-          "entermessage": "在此输入消息内容",
+          "entermessage": "输入消息内容",
           "copysuccessful": "签名后的消息已复制到剪贴板",
           "copyunsuccessful": "复制消息失败",
           "verifyonchange": "输入时自动验证签名"
@@ -981,7 +984,9 @@
         },
         "committee_members": {
             "title": "理事会",
-            "active": "理事会成员总数"
+            "active": "理事会成员总数",
+            "set_voting_proxy":"设置投票代理",
+            "input_placeholder":"请输入用户名"
         },
         "committee_member": {
             "title": "理事会成员"

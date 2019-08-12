@@ -21,8 +21,8 @@ import SettingsStore from "stores/SettingsStore";
 class AccountVoting extends React.Component {
 
     static propTypes = {
-        globalObject: ChainTypes.ChainObject.isRequired,
-        proxy: ChainTypes.ChainAccount.isRequired
+         globalObject: ChainTypes.ChainObject.isRequired,
+         proxy: ChainTypes.ChainAccount.isRequired
     };
 
     static defaultProps = {
@@ -297,29 +297,38 @@ class AccountVoting extends React.Component {
 
 
         let actionButtons = (
-            <span>
+            <div>
+                <button className={"button outline " + publish_buttons_class} onClick={this.onReset} tabIndex={8}>
+                    <Translate content="account.perm.reset"/>
+                </button>
                 <button className={cnames(publish_buttons_class, {success: this.isChanged()})} onClick={this.onPublish} tabIndex={4}>
                     <Translate content="account.votes.publish"/>
                 </button>
-                <button className={"button " + publish_buttons_class} onClick={this.onReset} tabIndex={8}>
-                    <Translate content="account.perm.reset"/>
-                </button>
-            </span>
+            </div>
         );
 
         let proxyInput = (
             <AccountSelector
                 hideImage
-                style={{width: "50%", maxWidth: 250}}
+                style={{width: 600, maxWidth: 600}}
                 account={this.state.current_proxy_input}
                 accountName={this.state.current_proxy_input}
                 onChange={this.onProxyChange.bind(this)}
                 onAccountChanged={this.onProxyAccountFound}
                 tabIndex={1}
-                placeholder="Proxy not set"
+                placeholder={counterpart.translate("explorer.committee_members.input_placeholder")}
+                wrapperStyle={{border:"none"}}
+                inputStyle={{paddingLeft:20}}
+                inputClassName="force-border"
         >
-            <span style={{paddingLeft: 5, position: "relative", top: -1, display: (hasProxy ? "" : "none")}}><Icon name="locked" size="1x" /></span>
-            <span style={{paddingLeft: 5, position: "relative", top: 9, display: (!hasProxy ? "" : "none")}}><Link to="/help/voting"><Icon name="question-circle" size="1x" /></Link></span>
+            <span style={{paddingLeft: 20, position: "relative", top: -1, display: (hasProxy ? "" : "none")}}>
+                <Icon name="locked" size="24px" />
+            </span>
+            <span style={{paddingLeft: 20, position: "relative", top: -1, display: (!hasProxy ? "" : "none")}}>
+              <Link to="/help/voting">
+                <Icon name="question-circle" size="24px" className="color-primary"/>
+              </Link>
+            </span>
         </AccountSelector>);
 
         const saveText = (
@@ -330,43 +339,29 @@ class AccountVoting extends React.Component {
 
         return (
             <div className="grid-content app-tables no-padding" ref="appTables">
-                <div className="content-block small-12">
-                    <div className="tabs-container generic-bordered-box">
-
-                        <Tabs
-                            setting="votingTab"
-                            className="account-tabs"
-                            defaultActiveTab={0}
-                            segmented={false}
-                            actionButtons={saveText}
-                            tabsClass="account-overview no-padding bordered-header content-block"
-                        >
-
-                            <Tab title="explorer.committee_members.title">
-                                <div className={cnames("content-block")}>
-                                    <div className="header-selector">
-                                        {/* <Link to="/help/voting/committee"><Icon name="question-circle" /></Link> */}
-                                        {proxyInput}
-                                        <div style={{float: "right", marginTop: "-2.5rem"}}>{actionButtons}</div>
-                                    </div>
-                                    <VotingAccountsList
-                                        type="committee"
-                                        label="account.votes.add_committee_label"
-                                        items={this.state.all_committee}
-                                        validateAccount={this.validateAccount.bind(this, "committee")}
-                                        onAddItem={this.onAddItem.bind(this, "committee")}
-                                        onRemoveItem={this.onRemoveItem.bind(this, "committee")}
-                                        tabIndex={hasProxy ? -1 : 3}
-                                        supported={this.state[hasProxy ? "proxy_committee" : "committee"]}
-                                        withSelector={false}
-                                        active={globalObject.get("active_committee_members")}
-                                        proxy={this.state.proxy_account_id}
-                                    />
-                                </div>
-                            </Tab>
-
-                        </Tabs>
-                    </div>
+                <div className="content-block small-12" style={{paddingTop:"34px"}}>
+                    <Translate content="explorer.committee_members.title" component="h5" style={{fontWeight:"bold"}}/>
+                      <div className="header-selector" style={{marginTop:34,marginBottom:40}}>
+                        {/* <Link to="/help/voting/committee"><Icon name="question-circle" /></Link> */}
+                        <div className="label-text">
+                          <Translate content="explorer.committee_members.set_voting_proxy"/>
+                        </div>
+                        {proxyInput}
+                        <div style={{float: "right", marginTop: "-3rem"}}>{actionButtons}</div>
+                      </div>
+                      <VotingAccountsList
+                        type="committee"
+                        label="account.votes.add_committee_label"
+                        items={this.state.all_committee}
+                        validateAccount={this.validateAccount.bind(this, "committee")}
+                        onAddItem={this.onAddItem.bind(this, "committee")}
+                        onRemoveItem={this.onRemoveItem.bind(this, "committee")}
+                        tabIndex={hasProxy ? -1 : 3}
+                        supported={this.state[hasProxy ? "proxy_committee" : "committee"]}
+                        withSelector={false}
+                        active={globalObject.get("active_committee_members")}
+                        proxy={this.state.proxy_account_id}
+                      />
                 </div>
             </div>
         );
@@ -378,4 +373,6 @@ const BudgetObjectWrapper = (props) => {
     return <AccountVoting {...props} />;
 };
 
-export default BudgetObjectWrapper;
+export default BudgetObjectWrapper
+
+//export default BindToChainState(AccountVoting);

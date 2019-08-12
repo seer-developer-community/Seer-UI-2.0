@@ -20,7 +20,8 @@ class PubKeyInput extends React.Component {
         onChange: React.PropTypes.func, // a method to be called any time user input changes
         onAction: React.PropTypes.func, // a method called when Add button is clicked
         tabIndex: React.PropTypes.number, // tabindex property to be passed to input tag
-        disableActionButton: React.PropTypes.bool // use it if you need to disable action button
+        disableActionButton: React.PropTypes.bool, // use it if you need to disable action button
+        hiddenIcon: React.PropTypes.bool
     }
 
     constructor(props) {
@@ -57,19 +58,20 @@ class PubKeyInput extends React.Component {
         return (
             <div className="pubkey-input no-overflow">
                 <div className="content-area">
-                    <div className="header-area">
-                        {!error && this.props.value && this.isValidPubKey(this.props.value) ?<label className="right-label"><Translate content="account.perm.valid_pub" /></label> : null}
+                    <div className="header-area" style={this.props.hiddenIcon ? {marginLeft:0}:{}}>
                         <Translate className="left-label" component="label" content={this.props.label}/>
                     </div>
                     <div className="input-area">
                         <span className="inline-label">
-                        <div className="account-image">
-                            <PrivateKeyView pubkey={this.props.value}>
-                                <Icon name="key" size="4x"/>
-                            </PrivateKeyView>
-                        </div>
+                          { this.props.hiddenIcon ? null :
+                            <div className="account-image">
+                                <PrivateKeyView pubkey={this.props.value}>
+                                    <Icon name="key" size="4x"/>
+                                </PrivateKeyView>
+                            </div>
+                          }
                         <input type="text"
-                            className={has_private ? "my-key" : ""}
+                            className={"w600 " + ( has_private ? "my-key" : "")}
                             value={this.props.value}
                             placeholder={this.props.placeholder || counterpart.translate("account.public_key")}
                             ref="user_input"
@@ -85,6 +87,14 @@ class PubKeyInput extends React.Component {
                         ) : null }
                         </span>
                     </div>
+
+                    {!error && this.props.value && this.isValidPubKey(this.props.value) ?
+                      <div className="flex-align-middle" style={{marginTop:10}}>
+                        <svg className="icon" aria-hidden="true" style={{width:24,height:24}}>
+                          <use xlinkHref="#icon-xuanzhong"></use>
+                        </svg>
+                        <Translate content="account.perm.valid_pub"  style={{fontSize:14,color:"#57C692",marginLeft:5}}/>
+                      </div> : null}
                     <div className="error-area has-error">
                         <span>{error}</span>
                     </div>

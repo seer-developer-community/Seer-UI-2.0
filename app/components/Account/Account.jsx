@@ -121,17 +121,17 @@ class Account extends React.Component {
                     },
                     "separator",
                     {
-                        name:"/account/" + accountName + "/" + "assets8",
+                        name:"/account/" + accountName + "/" + "permissions",
                         text:"account.menus.perm_mangage",
                         icon:"#icon-quanxianguanli"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "assets9",
+                        name:"/account/" + accountName + "/" + "signedmessages",
                         text:"account.signedmessages.menuitem",
                         icon:"#icon-xiaoxiqianming"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "assets10",
+                        name:"/account/" + accountName + "/" + "whitelist",
                         text:"account.menus.black_white_list",
                         icon:"#icon-heibaimingdan"
                     }

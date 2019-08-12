@@ -11,6 +11,7 @@ import counterpart from "counterpart";
 import utils from "common/utils";
 import AddressIndex from "stores/AddressIndex";
 import PrivateKeyStore from "stores/PrivateKeyStore";
+import { ChainStore } from "seerjs/es";
 
 class AccountPermissionRow extends React.Component {
     static propTypes = {
@@ -59,21 +60,26 @@ class AccountPermissionRow extends React.Component {
 
         return (
             <tr key={name}>
-                <td>
-                { this.props.account ?
-                    <AccountImage size={{height: 30, width: 30}} account={name}/>
-                : pubKey ? (
-                    <div className="account-image">
-                        <PrivateKeyView pubkey={pubKey}>
+                <td className={(has_private ? "my-key" : "") + " pub-key"}>
+                    <div className="flex-align-middle">
+                    <div style={{display:"inline-block",width:32,height:32}}>
+                  { this.props.account ?
+                    <AccountImage size={{height: 32, width: 32}} account={name}/>
+                    : pubKey ? (
+                        <div className="account-image">
+                          <PrivateKeyView pubkey={pubKey}>
                             <Icon name="key" size="4x"/>
-                        </PrivateKeyView>
-                    </div>)
-                : null}
-                </td>
-                <td className={(has_private ? "my-key" : "") + " pub-key"}>{name_or_key}</td>
+                          </PrivateKeyView>
+                        </div>)
+                      : null}
+                    </div>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  {name_or_key}
+                    </div>
+                  </td>
                 <td>{this.props.weights[item_id]}</td>
                 <td>
-                    <button className="button" onClick={this.props.onRemoveItem.bind(this, item_id, suffix)}>
+                    <button className="button small" onClick={this.props.onRemoveItem.bind(this, item_id, suffix)}>
                         <Translate content="account.votes.remove_witness"/></button>
                 </td>
             </tr>
@@ -99,6 +105,7 @@ class AccountPermissionsList extends React.Component {
         this.state = {
             selected_item: null,
             item_name_input: "",
+            item_account_input:null,
             weight_input: "",
             error: null
         }
@@ -108,7 +115,11 @@ class AccountPermissionsList extends React.Component {
     }
 
     onItemChange(item_name_input) {
-        this.setState({item_name_input});
+        let item_account_input = ChainStore.getAccount(item_name_input);
+        this.setState({
+          item_name_input,
+          item_account_input
+        });
     }
 
     onItemAccountChange(selected_item) {
@@ -178,6 +189,7 @@ class AccountPermissionsList extends React.Component {
         return (
             <div>
                 <AccountSelector
+                    style={{width:600}}
                     label={this.props.label}
                     error={error}
                     placeholder={this.props.placeholder}
@@ -185,32 +197,39 @@ class AccountPermissionsList extends React.Component {
                     accountName={this.state.item_name_input}
                     onChange={this.onItemChange}
                     onAccountChanged={this.onItemAccountChange}
-                    onAction={this.onAddItem}
-                    action_label="account.votes.add_witness"
                     tabIndex={this.props.tabIndex}
                     allowPubKey={true}
                     disableActionButton={!this.state.weight_input}
                     allowUppercase={true}
-                >
-                    <input value={this.state.weight_input}
-                        onChange={this.onWeightChanged.bind(this)}
-                        className="weight-input"
-                        type="number"
-                        autoComplete="off"
-                        placeholder={counterpart.translate("account.perm.weight")}
-                        onKeyDown={this.onWeightKeyDown.bind(this)}
-                        tabIndex={this.props.tabIndex + 1}
-                    />
-                </AccountSelector>
+                    hideImage
+                />
+
+              <div className="label-text" style={{marginTop:30}}>
+                <Translate content="account.perm.weight"/>
+              </div>
+              <input value={this.state.weight_input}
+                     onChange={this.onWeightChanged.bind(this)}
+                     className="w600"
+                     type="number"
+                     autoComplete="off"
+                     placeholder={counterpart.translate("account.perm.input_weight")}
+                     onKeyDown={this.onWeightKeyDown.bind(this)}
+                     tabIndex={this.props.tabIndex + 1}
+              />
+                <br/><br/><br/>
+                <button className="button large" onClick={()=>{this.onAddItem(this.state.item_account_input)}}>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <Translate content="account.votes.add_witness"/>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </button>
 
                 <div style={{paddingTop: "2rem"}}>
-                    <table className="table">
+                    <table className="table compact dashboard-table">
                         <thead>
                         <tr>
-                            <th style={{width: cw[0]}}></th>
-                            <th style={{width: cw[1]}}><Translate content="account.perm.acct_or_key" /></th>
-                            <th style={{width: cw[2]}}><Translate content="account.perm.weight" /></th>
-                            <th style={{width: cw[3]}}><Translate content="account.perm.action" /></th>
+                            <th style={{width: cw[1],backgroundColor:"#F8F8FA"}}><Translate content="account.perm.acct_or_key" /></th>
+                            <th style={{width: cw[2],backgroundColor:"#F8F8FA"}}><Translate content="account.perm.weight" /></th>
+                            <th style={{width: cw[3],backgroundColor:"#F8F8FA"}}><Translate content="account.perm.action" /></th>
                         </tr>
                         </thead>
                         <tbody>

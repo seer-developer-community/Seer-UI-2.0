@@ -15,7 +15,8 @@ class PasswordInput extends Component {
         noValidation: PropTypes.bool,
         noLabel: PropTypes.bool,
         passwordLength: PropTypes.number,
-        checkStrength: PropTypes.bool
+        checkStrength: PropTypes.bool,
+        width:PropTypes.number
     };
 
     static defaultProps = {
@@ -78,7 +79,7 @@ class PasswordInput extends Component {
         if(this.state.wrong || this.props.wrongPassword) password_error = <div><Translate content="wallet.pass_incorrect" /></div>;
         else if(this.state.error) password_error = <div>{this.state.error}</div>;
         if (!this.props.noValidation && !password_error && (this.state.value.length > 0 && this.state.value.length < this.props.passwordLength))
-            password_error = <div><Translate content="wallet.pass_length" minLength={this.props.passwordLength} /></div>;
+            password_error = <div style={{fontSize:12}}><Translate content="wallet.pass_length" minLength={this.props.passwordLength} /></div>;
         if(this.state.doesnt_match) confirmation_error = <div><Translate content="wallet.confirm_error" /></div>;
         let password_class_name = cname("form-group", {"has-error": password_error});
         let password_confirmation_class_name = cname("form-group", {"has-error": this.state.doesnt_match});
@@ -96,10 +97,14 @@ class PasswordInput extends Component {
             score = Math.min(5, strength.score + Math.floor(this.state.value.length / (this.props.passwordLength * 1.5)));
         }
 
+        let widthStyle = {maxWidth:"none"};
+        if(this.props.width){
+            widthStyle.width = this.props.width;
+        }
 
         return (
             <div className="account-selector">
-                <div className={password_class_name}>
+                <div className={password_class_name} style={widthStyle}>
                     {/* {noLabel ? null : <Translate component="label" content="wallet.password" />} */}
                     <section>
                         <input
@@ -113,16 +118,16 @@ class PasswordInput extends Component {
                             onKeyDown={this.onKeyDown}
                         />
                         {this.props.checkStrength ? (
-                                <progress style={{height: 10}} className={score === 5 ? "high" : score === 4 ? "medium" : "low"} value={score} max="5" min="0"></progress>
+                                <progress style={{height: 10,maxWidth:"none"}} className={score === 5 ? "high" : score === 4 ? "medium" : "low"} value={score} max="5" min="0"></progress>
                         ) : null}
                     </section>
 
                     {password_error}
                 </div>
                 { this.props.confirmation ?
-                <div className={password_confirmation_class_name}>
+                <div className={password_confirmation_class_name} style={widthStyle}>
                     {/* {noLabel ? null : <Translate component="label" content="wallet.confirm" />} */}
-                    <section style={{position: "relative", maxWidth: "30rem"}}>
+                    <section>
                         <input
                             name="confirm_password"
                             type="password"

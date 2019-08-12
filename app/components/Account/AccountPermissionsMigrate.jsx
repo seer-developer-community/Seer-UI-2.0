@@ -65,24 +65,26 @@ export default class AccountPermissionsMigrate extends React.Component {
 
         return (
                 <div>
-                    <p style={{maxWidth: "800px"}}><Translate content="account.perm.password_model_1" /></p>
+                    <div className="desc-text">
+                        <p style={{maxWidth: "800px"}}><Translate content="account.perm.password_model_1" /></p>
 
-                    <p style={{maxWidth: "800px"}}><Translate content="wallet.password_model_1" /></p>
-                    <p style={{maxWidth: "800px"}}><Translate unsafe content="wallet.password_model_2" /></p>
+                        <p style={{maxWidth: "800px"}}><Translate content="wallet.password_model_1" /></p>
+                        <p style={{maxWidth: "800px"}}><Translate unsafe content="wallet.password_model_2" /></p>
+                    </div>
+                    <br/><br/>
 
-                    <div className="divider" />
-
-                    <form
-                        style={{maxWidth: "40rem"}}
+                    <form style={{maxWidth: "40rem"}}
                         onSubmit={this.onSubmit.bind(this)}
-                        noValidate
-                    >
-                        <label className="left-label">
+                        noValidate>
+                        <div className="label-text">
                             <Translate content="wallet.generated" />
-                        </label>
-                        <p>{this.state.generatedPassword}</p>
-                        
-                        <p style={{fontWeight: "bold"}}><Translate content="account.perm.password_model_2" /></p>
+                        </div>
+
+                        <input type="text" className="w600 disabled" readOnly={true} value={this.state.generatedPassword} style={{backgroundColor:"#F8F8FA",fontSize:"13px",color:"#999",height:50}}/>
+                      <br/><br/>
+                      <div className="label-text">
+                        <Translate content="account.perm.password_model_2" />
+                      </div>
 
                         <PasswordInput
                             ref="password"
@@ -91,28 +93,31 @@ export default class AccountPermissionsMigrate extends React.Component {
                             noLabel
                             passwordLength={12}
                             checkStrength
+                            width={600}
                         />
                     </form>
-
+                    <br/>
                     <table className="table">
                         <tbody>
-                            <tr className={activeInUse ? "in-use" : ""}>
-                                <td><Translate content="account.perm.new_active" />:</td>
+                            <tr className={activeInUse ? "in-use" : ""} style={{backgroundColor:"#F8F8FA"}}>
+                                <td style={{paddingLeft:15}}><Translate content="account.perm.new_active" />:</td>
                                 <td>{this.props.active}</td>
                                 <td className="text-right">
-                                    <div className="button" onClick={this._onUseKey.bind(this, "active", activeInUse)}>{activeInUse ? removeText : useText}</div>
+                                    <div className="button small" onClick={this._onUseKey.bind(this, "active", activeInUse)}>{activeInUse ? removeText : useText}</div>
                                 </td>
                             </tr>
-                            <tr className={ownerInUse ? "in-use" : ""}>
-                                <td><Translate content="account.perm.new_owner" />:</td>
+                            <tr style={{height:10}}><td colSpan={3}></td></tr>
+                            <tr className={ownerInUse ? "in-use" : ""} style={{backgroundColor:"#F8F8FA"}}>
+                                <td style={{paddingLeft:15}}><Translate content="account.perm.new_owner" />:</td>
                                 <td>{this.props.owner}</td>
-                                <td className="text-right"><div className="button" onClick={this._onUseKey.bind(this, "owner", ownerInUse)}>{ownerInUse ? removeText : useText}</div></td>
+                                <td className="text-right"><div className="button small" onClick={this._onUseKey.bind(this, "owner", ownerInUse)}>{ownerInUse ? removeText : useText}</div></td>
                             </tr>
-                            <tr className={memoInUse ? "in-use" : ""}>
-                                <td><Translate content="account.perm.new_memo" />:</td>
+                            <tr style={{height:10}}><td colSpan={3}></td></tr>
+                            <tr className={memoInUse ? "in-use" : ""} style={{backgroundColor:"#F8F8FA"}}>
+                                <td style={{paddingLeft:15}}><Translate content="account.perm.new_memo" />:</td>
                                 <td>{this.props.memo}</td>
                                 <td className="text-right">
-                                    <div className="button" style={{visibility: memoInUse ? "hidden" : ""}} onClick={this._onUseKey.bind(this, "memo", memoInUse)}>{useText}</div>
+                                    <div className="button small" style={{visibility: memoInUse ? "hidden" : ""}} onClick={this._onUseKey.bind(this, "memo", memoInUse)}>{useText}</div>
                                 </td>
                             </tr>
                         </tbody>

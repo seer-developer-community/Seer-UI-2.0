@@ -251,10 +251,9 @@ class AccountPermissions extends React.Component {
                             segmented={false}
                             setting="permissionsTab"
                             className="account-tabs"
-                            tabsClass="account-overview bordered-header content-block"
-                            contentClass="padding"
+                            tabsClass="account-overview no-padding bordered-header content-block"
                             actionButtons={<div className="action-buttons">
-                                        <button className={reset_buttons_class} onClick={this.onReset} tabIndex={8}>
+                                        <button className={reset_buttons_class + " outline"} onClick={this.onReset} tabIndex={8}>
                                             <Translate content="account.perm.reset"/>
                                         </button>
 
@@ -265,42 +264,47 @@ class AccountPermissions extends React.Component {
                         >
 
                             <Tab title="account.perm.active">
-                                <HelpContent path="components/AccountPermActive" />
-                                <form className="threshold">
-                                    <label className="horizontal"><Translate content="account.perm.threshold"/> &nbsp; &nbsp;
-                                        <input type="number" placeholder="0" size="5"
+                                <div style={{marginTop:21}}>
+                                    <HelpContent path="components/AccountPermActive" />
+                                    <form>
+                                      <br/><br/>
+                                      <div className="label-text"><Translate content="account.perm.threshold"/></div>
+                                        <input type="number" className="w600"
                                             value={this.state.active_threshold}
                                             onChange={this.onThresholdChanged.bind(this, "active_threshold")}
+                                            placeholder={counterpart.translate("account.perm.input_threshold")}
                                             autoComplete="off"
                                             tabIndex={1}/>
-                                    </label>
-                                </form>
-                                <AccountPermissionsList
-                                    label="account.perm.add_permission_label"
-                                    accounts={active_accounts}
-                                    keys={active_keys}
-                                    weights={active_weights}
-                                    addresses={active_addresses}
-                                    validateAccount={this.validateAccount.bind(this, "active")}
-                                    onAddItem={this.onAddItem.bind(this, "active")}
-                                    onRemoveItem={this.onRemoveItem.bind(this, "active")}
-                                    placeholder={counterpart.translate("account.perm.account_name_or_key")}
-                                    tabIndex={2}
-                                />
-                                <br/>
-                                {error1 ? <div className="content-block has-error">{error1}</div> : null}
+                                    </form>
+                                    <AccountPermissionsList
+                                        label="account.perm.add_permission_label"
+                                        accounts={active_accounts}
+                                        keys={active_keys}
+                                        weights={active_weights}
+                                        addresses={active_addresses}
+                                        validateAccount={this.validateAccount.bind(this, "active")}
+                                        onAddItem={this.onAddItem.bind(this, "active")}
+                                        onRemoveItem={this.onRemoveItem.bind(this, "active")}
+                                        placeholder={counterpart.translate("account.perm.account_name_or_key")}
+                                        tabIndex={2}
+                                    />
+                                    <br/>
+                                    {error1 ? <div className="content-block has-error">{error1}</div> : null}
+                                </div>
                             </Tab>
 
                             <Tab title="account.perm.owner">
+                              <div style={{marginTop:21}}>
                                 <HelpContent path="components/AccountPermOwner" />
-                                <form className="threshold">
-                                    <label className="horizontal"><Translate content="account.perm.threshold"/> &nbsp; &nbsp;
-                                        <input type="number" placeholder="0" size="5"
-                                            value={this.state.owner_threshold}
-                                            onChange={this.onThresholdChanged.bind(this, "owner_threshold")}
-                                            autoComplete="off"
-                                            tabIndex={4}/>
-                                    </label>
+                                <form>
+                                    <br/><br/>
+                                    <div className="label-text"><Translate content="account.perm.threshold"/></div>
+                                    <input type="number" className="w600"
+                                           placeholder="0" size="5"
+                                        value={this.state.owner_threshold}
+                                        onChange={this.onThresholdChanged.bind(this, "owner_threshold")}
+                                        autoComplete="off"
+                                        tabIndex={4}/>
                                 </form>
                                 <AccountPermissionsList
                                     label="account.perm.add_permission_label"
@@ -316,10 +320,13 @@ class AccountPermissions extends React.Component {
                                 />
                                 <br/>
                                 {error2 ? <div className="content-block has-error">{error2}</div> : null}
+                              </div>
                             </Tab>
 
                             <Tab title="account.perm.memo_key">
+                              <div style={{marginTop:21}}>
                                 <HelpContent style={{maxWidth: "800px"}} path="components/AccountPermMemo" />
+                                  <br/><br/><br/>
                                 <PubKeyInput
                                     ref="memo_key"
                                     value={this.state.memo_key}
@@ -327,10 +334,13 @@ class AccountPermissions extends React.Component {
                                     placeholder="Public Key"
                                     onChange={this.onMemoKeyChanged.bind(this)}
                                     tabIndex={7}
+                                    hiddenIcon={true}
                                 />
+                              </div>
                             </Tab>
 
                             <Tab title="account.perm.password_model">
+                              <div style={{marginTop:21}}>
                                 <AccountPermissionsMigrate
                                     active={this.state.password_active}
                                     owner={this.state.password_owner}
@@ -346,20 +356,20 @@ class AccountPermissions extends React.Component {
                                     onRemoveOwner={this.onRemoveItem.bind(this, "owner")}
                                     onSetMemo={this.onMemoKeyChanged.bind(this)}
                                 />
+                              </div>
                             </Tab>
+                              <Tab title="account.recent">
+                                <div className="tab-content">
+                                  <RecentTransactions
+                                    accountsList={accountsList}
+                                    limit={25}
+                                    compactView={false}
+                                    filter="account_update"
+                                    style={{paddingBottom: "2rem"}}
+                                  />
+                                </div>
+                              </Tab>
                         </Tabs>
-
-                        <div className="tab-content" style={{padding: 10}}>
-                            <div className="divider"></div>
-
-                            <RecentTransactions
-                                accountsList={accountsList}
-                                limit={25}
-                                compactView={false}
-                                filter="account_update"
-                                style={{paddingBottom: "2rem"}}
-                            />
-                        </div>
                     </div>
                 </div>
             </div>

@@ -33,25 +33,41 @@ class Explorer extends React.Component {
 
     render() {
 
-        let defaultActiveTab = this.state.tabs.findIndex(t => t.name === this.props.tab);
+      //   let defaultActiveTab = this.state.tabs.findIndex(t => t.name === this.props.tab);
+      //
+      //   let tabs = [];
+      //   let
+      //
+      //   for (var i = 0; i < this.state.tabs.length; i++) {
+      //       let currentTab = this.state.tabs[i];
+      //
+      //       let tabContent = (defaultActiveTab==i)?this.props.content:null;
+      //       let isLinkTo=(defaultActiveTab==i)?"":currentTab.link;
+      //
+      //       tabs.push(<Tab key={i} title={currentTab.translate} isLinkTo={isLinkTo} style={{backgroundColor:"#f2f2f2"}}>
+      //           <div >
+      //               {tabContent}
+      //           </div>
+      //         </Tab>);
+      //   }
+      //
+      //
+      //   return (
+      //       <Tabs defaultActiveTab={defaultActiveTab} segmented={false} setting="explorerTab-{this.props.tab}" className="account-tabs" tabsClass="account-overview bordered-header content-block" contentClass="tab-content padding">
+      //           {tabs}
+      //       </Tabs>
+      //   );
+      //
+      // console.log("-------");
+      // console.log(this.props);
 
-        let tabs = [];
-
-        for (var i = 0; i < this.state.tabs.length; i++) {
-            let currentTab = this.state.tabs[i];
-
-            let tabContent = (defaultActiveTab==i)?this.props.content:null;
-            let isLinkTo=(defaultActiveTab==i)?"":currentTab.link;
-
-            tabs.push(<Tab key={i} title={currentTab.translate} isLinkTo={isLinkTo}>{tabContent}</Tab>);
-        }
-
-
-        return (
-            <Tabs defaultActiveTab={defaultActiveTab} segmented={false} setting="explorerTab-{this.props.tab}" className="account-tabs" tabsClass="account-overview bordered-header content-block" contentClass="tab-content padding">
-                {tabs}
-            </Tabs>
-        );
+      return(
+        <div style={{backgroundColor:"#f2f2f2"}}>
+            <div style={{width:1200,margin:"21px auto",backgroundColor:"#fff"}}>
+                {this.props.content}
+            </div>
+        </div>
+      )
     }
 }
 

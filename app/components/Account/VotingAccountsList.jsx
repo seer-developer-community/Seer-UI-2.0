@@ -56,23 +56,23 @@ class AccountItemRow extends React.Component {
         const isSupported = action === "remove";
         return (
             <tr className={(isSupported ? "": "unsupported")}>
-                <td style={{textAlign: "right"}}>
+                <td style={{textAlign: "left"}}>
                     {this.props.idx + 1}
                 </td>
                 <td style={{textAlign: "left"}}><LinkToAccountById account={account.get("id")} /></td>
                 <td>
                     {link && link.indexOf(".") !== -1 ?
                     <a href={link} target="_blank" rel="noopener noreferrer">
-                        <Icon name="share" />
+                        <Icon name="share" size="24px"/>
                     </a> : null}
                 </td>
-                <td><FormattedAsset amount={votes} asset="1.3.0" decimalOffset={5} hide_asset /></td>
-                <td><Translate content={`account.votes.${isActive ? "active_short" : "inactive"}`} /></td>
+                <td style={{textAlign: "center"}}><FormattedAsset amount={votes} asset="1.3.0" decimalOffset={5} hide_asset /></td>
+                <td style={{textAlign: "center"}}><Translate content={`account.votes.${isActive ? "active_short" : "inactive"}`} /></td>
                 <td style={{textAlign: "center"}}><Translate content={`settings.${isSupported ? "yes" : "no"}`}/></td>
-                <td className={this.props.proxy ? "" : "clickable"} onClick={this.props.proxy ? () => {} : this.onAction.bind(this, item_id)}>
+                <td style={{textAlign: "center"}} className={this.props.proxy ? "" : "clickable"} onClick={this.props.proxy ? () => {} : this.onAction.bind(this, item_id)}>
                     {!this.props.proxy ?
-                        <Icon name={isSupported ? "checkmark-circle" : "minus-circle"} /> :
-                        <Icon name="locked" />
+                        <Icon name={isSupported ? "checkmark-circle" : "minus-circle"} size="24px"/> :
+                        <Icon name="locked" size="24px"/>
                 }
                 </td>
             </tr>
@@ -206,13 +206,13 @@ class VotingAccountsList extends React.Component {
                 <table className="table dashboard-table table-hover">
                     <thead>
                         <tr>
-                            <th style={{textAlign: "right"}}>#</th>
+                            <th style={{textAlign: "left"}}>#</th>
                             <th style={{textAlign: "left", maxWidth: cw[1]}}><Translate content="account.votes.name" /></th>
                             <th style={{maxWidth: cw[2]}}><Translate content="account.votes.about"/></th>
-                            <th style={{maxWidth: cw[3]}}><Translate content="account.votes.votes" /></th>
-                            <th style={{maxWidth: cw[4]}}><Translate content="account.votes.status.title" /></th>
-                            <th style={{maxWidth: cw[0]}}><Translate content="account.votes.supported"/></th>
-                            <th style={{maxWidth: cw[5]}}><Translate content="account.votes.toggle" /></th>
+                            <th style={{maxWidth: cw[3],textAlign: "center"}}><Translate content="account.votes.votes" /></th>
+                            <th style={{maxWidth: cw[4],textAlign: "center"}}><Translate content="account.votes.status.title" /></th>
+                            <th style={{maxWidth: cw[0],textAlign: "center"}}><Translate content="account.votes.supported"/></th>
+                            <th style={{maxWidth: cw[5],textAlign: "center"}}><Translate content="account.votes.toggle" /></th>
                         </tr>
                     </thead>
                     <tbody>

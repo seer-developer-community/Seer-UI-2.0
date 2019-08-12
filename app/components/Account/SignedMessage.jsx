@@ -118,53 +118,52 @@ class SignedMessage extends React.Component {
         let messageGiven = this.props.message != null && this.props.message != "";
         let notificationGiven = this.state.notification && this.state.notification != "";
         return (
-            <div style={{color: "gray", margin: "10px 10px"}}>
+            <div style={{color: "gray",marginTop:34}}>
                 {this.state.messageParsed != null &&
-                    <fieldset style={{borderColor: borderColor}}>
-                        <legend style={{color: "white", weight: "bold"}}>
-                            {legendMessage}
-                        </legend>
-                        <pre style={{position: "relative", width: "100%", display: "table"}}>
+                <div style={{width:"100%",minHeight:161,backgroundColor:"#F8F8FA",border:"1px solid #dcdcdc"}}>
+                    <div style={{width:"100%",height:40,backgroundColor:"#F4E2E2",color:"#FC4C6C",paddingLeft:15}} className="flex-align-middle">
+                      {legendMessage}
+                    </div>
+                    <div style={{padding:15}}>
+                         <pre style={{position: "relative", width: "100%", display: "table"}}>
                             {this.state.messageParsed.content}
-                            {notificationGiven &&
-                            <div style={{
-                                textAlign: "center",
-                                display: "table-cell",
-                                verticalAlign: "middle",
-                                position: "absolute",
-                                width: "calc(100% - 30px)",
-                                height: "calc(100% + 15px)",
-                                top: "0px",
-                                right: "30px",
-                                backgroundColor: "rgba(50,50,50,0.5)"
-                            }} id="overlay">
-                                {this.state.notification}
-                            </div>
-                            }
+                           {notificationGiven &&
+                           <div style={{
+                             textAlign: "center",
+                             display: "table-cell",
+                             verticalAlign: "middle",
+                             position: "absolute",
+                             width: "calc(100% - 30px)",
+                             height: "calc(100% + 15px)",
+                             top: "0px",
+                             right: "30px",
+                             backgroundColor: "rgba(50,50,50,0.5)"
+                           }} id="overlay">
+                             {this.state.notification}
+                           </div>
+                           }
                         </pre>
-                        <span style={{
-                            fontSize: "small",
-                            float: "right"
-                        }}>
+                      <br/><br/>
+                      <span style={{ fontSize: "small" }}>
                             Signed on {this.state.messageParsed.meta.timestamp} &nbsp;
-                            <button className="button" type="button" style={{
-                                fontSize: "small",
-                                float: "right",
-                                padding: "0px 0px",
-                                background: "#777"
-                            }} onClick={this._toggleRawMessage.bind(this)}>&#x1f50d;</button></span>
-                        {this.state.showRawMessage &&
-                        <br />
-                        }
-                        {this.state.showRawMessage &&
-                        <br />
-                        }
-                        {this.state.showRawMessage &&
-                            <div style={{overflow: "auto", width: "calc(100%)", maxWidth: "1000px"}}>
-                                <pre>{this.state.message}</pre>
-                            </div>
-                        }
-                    </fieldset>
+                        <button className="button" type="button" style={{
+                          fontSize: "small",
+                          padding: "0px 0px",
+                          background: "#777"
+                        }} onClick={this._toggleRawMessage.bind(this)}>&#x1f50d;</button></span>
+                      {this.state.showRawMessage &&
+                      <br />
+                      }
+                      {this.state.showRawMessage &&
+                      <br />
+                      }
+                      {this.state.showRawMessage &&
+                      <div>
+                        <pre>{this.state.message}</pre>
+                      </div>
+                      }
+                    </div>
+                </div>
                 }
                 {messageGiven && this.state.messageParsed == null &&
                     <fieldset style={{borderColor: "#F00"}}>

@@ -210,69 +210,76 @@ class AccountSignedMessages extends React.Component {
                             className="account-tabs"
                             tabsClass="account-overview no-padding bordered-header content-block"
                             setting="accountSignedMessagesTab"
-                            contentClass="grid-content shrink small-vertical medium-horizontal padding"
+                            contentClass="shrink small-vertical medium-horizontal"
                             segmented={false}
                         >
 
                             <Tab title="account.signedmessages.signmessage">
-                                <div className="grid-content" style={{overflowX: "hidden"}}>
-                                    <div className="content-block no-margin">
-                                        <h3><Translate content="account.signedmessages.signmessage"/></h3>
-                                    </div>
+                                <div style={{paddingTop:"34px"}}>
+
                                     <PubKeyInput
                                         ref="memo_key"
                                         value={this.state.tabsm_memo_key}
                                         label="account.perm.memo_public_key"
-                                        placeholder="Public Key"
+                                        placeholder={counterpart.translate("account.perm.input_public_key")}
                                         tabIndex={7}
                                         onChange={this._tabSMHandleChangeKey.bind(this)}
                                         disableActionButton={true}
+                                        hiddenIcon={true}
                                     />
                                     <br/>
-                                    <textarea rows="10" value={this.state.tabsm_message_text} onChange={this._tabSMHandleChange.bind(this)} placeholder={counterpart.translate("account.signedmessages.entermessage")} />
+                                    <textarea className="w600" style={{height:120}} rows="10" value={this.state.tabsm_message_text} onChange={this._tabSMHandleChange.bind(this)} placeholder={counterpart.translate("account.signedmessages.entermessage")} />
+                                    <br/>
                                     <span>
-                                        <button className="button" onClick={this._tabSMSignAction.bind(this)}>
+                                        <button className="button large" onClick={this._tabSMSignAction.bind(this)}>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <Translate content="account.signedmessages.sign"/>
+                                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                         </button>
                                         <text style={{color: "gray"}}>{this.state.tabsm_popup}</text>
                                     </span>
                                     <br/>
                                     <br/>
-                                    <textarea rows="14"
+                                    <br/>
+                                    <textarea className="w600"
+                                              rows="14"
+                                              readOnly={true}
                                               value={this.state.tabsm_message_signed}
-                                              style={{editable: false}}
+                                              style={{height:120}}
                                               placeholder={counterpart.translate("account.signedmessages.automaticcreation")}
                                               onClick={this._tabSMCopyToClipBoard.bind(this)}  />
                                 </div>
                             </Tab>
 
                             <Tab title="account.signedmessages.verifymessage">
-                                <div className="grid-content" style={{overflowX: "hidden"}}>
-                                    <div className="content-block no-margin">
-                                        <h3><Translate content="account.signedmessages.verifymessage"/></h3>
-                                        <div style={{float: "right", marginTop: "0.1em", marginBottom: "0.5em"}}>
-                                            <table><tr><td><label><Translate content="account.signedmessages.verifyonchange"/></label></td><td>
-                                                <div className="switch" onClick={this._tabVMToggleVerifyOnChange.bind(this)}>
-                                                    <input type="checkbox" checked={this.state.tabvm_flag_verifyonchange} value={counterpart.translate("account.signedmessages.verifyonchange")} />
-                                                    <label />
-                                                </div></td></tr></table>
-                                        </div>
+                                <div style={{paddingTop:"34px"}}>
+                                    <div className="flex-align-middle align-right label-text">
+                                      <Translate content="account.signedmessages.verifyonchange"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                      <div className="switch" onClick={this._tabVMToggleVerifyOnChange.bind(this)}>
+                                        <input type="checkbox" checked={this.state.tabvm_flag_verifyonchange} value={counterpart.translate("account.signedmessages.verifyonchange")} />
+                                        <label />
+                                      </div>
                                     </div>
-                                    <textarea rows="10" value={this.state.tabvm_message_signed} onChange={this._tabVMHandleChange.bind(this)} placeholder={counterpart.translate("account.signedmessages.entermessage")} />
-                                    <span>
-                                        <button className="button" onClick={this._tabVMAction.bind(this)}>
+                                    <textarea style={{height:120}} rows="10" value={this.state.tabvm_message_signed} onChange={this._tabVMHandleChange.bind(this)} placeholder={counterpart.translate("account.signedmessages.entermessage")} />
+                                  {this.state.tabvm_verified !== null &&
+                                  <div style={{color:"red"}}>
+                                    Message is:
+                                    <span
+                                      style={{color: this.state.tabvm_verified ? "green" : "red"}}>
+                                      {this.state.tabvm_verified ? "VERIFIED" : "NOT VERIFIED"}
+                                    </span>
+                                    <br/>
+                                    <br/>
+                                  </div>
+                                  }
+                                  <br/>
+                                  <span>
+                                        <button className="button large" onClick={this._tabVMAction.bind(this)}>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <Translate content="account.signedmessages.verify"/>
+                                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                         </button>
                                         <text style={{color: "gray"}}>{this.state.tabvm_popup}</text>
-                                        {this.state.tabvm_verified !== null &&
-                                        <div style={{float: "right"}}>
-                                            Message is:
-                                            <div
-                                                style={{backgroundColor: this.state.tabvm_verified ? "green" : "red"}}>
-                                                <label>{this.state.tabvm_verified ? "verified" : "not verified"}</label>
-                                            </div>
-                                        </div>
-                                        }
                                         {((this.state.tabvm_verified && this.state.tabvm_message_signed_and_verified !== null) || this.state.tabvm_flag_verifyonchange) &&
                                         <div>
                                             <br />

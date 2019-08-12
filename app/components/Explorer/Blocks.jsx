@@ -40,7 +40,8 @@ class BlockTimeAgo extends React.Component {
         );
 
         return (
-            blockTime ? <h3 className={textClass} ><TimeAgo time={blockTime} /></h3> : null
+            // blockTime ? <h3 className={textClass} ><TimeAgo time={blockTime} /></h3> : null
+          blockTime ? <div className={textClass} style={{fontSize:"18px",marginTop:20}}><TimeAgo time={blockTime} /></div> : null
         );
 
     }
@@ -253,116 +254,115 @@ class Blocks extends React.Component {
             dynamic = ChainStore.getObject(this.props.coreAsset.toJS().dynamic_asset_data_id,false,false);
         }
 
+        let gridValueStyle = {
+            fontSize:"18px",
+            color:"#0C0D26",
+            fontWeight:"bold",
+            marginTop:"20px"
+        };
+
+
         return (
             <div ref="outerWrapper" className="grid-block vertical">
 
                 {/* First row of stats */}
-                <div className="align-center grid-block shrink small-horizontal blocks-row">
-                    <div className="grid-block text-center small-6 medium-3">
-                        <div className="grid-content no-overflow">
-                            <span className="txtlabel"><Translate component="span" content="explorer.blocks.current_block" /></span>
-                            <h2>#{utils.format_number(dynGlobalObject.get("head_block_number"), 0)}</h2>
-                        </div>
-                    </div>
-                    <div className="grid-block text-center small-6 medium-3">
-                        <div className="grid-content no-overflow">
-
-                            <span className="txtlabel"><Translate component="span" content="explorer.blocks.last_block" /></span>
-                              <BlockTimeAgo blockTime={headBlock} />
-                        </div>
-                    </div>
-                    <div className="grid-block text-center small-6 medium-3">
-                        <div className="grid-content no-overflow">
-
-                            <span className="txtlabel"><Translate component="span" content="explorer.blocks.trx_per_sec" /></span>
-                            <h2>{utils.format_number(trxPerSec, 2)}</h2>
-                        </div>
-                    </div>
-                    <div className="grid-block text-center small-6 medium-3">
-                        <div className="grid-content no-overflow">
-
-                            <span className="txtlabel"><Translate component="span" content="explorer.blocks.avg_conf_time" /></span>
-                            <h2>{utils.format_number(avgTime / 2, 2)}s</h2>
-                        </div>
-                    </div>
-                </div>
-
-                { /* Second row of stats */ }
-                <div  className="align-center grid-block shrink small-horizontal  blocks-row">
-                    <div className="grid-block text-center small-6 medium-3">
-                        <div className="grid-content no-overflow clear-fix">
-                            <span className="txtlabel"><Translate component="span" content="explorer.blocks.active_witnesses" /></span>
-                            <h2 className="txtlabel success">
-                                {globalObject.get("active_witnesses").size}
-                            </h2>
-                        </div>
-                    </div>
-
-                    <div className="grid-block text-center small-6 medium-3">
-                        <div className="grid-content no-overflow clear-fix">
-                            <span className="txtlabel"><Translate component="span" content="explorer.blocks.active_committee_members" /></span>
-                            <h2 className="txtlabel success">
-                                {globalObject.get("active_committee_members").size}
-                            </h2>
-                        </div>
-                    </div>
-
-                    <div className="grid-block text-center small-6 medium-3">
-                        <div className="grid-content no-overflow clear-fix">
-                            <span className="txtlabel"><Translate component="span" content="explorer.blocks.trx_per_block" /></span>
-                            <h2>{utils.format_number(trxCount / blockCount || 0, 2)}</h2>
-                        </div>
-                    </div>
-                    <div className="grid-block text-center small-6 medium-3">
-                        <div className="grid-content no-overflow clear-fix">
-                            <span className="txtlabel"><Translate component="span" content="explorer.blocks.recently_missed_blocks" /></span>
-                            <h2 className="txtlabel warning" style={{fontWeight: "100"}}>
-                                {dynGlobalObject.get("recently_missed_count")}
-                            </h2>
-                        </div>
-                    </div>
-                </div>
-
-            { /* Third row: graphs */ }
-                <div className="align-center grid-block shrink small-vertical medium-horizontal blocks-row">
-                    <div className="grid-block text-center small-12 medium-3">
-                        <div className="grid-content no-overflow clear-fix">
-                            <span className="txtlabel"><Translate component="span" content="explorer.asset.summary.current_supply" /></span>
-                            <h3 className="txtlabel">
-                                <FormattedAsset
-                                    amount={dynamic?dynamic.toJS().current_supply:0}
-                                    asset={coreAsset.get("id")}
-                                    decimalOffset={5}
-                                />
-                            </h3>
-                        </div>
-                    </div>
-                    <div className="grid-block text-center small-12 medium-3">
-                        <div className="grid-content no-overflow">
-                            <div className="txtlabel"><Translate component="span" content="explorer.blocks.block_times" /></div>
-                                <BlocktimeChart blockTimes={blockTimes} head_block_number={dynGlobalObject.get("head_block_number")} />
+                    <div className="align-center grid-block shrink small-horizontal blocks-row" style={{marginTop:41}}>
+                        <div className="grid-block text-center small-6 medium-2">
+                            <div className="grid-content no-overflow">
+                                <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.blocks.current_block" /></div>
+                                <div style={gridValueStyle}>#{utils.format_number(dynGlobalObject.get("head_block_number"), 0)}</div>
                             </div>
                         </div>
-                    <div className="grid-block text-center small-12 medium-3">
-                        <div className="grid-content no-overflow">
-                            <div className="txtlabel"><Translate component="span" content="explorer.blocks.trx_per_block" /></div>
-                            <TransactionChart blocks={latestBlocks} head_block={dynGlobalObject.get("head_block_number")}/>
+                        <div className="grid-block text-center small-6 medium-2">
+                            <div className="grid-content no-overflow">
+                                <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.blocks.last_block" /></div>
+                                  <BlockTimeAgo blockTime={headBlock} />
+                            </div>
                         </div>
-                    </div>
-                    <div className="grid-block text-center small-12 medium-3">
+                        <div className="grid-block text-center small-6 medium-2">
+                            <div className="grid-content no-overflow">
+                                <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.blocks.trx_per_sec" /></div>
+                                <div style={gridValueStyle}>{utils.format_number(trxPerSec, 2)}</div>
+                            </div>
+                        </div>
+                        <div className="grid-block text-center small-6 medium-2">
+                            <div className="grid-content no-overflow">
+                                <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.blocks.avg_conf_time" /></div>
+                                <div style={gridValueStyle}>{utils.format_number(avgTime / 2, 2)}s</div>
+                            </div>
+                        </div>
+                      <div className="grid-block text-center small-6 medium-2">
                         <div className="grid-content no-overflow clear-fix">
-                            <span className="txtlabel"><Translate component="span" content="explorer.asset.summary.stealth_supply" /></span>
-                            <h3 className="txtlabel">
-                                <FormattedAsset
-                                    amount={dynamic?dynamic.toJS().confidential_supply:0}
-                                    asset={coreAsset.get("id")}
-                                    decimalOffset={5}
-                                />
-                            </h3>
+                          <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.blocks.active_witnesses" /></div>
+                          <div className="txtlabel success"  style={gridValueStyle}>
+                            {globalObject.get("active_witnesses").size}
+                          </div>
                         </div>
+                      </div>
+
+                      <div className="grid-block text-center small-6 medium-2">
+                        <div className="grid-content no-overflow clear-fix">
+                          <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.blocks.active_committee_members" /></div>
+                          <div className="txtlabel success" style={gridValueStyle}>
+                            {globalObject.get("active_committee_members").size}
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
-                </div>
+                    { /* Second row of stats */ }
+                    <div  className="align-center grid-block shrink small-horizontal  blocks-row" style={{marginTop:63}}>
+                      <div className="grid-block text-center small-12 medium-2">
+                        <div className="grid-content no-overflow clear-fix">
+                          <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.asset.summary.current_supply" /></div>
+                          <div className="txtlabel" style={gridValueStyle}>
+                            <FormattedAsset
+                              amount={dynamic?dynamic.toJS().current_supply:0}
+                              asset={coreAsset.get("id")}
+                              decimalOffset={5}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="grid-block text-center small-12 medium-2">
+                        <div className="grid-content no-overflow clear-fix">
+                          <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.asset.summary.stealth_supply" /></div>
+                          <div className="txtlabel" style={gridValueStyle}>
+                            <FormattedAsset
+                              amount={dynamic?dynamic.toJS().confidential_supply:0}
+                              asset={coreAsset.get("id")}
+                              decimalOffset={5}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                        <div className="grid-block text-center small-6 medium-2">
+                            <div className="grid-content no-overflow clear-fix">
+                                <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.blocks.trx_per_block" /></div>
+                                <div style={gridValueStyle}>{utils.format_number(trxCount / blockCount || 0, 2)}</div>
+                            </div>
+                        </div>
+                        <div className="grid-block text-center small-6 medium-2">
+                            <div className="grid-content no-overflow clear-fix">
+                                <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.blocks.recently_missed_blocks" /></div>
+                                <div className="txtlabel warning" style={{fontWeight: "100",...gridValueStyle}}>
+                                    {dynGlobalObject.get("recently_missed_count")}
+                                </div>
+                            </div>
+                        </div>
+                      <div className="grid-block text-center small-12 medium-2">
+                        <div className="grid-content no-overflow">
+                          <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.blocks.block_times" /></div>
+                          <BlocktimeChart blockTimes={blockTimes} head_block_number={dynGlobalObject.get("head_block_number")} />
+                        </div>
+                      </div>
+                      <div className="grid-block text-center small-12 medium-2">
+                        <div className="grid-content no-overflow">
+                          <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.blocks.trx_per_block" /></div>
+                          <TransactionChart blocks={latestBlocks} head_block={dynGlobalObject.get("head_block_number")}/>
+                        </div>
+                      </div>
+                    </div>
 
             { /* Fourth row: transactions and blocks */ }
                 <div ref ="transactionsBlock" className="grid-block no-overflow">

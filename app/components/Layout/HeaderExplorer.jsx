@@ -36,7 +36,7 @@ const SUBMENUS = {
     SETTINGS: "SETTINGS"
 };
 
-class HeaderNav extends React.Component {
+class HeaderExplorer extends React.Component {
 
     static contextTypes = {
         location: React.PropTypes.object.isRequired,
@@ -508,7 +508,7 @@ class HeaderNav extends React.Component {
         };
 
         return (
-            <div className="header-container light" style={{minHeight:"59px"}}>
+            <div className="header-container dark" style={{minHeight:"59px"}}>
                 <div>
                     <div className="header menu-group primary" style={{flexWrap:"nowrap", justifyContent:"none"}}>
                         {__ELECTRON__ ? <div className="grid-block show-for-medium shrink electron-navigation">
@@ -529,33 +529,47 @@ class HeaderNav extends React.Component {
                         <ul className="menu-bar">
                             <li style={{paddingRight:"40px"}}>{dashboard}</li>
 
+                          <li>
+                            <a style={{flexFlow: "row"}} className={cnames(active.indexOf("blocks") !== -1 ? null : "column-hide-xs", {active: active.indexOf("blocks") !== -1})} onClick={this._onNavigate.bind(this, "/explorer/blocks")}>
+                              <Translate className="column-hide-small" component="span" content="explorer.blocks.title" />
+                            </a>
+                          </li>
 
-
                             <li>
-                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("prediction") !== -1 ? null : "column-hide-xs", {active: active.indexOf("prediction") !== -1})} onClick={this._onNavigate.bind(this, "/prediction")}>
-                                    <Translate className="column-hide-small" component="span" content="header.prediction" />
+                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("assets") !== -1 ? null : "column-hide-xs", {active: active.indexOf("assets") !== -1})} onClick={this._onNavigate.bind(this, "/explorer/assets")}>
+                                    <Translate className="column-hide-small" component="span" content="explorer.assets.title" />
                                 </a>
                             </li>
                             <li>
-                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("exchange") !== -1 ? null : "column-hide-xs", {active: active.indexOf("exchange") !== -1})} onClick={this._onNavigate.bind(this, "/exchange")}>
-                                    <Translate className="column-hide-small" component="span" content="header.exchange" />
+                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("accounts") !== -1 ? null : "column-hide-xs", {active: active.indexOf("accounts") !== -1})} onClick={this._onNavigate.bind(this, "/explorer/accounts")}>
+                                    <Translate className="column-hide-small" component="span" content="explorer.accounts.title" />
                                 </a>
                             </li>
                             <li>
-                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("explorer") !== -1 ? null : "column-hide-xs", {active: active.indexOf("explorer") !== -1})} onClick={this._onNavigate.bind(this, "/explorer")}>
-                                    <Translate className="column-hide-small" component="span" content="header.explorer" />
+                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("witnesses") !== -1 ? null : "column-hide-xs", {active: active.indexOf("witnesses") !== -1})} onClick={this._onNavigate.bind(this, "/explorer/witnesses")}>
+                                    <Translate className="column-hide-small" component="span" content="explorer.witnesses.title" />
                                 </a>
                             </li>
                             <li>
-                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("wallet") !== -1 ? null : "column-hide-xs", {active: active.indexOf("wallet") !== -1})} onClick={this._onNavigate.bind(this, "/settings")}>
-                                    <Translate className="column-hide-small" component="span" content="header.wallet_manage" />
+                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("committee-members") !== -1 ? null : "column-hide-xs", {active: active.indexOf("committee-members") !== -1})} onClick={this._onNavigate.bind(this, "/explorer/committee-members")}>
+                                    <Translate className="column-hide-small" component="span" content="explorer.committee_members.title" />
                                 </a>
                             </li>
                             <li>
-                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("account") !== -1 ? null : "column-hide-xs", {active: active.indexOf("account") !== -1})} onClick={this._onNavigate.bind(this, "/account/" + currentAccount)}>
-                                    <Translate className="column-hide-small" component="span" content="header.account_manage" />
+                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("markets") !== -1 ? null : "column-hide-xs", {active: active.indexOf("markets") !== -1})} onClick={this._onNavigate.bind(this, "/explorer/markets")}>
+                                    <Translate className="column-hide-small" component="span" content="markets.title" />
                                 </a>
                             </li>
+                          <li>
+                            <a style={{flexFlow: "row"}} className={cnames(active.indexOf("fees") !== -1 ? null : "column-hide-xs", {active: active.indexOf("fees") !== -1})} onClick={this._onNavigate.bind(this, "/explorer/fees")}>
+                              <Translate className="column-hide-small" component="span" content="fees.title" />
+                            </a>
+                          </li>
+                          <li>
+                            <a style={{flexFlow: "row"}} className={cnames(active.indexOf("oracles") !== -1 ? null : "column-hide-xs", {active: active.indexOf("oracles") !== -1})} onClick={this._onNavigate.bind(this, "/explorer/oracles")}>
+                              <Translate className="column-hide-small" component="span" content="seer.oracle.title" />
+                            </a>
+                          </li>
                         </ul>
                     </div>
                 </div>
@@ -783,7 +797,7 @@ class HeaderNav extends React.Component {
     }
 }
 
-export default connect(HeaderNav, {
+export default connect(HeaderExplorer, {
     listenTo() {
         return [AccountStore, WalletUnlockStore, WalletManagerStore, SettingsStore, GatewayStore];
     },

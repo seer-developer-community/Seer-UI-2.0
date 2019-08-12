@@ -133,7 +133,7 @@ class HelpContent extends React.Component {
             return null;
         }
 
-        return <div style={this.props.style} className="help-content" dangerouslySetInnerHTML={{__html: this.setVars(value, this.props.hide_issuer)}}/>;
+        return <div style={this.props.style} className="help-content desc-text" dangerouslySetInnerHTML={{__html: this.setVars(value, this.props.hide_issuer)}}/>;
     }
 }
 
