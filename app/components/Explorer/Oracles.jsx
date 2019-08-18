@@ -36,36 +36,49 @@ class OracleCard extends React.Component {
 
     render() {
         return (
-            <div className="grid-content account-card" onClick={this._onCardClick.bind(this)}>
-                <div className="card">
-                    <h4 className="text-center">{this.props.account.get("name")}</h4>
-                    <div className="card-content">
-                        <div className="text-center">
-                            {/*<AccountImage account={this.props.witness.get('name')} size={{height: 64, width: 64}}/>*/}
-                        </div>
-                        <br/>
+            <div className="grid-content" onClick={this._onCardClick.bind(this)} style={{flex: "0 0 50%",maxWidth: "50%",padding: "0 1.6rem 1.6rem 0"}}>
+                <div className="card" style={{background:"#fff",borderColor:"#EFEFEF"}}>
+                    <br/>
+                    <div className="card-content" style={{margin:"1rem 1rem 0 1rem"}}>
+                        <table>
+                            <tr>
+                                <td rowSpan={2} width="96px">
+                                  <AccountImage account={this.props.account.get('name')} size={{height: 64, width: 64}}/>
+                                </td>
+                                <td><span style={{fontSize:"18px",color:"#0c0d26",fontWeight:"bold"}}>{this.props.account.get("name")}</span></td>
+                            </tr>
+                            <tr>
+                              <td><span style={{fontSize:"14px",color:"#666"}}>ID: {this.props.account.get("id")}</span></td>
+                            </tr>
+                        </table>
+                      <br/>
+                      <br/>
+                        <p style={{background:"#F2F2F2",width:"100%",height:"96px",padding:"20px 15px",fontSize:"14px",color:"#666"}}>
+                          {this.props.oracle.description}
+                        </p>
+
                         <table className="table key-value-table">
                             <tbody>
                             <tr>
-                                <td><Translate content="seer.oracle.description"/></td>
-                                <td>{this.props.oracle.description}</td>
+                                <td><Translate content="seer.oracle.guaranty"/></td>
+                                <td style={{textAlign:"right"}}><FormattedAsset amount={this.props.oracle.guaranty} asset={"1.3.0"}/></td>
                             </tr>
                             <tr>
-                                <td><Translate content="seer.oracle.guaranty"/></td>
-                                <td><FormattedAsset amount={this.props.oracle.guaranty} asset={"1.3.0"}/></td>
+                              <td><Translate content="seer.oracle.locked_guaranty"/></td>
+                              <td style={{textAlign:"right"}}><FormattedAsset amount={this.props.oracle.locked_guaranty} asset={"1.3.0"}/></td>
                             </tr>
                             <tr>
                                 <td><Translate content="seer.oracle.reputation"/></td>
-                                <td>{this.props.oracle.reputation}</td>
+                                <td style={{textAlign:"right"}}>{this.props.oracle.reputation}</td>
                             </tr>
-                            <tr>
+                            <tr style={{border:"none"}}>
                                 <td><Translate content="seer.oracle.volume"/></td>
-                                <td>{this.props.oracle.volume}</td>
+                                <td style={{textAlign:"right"}}>{this.props.oracle.volume}</td>
                             </tr>
-                            <tr>
-                                <td><Translate content="seer.oracle.script"/></td>
-                                <td>{this.props.oracle.script.substring(0,32)}</td>
-                            </tr>
+                            {/*<tr>*/}
+                                {/*<td><Translate content="seer.oracle.script"/></td>*/}
+                                {/*<td style={{textAlign:"right"}}>{this.props.oracle.script.substring(0,32)}</td>*/}
+                            {/*</tr>*/}
                             </tbody>
                         </table>
                     </div>
@@ -201,19 +214,19 @@ class OracleList extends React.Component {
         if (!cardView) {
             return (
                 <table className="table table-hover">
-                    <thead>
-                    <tr>
-                        <th className="clickable" onClick={this._setSort.bind(this, 'rank')}><Translate content="explorer.witnesses.rank" /></th>
-                        <th className="clickable" onClick={this._setSort.bind(this, 'name')}><Translate content="account.votes.name" /></th>
-                        <th className="clickable" onClick={this._setSort.bind(this, 'last_aslot')}><Translate content="explorer.blocks.last_block" /></th>
-                        <th className="clickable" onClick={this._setSort.bind(this, 'last_confirmed_block_num')}><Translate content="explorer.witnesses.last_confirmed" /></th>
-                        <th className="clickable" onClick={this._setSort.bind(this, 'total_missed')}><Translate content="explorer.witnesses.missed" /></th>
-                        <th className="clickable" onClick={this._setSort.bind(this, 'total_votes')}><Translate content="account.votes.votes" /></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {itemRows}
-                    </tbody>
+                  <thead>
+                  <tr>
+                    <th className="clickable" onClick={this._setSort.bind(this, 'rank')}><Translate content="explorer.witnesses.rank" /></th>
+                    <th className="clickable" onClick={this._setSort.bind(this, 'name')}><Translate content="account.votes.name" /></th>
+                    <th className="clickable" onClick={this._setSort.bind(this, 'last_aslot')}><Translate content="explorer.blocks.last_block" /></th>
+                    <th className="clickable" onClick={this._setSort.bind(this, 'last_confirmed_block_num')}><Translate content="explorer.witnesses.last_confirmed" /></th>
+                    <th className="clickable" onClick={this._setSort.bind(this, 'total_missed')}><Translate content="explorer.witnesses.missed" /></th>
+                    <th className="clickable" onClick={this._setSort.bind(this, 'total_votes')}><Translate content="account.votes.votes" /></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {itemRows}
+                  </tbody>
 
                 </table>
             )
@@ -282,35 +295,18 @@ class Witnesses extends React.Component {
         }
 
         let content =
-            <div className="grid-block">
-                <div className="grid-block">
-                    {/*<div className="grid-block vertical small-5 medium-3">*/}
-                    {/*<div className="grid-content">*/}
-                    {/*<Link to={`/account/${AccountStore.getState().currentAccount}/create-house/`}><button className="button"><Translate content="transaction.trxTypes.asset_create" /></button></Link>*/}
-
-                    {/*<br/>*/}
-
-                    {/*<div className="view-switcher">*/}
-                    {/*<span className="button outline" onClick={this._toggleView.bind(this)}>{!this.state.cardView ? <Translate content="explorer.witnesses.card"/> : <Translate content="explorer.witnesses.table"/>}</span>*/}
-                    {/*</div>*/}
-                    {/*</div>*/}
-                    {/*</div>*/}
-                    <div className="grid-block">
-                        <div className="grid-content ">
-                            <OracleList
-                                current_aslot={dynGlobalObject.current_aslot}
-                                current={current ? current.get("id") : null}
-                                witnesses={Immutable.List(globalObject.active_witnesses)}
-                                witnessList={globalObject.active_witnesses}
-                                filter={this.state.filterWitness}
-                                cardView={this.state.cardView}
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
+          <div className="grid-block" style={{backgroundColor:"#F2F2F2",marginTop:60}}>
+            <OracleList
+              current_aslot={dynGlobalObject.current_aslot}
+              current={current ? current.get("id") : null}
+              witnesses={Immutable.List(globalObject.active_witnesses)}
+              witnessList={globalObject.active_witnesses}
+              filter={this.state.filterWitness}
+              cardView={this.state.cardView}
+            />
+          </div>
         ;
-        return (<Explorer tab="oracles" content={content}/>);
+        return content;//(<Explorer tab="oracles" content={content}/>);
     }
 }
 Witnesses = BindToChainState(Witnesses, {keep_updating: true});

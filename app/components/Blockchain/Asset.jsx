@@ -27,8 +27,8 @@ class AssetFlag extends React.Component {
         }
 
         return (
-            <span className="asset-flag">
-                <span className="label info">
+            <span className="asset-flag" style={{marginRight:"16px"}}>
+                <span className="label info" style={{display:"inline-block",padding:"7px 13px",borderRadius:"15px",fontSize:"14px"}}>
                     <Translate content={"account.user_issued_assets." + name}/>
                 </span>
             </span>
@@ -48,8 +48,8 @@ class AssetPermission extends React.Component {
         }
 
         return (
-            <span className="asset-flag">
-                <span className="label info">
+            <span className="asset-flag" style={{marginRight:"16px"}}>
+                <span className="label info" style={{display:"inline-block",padding:"7px 13px",borderRadius:"15px",fontSize:"14px"}}>
                     <Translate content={"account.user_issued_assets." + name}/>
                 </span>
             </span>
@@ -95,26 +95,17 @@ class Asset extends React.Component {
 
     renderFlagIndicators(flags, names)
     {
-        return (
-
-            <div>
-                {names.map((name) => {
-                    return <AssetFlag key={`flag_${name}`} name={name} isSet={flags[name]}/>
-                })}
-            </div>
-        );
+        return names.map((name) => {
+          return <AssetFlag key={`flag_${name}`} name={name} isSet={flags[name]}/>
+        });
     }
 
 
     renderPermissionIndicators(permissions, names)
     {
-        return (
-            <div>
-                {names.map((name) => {
-                    return <AssetPermission key={`perm_${name}`}name={name} isSet={permissions[name]}/>
-                })}
-            </div>
-        );
+        return names.map((name) => {
+          return <AssetPermission key={`perm_${name}`}name={name} isSet={permissions[name]}/>
+        });
     }
 
 
@@ -199,6 +190,10 @@ class Asset extends React.Component {
         let {name, prefix} = utils.replaceName(asset.symbol, "bitasset" in asset && !asset.bitasset.is_prediction_market && asset.issuer === "1.2.0");
 
         return (
+          <div style={{fontSize:16,color:"#0c0d26",fontWeight:"bold"}}>
+            <Translate content="account.asset_details"/>
+          </div>
+          /*
             <div style={{overflow:"visible"}}>
                 <HelpContent
                     path = {"assets/" + asset.symbol}
@@ -212,9 +207,9 @@ class Asset extends React.Component {
                 {short_name ? <p>{short_name}</p> : null}
                 <a style={{textTransform: "uppercase"}} className="button market-button" href={`${__HASH_HISTORY__ ? "#" : ""}/market/${asset.symbol}_${preferredMarket}`}><Translate content="exchange.market"/></a>
             </div>
+            */
         );
     }
-
 
     renderSummary(asset) {
         // TODO: confidential_supply: 0 USD   [IF NOT ZERO OR NOT DISABLE CONFIDENTIAL]
@@ -258,31 +253,31 @@ class Asset extends React.Component {
         ) : null;
 
         return (
-            <div className="asset-card no-padding">
-                <div className="card-divider"><AssetName name={asset.symbol} /></div>
-                    <table className="table key-value-table table-hover">
-                        <tbody>
-                            <tr>
-                                <td> <Translate content="explorer.asset.summary.asset_type"/> </td>
-                                <td> {this._assetType(asset)} </td>
-                            </tr>
-                            <tr>
-                                <td> <Translate content="explorer.asset.summary.issuer"/> </td>
-                                <td> <LinkToAccountById account={asset.issuer}/> </td>
-                            </tr>
-                            <tr>
-                                <td> <Translate content="explorer.assets.precision"/> </td>
-                                <td> {asset.precision} </td>
-                            </tr>
-                            {currentSupply}
-                            {stealthSupply}
-                            {marketFee}
-                            {maxMarketFee}
-                        </tbody>
-                    </table>
-                <br/>
-                {this.renderFlagIndicators(flagBooleans, bitNames)}
-            </div>
+          <table className="table dashboard-table close-border table-hover">
+            <thead>
+            <tr className="dashboard-table-title">
+              <td colSpan={2} style={{background:"#F8F8FA",fontWeight:"bold"}}><AssetName name={asset.symbol} /></td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td width="30%"> <Translate content="explorer.asset.summary.asset_type"/> </td>
+              <td> {this._assetType(asset)} </td>
+            </tr>
+            <tr>
+              <td> <Translate content="explorer.asset.summary.issuer"/> </td>
+              <td> <LinkToAccountById account={asset.issuer}/> </td>
+            </tr>
+            <tr>
+              <td> <Translate content="explorer.assets.precision"/> </td>
+              <td> {asset.precision} </td>
+            </tr>
+            {currentSupply}
+            {stealthSupply}
+            {marketFee}
+            {maxMarketFee}
+            </tbody>
+          </table>
         );
     }
 
@@ -290,25 +285,29 @@ class Asset extends React.Component {
         var dynamic = asset.dynamic;
         var options = asset.options;
         return (
-            <div className="asset-card no-padding">
-                <div className="card-divider">{(<Translate content="explorer.asset.fee_pool.title"/>)}</div>
-                    <table className="table key-value-table" style={{ padding:"1.2rem"}}>
-                        <tbody>
-                            <tr>
-                                <td> <Translate content="explorer.asset.fee_pool.core_exchange_rate"/> </td>
-                                <td> {this.formattedPrice(options.core_exchange_rate)} </td>
-                            </tr>
-                            <tr>
-                                <td> <Translate content="explorer.asset.fee_pool.pool_balance"/> </td>
-                                <td> {dynamic ? <FormattedAsset asset="1.3.0" amount={dynamic.fee_pool} /> : null} </td>
-                            </tr>
-                            <tr>
-                                <td> <Translate content="explorer.asset.fee_pool.unclaimed_issuer_income"/> </td>
-                                <td> {dynamic ? <FormattedAsset asset={asset.id} amount={dynamic.accumulated_fees} /> : null} </td>
-                            </tr>
-                        </tbody>
-                    </table>
-            </div>
+          <table className="table dashboard-table close-border table-hover">
+            <thead>
+            <tr className="dashboard-table-title">
+              <td colSpan={2} style={{background:"#F8F8FA",fontWeight:"bold"}}>
+                <Translate content="explorer.asset.fee_pool.title"/>
+              </td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td width="30%"> <Translate content="explorer.asset.fee_pool.core_exchange_rate"/> </td>
+              <td> {this.formattedPrice(options.core_exchange_rate)} </td>
+            </tr>
+            <tr>
+              <td> <Translate content="explorer.asset.fee_pool.pool_balance"/> </td>
+              <td> {dynamic ? <FormattedAsset asset="1.3.0" amount={dynamic.fee_pool} /> : null} </td>
+            </tr>
+            <tr>
+              <td> <Translate content="explorer.asset.fee_pool.unclaimed_issuer_income"/> </td>
+              <td> {dynamic ? <FormattedAsset asset={asset.id} amount={dynamic.accumulated_fees} /> : null} </td>
+            </tr>
+            </tbody>
+          </table>
         );
     }
 
@@ -317,12 +316,14 @@ class Asset extends React.Component {
     // TODO: Blacklist Market: Base/Market, Base/Market
     renderPermissions(asset) {
         //var dynamic = asset.dynamic;
-
         var options = asset.options;
 
         let permissionBooleans = assetUtils.getFlagBooleans(asset.options.issuer_permissions);
 
         let bitNames = Object.keys(permissionBooleans);
+
+        let flagBooleans = assetUtils.getFlagBooleans(asset.options.flags);
+        let flagBitNames = Object.keys(flagBooleans);
 
         // options.blacklist_authorities = ["1.2.3", "1.2.4"];
         // options.whitelist_authorities = ["1.2.1", "1.2.2"];
@@ -332,7 +333,7 @@ class Asset extends React.Component {
         // options.max_market_fee initially a string
         var maxMarketFee = permissionBooleans["charge_market_fee"] ? (
             <tr>
-                <td> <Translate content="explorer.asset.permissions.max_market_fee"/> </td>
+                <td width="30%"> <Translate content="explorer.asset.permissions.max_market_fee"/> </td>
                 <td> <FormattedAsset amount={+options.max_market_fee} asset={asset.id} /> </td>
             </tr>
         ) : null;
@@ -363,21 +364,27 @@ class Asset extends React.Component {
         ) : null;
 
         return (
-            <div className="asset-card no-padding">
-                <div className="card-divider">{(<Translate content="explorer.asset.permissions.title"/>)} </div>
-                <table className="table key-value-table table-hover" style={{ padding:"1.2rem"}}>
-                    <tbody>
-                        {maxMarketFee}
-                        {maxSupply}
-                    </tbody>
-                </table>
-
-                <br/>
-                {this.renderPermissionIndicators(permissionBooleans, bitNames)}
-                <br/>
-
-                {/*whiteLists*/}
-            </div>
+              <table className="table dashboard-table close-border table-hover">
+                <thead>
+                <tr className="dashboard-table-title">
+                  <td colSpan={2} style={{background:"#F8F8FA",fontWeight:"bold"}}>
+                    <Translate content="explorer.asset.permissions.title"/>
+                  </td>
+                </tr>
+                </thead>
+                <tbody>
+                {maxMarketFee}
+                {maxSupply}
+                <tr>
+                  <td colSpan={2}>
+                    <div style={{lineHeight:"40px"}}>
+                      {this.renderPermissionIndicators(permissionBooleans, bitNames)}
+                      {this.renderFlagIndicators(flagBooleans, flagBitNames)}
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
         );
     }
 
@@ -387,31 +394,20 @@ class Asset extends React.Component {
         var priceFeedData = null;
 
         return (
-            <div className="grid-container">
-                <div className="grid-block page-layout">
-                    <div className="grid-block main-content wrap regular-padding">
-                        <div className="grid-block small-up-1" style={{width:"100%"}}>
-                            {this.renderAboutBox(asset)}
-                        </div>
-                        <div className="grid-block small-up-1 medium-up-2">
-                            <div className="grid-content">
-                                {this.renderSummary(asset)}
-                            </div>
-                            <div className="grid-content">
-                                {priceFeed ? priceFeed : this.renderPermissions(asset)}
-                            </div>
-                        </div>
-                        <div className="grid-block small-up-1 medium-up-2">
-                            <div className="grid-content">
-                                {this.renderFeePool(asset)}
-                            </div>
-                            <div className="grid-content">
-                                {priceFeed ? this.renderPermissions(asset) : null}
-                            </div>
-                        </div>
-                        {priceFeedData ? priceFeedData : null}
-                    </div>
-                </div>
+            <div style={{padding:"37px 20px 20px 20px"}}>
+              {this.renderAboutBox(asset)}
+                <br/>
+                <br/>
+              {this.renderSummary(asset)}
+              <br/>
+              <br/>
+              {priceFeed ? priceFeed : this.renderPermissions(asset)}
+              <br/>
+              <br/>
+              {this.renderFeePool(asset)}
+              <br/>
+              <br/>
+              {priceFeedData ? priceFeedData : null}
             </div>
         );
     }

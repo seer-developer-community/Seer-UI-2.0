@@ -23,7 +23,7 @@ class BlocksContainer extends React.Component {
                 <Blocks/>
             </AltContainer>;
 
-        return <Explorer tab="blocks" content={content}/>;
+        return content;// <Explorer tab="blocks" content={content}/>;
 
     }
 }

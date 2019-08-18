@@ -49,18 +49,32 @@ class TransactionChart extends React.Component {
             return [block.id, block.transactions.length];
         }).toArray();
 
-        let colors = trxData.map(entry => {
-            // console.log("entry:", entry);
-            if (entry[1] <= 5) {
-                return "#50D2C2";
-            } else if (entry[1] <= 10) {
-                return "#A0D3E8";
-            } else if (entry[1] <= 20) {
-                return "#FCAB53";
-            } else {
-                return "#deb869";
-            }
-        })
+        // let colors = trxData.map(entry => {
+        //     // console.log("entry:", entry);
+        //     if (entry[1] <= 5) {
+        //         return "#50D2C2";
+        //     } else if (entry[1] <= 10) {
+        //         return "#A0D3E8";
+        //     } else if (entry[1] <= 20) {
+        //         return "#FCAB53";
+        //     } else {
+        //         return "#deb869";
+        //     }
+        // })
+
+      let colors = trxData.map(entry => {
+        // console.log("entry:", entry);
+        if (entry[1] <= 5) {
+          return "#05bee7";
+        } else if (entry[1] <= 10) {
+          return "#05bee7";
+        } else if (entry[1] <= 20) {
+          return "#05bee7";
+        } else {
+          return "#05bee7";
+        }
+      })
+
 
         return {
             colors,
@@ -79,7 +93,7 @@ class TransactionChart extends React.Component {
                 type: "column",
                 backgroundColor: "rgba(255, 0, 0, 0)",
                 spacing: [0, 0, 5, 0],
-                height: 100
+                height: 50
             },
             title: {
                 text: null

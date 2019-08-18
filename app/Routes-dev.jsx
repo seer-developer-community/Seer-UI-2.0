@@ -81,14 +81,18 @@ const routes = (
         <IndexRoute component={DashboardContainer}/>
         <Route path="/auth/:data" component={Auth}/>
         <Route path="/dashboard" component={DashboardContainer}/>
-        <Route path="explorer" component={Explorer}/>
-        <Route path="/explorer/fees" component={FeesContainer} />
-        <Route path="/explorer/blocks" component={BlocksContainer} />
-        <Route path="/explorer/assets" component={AssetsContainer} />
-        <Route path="/explorer/accounts" component={AccountsContainer} />
-        <Route path="/explorer/witnesses" component={Witnesses} />
-        <Route path="/explorer/committee-members" component={CommitteeMembers} />
-        <Route path="/explorer/oracles" component={Oracles}/>
+        <Route path="explorer" component={Explorer}>
+          <Route path="fees" component={FeesContainer} />
+          <Route path="blocks" component={BlocksContainer} />
+          <Route path="assets" component={AssetsContainer} />
+          <Route path="accounts" component={AccountsContainer} />
+          <Route path="witnesses" component={Witnesses} />
+          <Route path="committee-members" component={CommitteeMembers} />
+          <Route path="oracles" component={Oracles}/>
+          <Route path="asset/:symbol" component={Asset} />
+          <Route path="markets" component={MarketsContainer} />
+        </Route>
+
         <Route path="/houses" components={Houses}/>
         <Route path="/houses/:house_id" component={HouseDetail}/>
         <Route path="/explorer/rooms/:room_id" component={RoomParticipate}/>
@@ -115,12 +119,10 @@ const routes = (
         <Route path="transfer" component={Transfer}/>
 
         <Route path="invoice/:data" component={Invoice} />
-        <Route path="explorer/markets" component={MarketsContainer} />
         <Route path="market/:marketID" component={ExchangeContainer} />
         <Route path="settings" component={SettingsContainer} />
         <Route path="settings/:tab" component={SettingsContainer} />
         <Route path="block/:height" component={BlockContainer} />
-        <Route path="asset/:symbol" component={Asset} />
         <Route path="create-account" component={LoginSelector}>
             <Route path="wallet" component={CreateAccount} />
             <Route path="password" component={CreateAccountPassword} />

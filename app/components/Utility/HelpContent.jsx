@@ -3,6 +3,7 @@ import { zipObject } from "lodash";
 import counterpart from "counterpart";
 import utils from "common/utils";
 import {withRouter} from "react-router";
+import $ from "jquery";
 
 let req = require.context("../../help", true, /\.md/);
 let HelpData = {};
@@ -133,7 +134,13 @@ class HelpContent extends React.Component {
             return null;
         }
 
-        return <div style={this.props.style} className="help-content desc-text" dangerouslySetInnerHTML={{__html: this.setVars(value, this.props.hide_issuer)}}/>;
+
+        let doc = $("<div>" + value + "</div>");
+        doc.find("p").addClass("desc-text");
+
+        value = doc.html();
+
+        return <div style={this.props.style} className="help-content" dangerouslySetInnerHTML={{__html: this.setVars(value, this.props.hide_issuer)}}/>;
     }
 }
 

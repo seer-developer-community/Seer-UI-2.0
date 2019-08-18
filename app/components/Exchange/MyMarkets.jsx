@@ -662,20 +662,69 @@ class MyMarkets extends React.Component {
         }
 
         const translator = require("counterpart");
+        let placeholder = counterpart.translate("exchange.search").toUpperCase();
 
         return (
-            <div className={this.props.className} style={this.props.style}>
-                <div
-                    style={this.props.headerStyle}
-                    className="grid-block shrink left-orderbook-header bottom-header"
-                >
-                    <div ref="myMarkets" className={starClass} onClick={this._changeTab.bind(this, "my-market")} data-intro={translator.translate("walkthrough.my_markets_tab")}>
+            <div style={{width:"100%"}}>
+              <table width="100%">
+                <tr>
+                  <td>
+                    <div className="flex-align-middle">
+                      <div ref="myMarkets" className={starClass} onClick={this._changeTab.bind(this, "my-market")} data-intro={translator.translate("walkthrough.my_markets_tab")}>
                         <Translate content="exchange.market_name" />
-                    </div>
-                    <div className={allClass} onClick={this._changeTab.bind(this, "find-market")} data-intro={translator.translate("walkthrough.find_markets_tab")}>
+                      </div>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <div className={allClass} onClick={this._changeTab.bind(this, "find-market")} data-intro={translator.translate("walkthrough.find_markets_tab")}>
                         <Translate content="exchange.more" />
+                      </div>
                     </div>
-                </div>
+                  </td>
+                  <td>
+
+                    {myMarketTab ?
+                      <div className="grid-block shrink" style={{width: "100%", textAlign: "left"}}>
+                        <div className="input-search" style={{marginBottom: "1rem",maxWidth: "16rem"}} >
+                          <svg className="icon" aria-hidden="true">
+                            <use xlinkHref="#icon-sousuo"></use>
+                          </svg>
+                          <input placeholder={placeholder} type="text" value={this.state.myMarketFilter} onChange={this.handleSearchUpdate}  />
+                        </div>
+
+                        <label style={{margin: "3px 0 0"}}>
+                          <input style={{position: "relative", top: 3}} className="no-margin" type="checkbox" checked={this.props.onlyStars} onChange={() => {MarketsActions.toggleStars();}}/>
+                          <span>&nbsp;<Translate content="exchange.show_star_1" /><Icon className="gold-star" name="fi-star"/> <Translate content="exchange.show_star_2" /></span>
+                        </label>
+
+                      </div> :
+
+                      <div style={{display:"flex",justifyContent:"flex-end",alignItems: "flex-end"}}>
+                        <div className="input-search" style={{marginBottom: "1rem",maxWidth: "16rem"}} >
+                          <Translate content="exchange.quote" style={{fontSize:"14px",color:"#666",width:"120px",height:"25px",lineHeight:"25px",position:"relative",top:10}}/>
+                          <input style={{fontSize:14,position:"relative",top:5}} placeholder={placeholder} type="text" value={this.state.findBaseInput} onChange={e=>{this._onInputBaseAsset.bind(this)(e.target.value); }} />
+                        </div>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <div className="input-search" style={{marginBottom: "1rem",maxWidth: "16rem"}} >
+                          <svg className="icon" aria-hidden="true">
+                            <use xlinkHref="#icon-sousuo"></use>
+                          </svg>
+                          <input placeholder={placeholder} type="text" value={this.state.inputValue} onChange={this._onInputName.bind(this)} />
+                        </div>
+                      </div>
+                    }
+                  </td>
+                </tr>
+              </table>
+                <div className={this.props.className} style={this.props.style}>
+                    {/*<div style={this.props.headerStyle} className="grid-block shrink left-orderbook-header bottom-header">*/}
+
+                          {/*<div style={{display:"inline-block"}}>*/}
+
+                              {/*/!*{this.state.assetNameError ?*!/*/}
+                                {/*/!*<div className="error-area" style={{paddingTop: 10}}>*!/*/}
+                                  {/*/!*<span style={{wordBreak: "break-all"}}><Translate content="explorer.asset.invalid" name={this.state.inputValue} /></span>*!/*/}
+                                {/*/!*</div> : null}*!/*/}
+                          {/*</div>*/}
+                    {/*</div>*/}
 
                 {this.props.controls ? (
                     <div className="small-12 medium-6" style={{padding: "1rem 0"}}>
@@ -683,62 +732,7 @@ class MyMarkets extends React.Component {
                         {/* {!myMarketTab ? <input type="text" value={this.state.inputValue} onChange={this._lookupAssets.bind(this)} placeholder="SYMBOL:SYMBOL" /> : null} */}
                     </div> ) : null}
 
-                {myMarketTab ?
-                    <div className="grid-block shrink" style={{width: "100%", textAlign: "left", padding: "0.75rem 0.5rem"}}>
-                        <label style={{margin: "3px 0 0"}}>
-                            <input style={{position: "relative", top: 3}} className="no-margin" type="checkbox" checked={this.props.onlyStars} onChange={() => {MarketsActions.toggleStars();}}/>
-                            <span>&nbsp;<Translate content="exchange.show_star_1" /><Icon className="gold-star" name="fi-star"/> <Translate content="exchange.show_star_2" /></span>
-                        </label>
-                        <div className="float-right search-wrapper" style={{paddingLeft: 20}}>
-                             <form>
-                                <input autoComplete="off" style={{fontSize: "0.9rem", height: "inherit", position: "relative", top: 1, padding: 2}} type="text" className="no-margin market-filter-input" placeholder="Filter" maxLength="16" name="focus" required="required" value={this.state.myMarketFilter} onChange={this.handleSearchUpdate} />
-                                <button className="clear-text" type="reset" onClick={this.clearInput}></button>
-                            </form>
-                        </div>
 
-                    </div> :
-
-                    <div style={{width: "100%", textAlign: "left", padding: "0.75rem 0.5rem"}}>
-                        <table>
-                            <tbody>
-                                <tr style={{width: "100%"}}>
-                                    <td>
-                                        <AssetSelector
-                                            onAssetSelect={this._onFoundBaseAsset.bind(this)}
-                                            assets={defaultBases}
-                                            onChange={this._onInputBaseAsset.bind(this)}
-                                            asset={this.state.findBaseInput}
-                                            assetInput={this.state.findBaseInput}
-                                            tabIndex={1}
-                                            style={{width: "100%", paddingBottom: "1.5rem"}}
-                                            onFound={this._onFoundBaseAsset.bind(this)}
-                                            label="exchange.quote"
-                                            noLabel
-                                            inputStyle={{fontSize: "0.9rem"}}
-                                        />
-                                    </td>
-                                </tr>
-                                <tr style={{width: "100%"}}>
-                                    <td>
-                                        <label><Translate content="account.user_issued_assets.name" />:</label>
-                                        <input
-                                            style={{fontSize: "0.9rem", position: "relative", top: 1}}
-                                            type="text"
-                                            value={this.state.inputValue}
-                                            onChange={this._onInputName.bind(this)}
-                                            placeholder={counterpart.translate("exchange.search")}
-                                            maxLength="16"
-                                        />
-                                        {this.state.assetNameError ?
-                                            <div className="error-area" style={{paddingTop: 10}}>
-                                                <span style={{wordBreak: "break-all"}}><Translate content="explorer.asset.invalid" name={this.state.inputValue} /></span>
-                                            </div> : null}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    }
 
 
                 <ul className="mymarkets-tabs">
@@ -804,6 +798,7 @@ class MyMarkets extends React.Component {
                         findMarketTab={!myMarketTab}
                     /> : null}
                 </div>
+            </div>
             </div>
         );
     }

@@ -59,12 +59,11 @@ class Explorer extends React.Component {
       //   );
       //
       // console.log("-------");
-      // console.log(this.props);
 
       return(
-        <div style={{backgroundColor:"#f2f2f2"}}>
+        <div style={{backgroundColor:"#f2f2f2",height:"100%"}}>
             <div style={{width:1200,margin:"21px auto",backgroundColor:"#fff"}}>
-                {this.props.content}
+                {this.props.children}
             </div>
         </div>
       )

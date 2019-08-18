@@ -22,7 +22,7 @@ class AccountsContainer extends React.Component {
                 <Accounts />
               </AltContainer>;
                       
-             return (<Explorer tab="accounts" content={content}/>);         
+             return content;//(<Explorer tab="accounts" content={content}/>);
     }
 }
 

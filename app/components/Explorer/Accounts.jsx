@@ -11,6 +11,7 @@ import BindToChainState from "../Utility/BindToChainState";
 import BalanceComponent from "../Utility/BalanceComponent";
 import AccountStore from "stores/AccountStore";
 import { connect } from "alt-react";
+import counterpart from "counterpart";
 
 class AccountRow extends React.Component {
     static propTypes = {
@@ -48,7 +49,11 @@ class AccountRow extends React.Component {
         return (
             <tr key={account.get("id")}>
                 <td>{account.get("id")}</td>
-                {linkedAccounts.has(accountName) ? <td onClick={this._onUnLinkAccount.bind(this, accountName)}><Icon name="minus-circle" /></td> : <td onClick={this._onLinkAccount.bind(this, accountName)}><Icon name="plus-circle" /></td>}
+                {linkedAccounts.has(accountName) ?
+                  <td onClick={this._onUnLinkAccount.bind(this, accountName)}><Icon name="minus-circle" className="icon-18px"/></td>
+                  :
+                  <td onClick={this._onLinkAccount.bind(this, accountName)}><Icon name="plus-circle" className="icon-18px color-primary"/></td>
+                }
                 <td><Link to={`/account/${accountName}/overview`}>{accountName}</Link></td>
                 <td>{!balance? "n/a" : <BalanceComponent balance={balance} />}</td>
                 <td>{!balance ? "n/a" : <BalanceComponent balance={balance} asPercentage={true} />}</td>
@@ -105,6 +110,7 @@ class Accounts extends React.Component {
         let {searchAccounts} = this.props;
         let {searchTerm} = this.state;
         let accountRows = null;
+        let placeholder = counterpart.translate("markets.input_code_filter").toUpperCase();
 
         if (searchAccounts.size > 0 && searchTerm &&searchTerm.length > 0) {
             accountRows = searchAccounts.filter(a => {
@@ -127,30 +133,33 @@ class Accounts extends React.Component {
         }
 
         return (
-            <div className="grid-block">
-                <div className="grid-block vertical medium-6 medium-offset-3">
-                    <div className="grid-content shrink">
-                        <Translate component="h3" content="explorer.accounts.title" />
-                        <input type="text" value={this.state.searchTerm} onChange={this._onSearchChange.bind(this)}/>
-                    </div>
-                    <div className="grid-content">
-                        <table className="table">
-                            <thead>
-                                <tr>
-                                    <th><Translate component="span" content="explorer.assets.id" /></th>
-                                    <th><Icon name="user" /></th>
-                                    <th><Translate component="span" content="account.name" /></th>
-                                    <th><Translate component="span" content="gateway.balance" /></th>
-                                    <th><Translate component="span" content="account.percent" /></th>
-                                </tr>
-                            </thead>
+            <div style={{padding:"50px 20px 70px 20px"}}>
+              <div className="input-search" style={{marginBottom: "1rem",maxWidth: "16rem"}} >
+                <svg className="icon" aria-hidden="true">
+                  <use xlinkHref="#icon-sousuo"></use>
+                </svg>
+                <input placeholder={placeholder} type="text" value={this.state.searchTerm} onChange={this._onSearchChange.bind(this)}/>
+              </div>
 
-                            <tbody>
-                                {accountRows}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+              <table className="table dashboard-table">
+                <thead>
+                <tr>
+                  <th style={{background:"#F8F8FA",fontWeight:"bold"}}><Translate component="span" content="explorer.assets.id" /></th>
+                  <th style={{background:"#F8F8FA",fontWeight:"bold"}}>
+                    <svg className="icon" aria-hidden="true" style={{width:20,height:20}}>
+                      <use xlinkHref="#icon-yonghu"></use>
+                    </svg>
+                  </th>
+                  <th style={{background:"#F8F8FA",fontWeight:"bold"}}><Translate component="span" content="account.name" /></th>
+                  <th style={{background:"#F8F8FA",fontWeight:"bold"}}><Translate component="span" content="gateway.balance" /></th>
+                  <th style={{background:"#F8F8FA",fontWeight:"bold"}}><Translate component="span" content="account.percent" /></th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {accountRows}
+                </tbody>
+              </table>
             </div>
         );
     }

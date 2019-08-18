@@ -94,7 +94,7 @@ class FeeGroup extends React.Component {
                 if (!headIncluded) {
                     headIncluded = true
                     title = (<td rowSpan="6" style={{width:"15em"}}>
-                        <span className={labelClass}>
+                        <span className={labelClass} style={{borderRadius:"5px"}}>
                             {feename}
                         </span>
                     </td>)
@@ -125,8 +125,7 @@ class FeeGroup extends React.Component {
 
         return (
             <div className="asset-card">
-                <div className="card-divider">{this.props.title}</div>
-                <table className="table">
+                <table className="table dashboard-table even-bg">
                     <thead>
                         <tr>
                             <th><Translate content={"explorer.block.op"} /></th>
@@ -145,28 +144,80 @@ FeeGroup = BindToChainState(FeeGroup, {keep_updating:true});
 
 class Fees extends React.Component {
 
+    constructor(){
+        super();
+        this.state = {
+          currentFeeIds:null,
+          currentGroupName:null,
+          currentGroupNameText:null
+        }
+    }
+
+    typeSelect(groupName,feeIds,groupNameText){
+        this.setState({
+          currentGroupName:groupName,
+          currentFeeIds:feeIds,
+          currentGroupNameText:groupNameText
+        });
+    }
+
     render() {
 
         let FeeGroupsTitle  = counterpart.translate("transaction.feeGroups");
         let feeGroups = [];
 
+        let typesButton = [];
+
         for (let groupName in fee_grouping) {
             let groupNameText = FeeGroupsTitle[groupName];
             let feeIds = fee_grouping[groupName];
             feeGroups.push(<FeeGroup key={groupName} settings={this.props.settings} opIds={feeIds} title={groupNameText}/>);
+            if(this.state.currentGroupName === groupName){
+              typesButton.push(
+                <div key={groupName} onClick={e=>{this.typeSelect(feeIds)}} style={{display:"inline-block",width:99,height:35,lineHeight:"35px",
+                                                    fontSize:"14px",textAlign:"center",background:"#E1F1EB",
+                                                    borderRadius:"3px",color:"#666",
+                                                    marginBottom:"10px"}}>
+                  {groupNameText}
+                </div>
+              );
+            }else{
+              typesButton.push(
+                <div key={groupName} onClick={e=>{this.typeSelect(groupName,feeIds,groupNameText)}} style={{display:"inline-block",width:99,height:35,lineHeight:"35px",
+                                                                                    fontSize:"14px",textAlign:"center",color:"#666",marginBottom:"10px"}}>
+                  {groupNameText}
+                </div>
+              );
+            }
+
+            if(!this.state.currentFeeIds){
+                this.state.currentFeeIds = feeIds;
+                this.state.currentGroupName = groupName;
+                this.state.currentGroupNameText = groupNameText;
+            }
         }
 
         return(
-                <div className="grid-block vertical" style={{overflow:"visible"}}>
-                    <div className="grid-block small-12 shrink" style={{ overflow:"visible"}}>
-                        <HelpContent path = {"components/Fees"} />
-                    </div>
-                    <div className="grid-block small-12 " style={{overflow:"visible"}}>
-                        <div className="grid-content">
-                            {feeGroups}
+          <div>
+              <div style={{padding:"30px 27px 8px 27px"}}>
+                <HelpContent path = {"components/Fees"} />
+              </div>
+
+            <h1 style={{backgroundColor:"#f2f2f2",height:"18px",marginTop:30,marginBottom:30}}>&nbsp;</h1>
+
+            <table width="100%">
+                <tr>
+                    <td width="171px" style={{verticalAlign:"top"}}>
+                        <div style={{textAlign:"center"}}>
+                          {typesButton}
                         </div>
-                    </div>
-                </div>
+                    </td>
+                    <td style={{verticalAlign:"top"}}>
+                      <FeeGroup key={this.state.currentGroupName} settings={this.props.settings} opIds={this.state.currentFeeIds} title={this.state.currentGroupNameText}/>
+                    </td>
+                </tr>
+            </table>
+          </div>
         );
     }
 }

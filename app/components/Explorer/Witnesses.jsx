@@ -12,6 +12,9 @@ import SettingsActions from "actions/SettingsActions";
 import SettingsStore from "stores/SettingsStore";
 import classNames from "classnames";
 import Explorer from "./Explorer";
+import utils from "../../lib/common/utils";
+import counterpart from "counterpart";
+import Icon from "../Icon/Icon";
 var Apis =  require("seerjs-ws").Apis;
 require("./witnesses.scss");
 
@@ -36,42 +39,50 @@ class WitnessCard extends React.Component {
         let total_collateral = witness_data.get( "total_collateral" );
         let collateral_profit = witness_data.get( "collateral_profit" );
 
-        let witness_aslot = witness_data.get('last_aslot')
-        let color = {};
+        let witness_aslot = witness_data.get('last_aslot');
+        let color = {background:"#fff",border:"1px solid #EFEFEF"};
         if( this.props.most_recent - witness_aslot > 100 ) {
-           color = {borderLeft: "1px solid #FCAB53"};
+           //color = {borderLeft: "1px solid #FCAB53"};
         }
         else {
-           color = {borderLeft: "1px solid #50D2C2"};
+           //color = {borderLeft: "1px solid #50D2C2"};
         }
         let last_aslot_time = new Date(Date.now() - ((this.props.most_recent - witness_aslot ) * ChainStore.getObject( "2.0.0" ).getIn( ["parameters","block_interval"] )*1000));
 
         return (
             <div className="grid-content account-card" onClick={this._onCardClick.bind(this)}>
                 <div className="card" style={color}>
-                    <h4 className="text-center">#{this.props.rank}: {this.props.witness.get('name')}</h4>
-                    <div className="card-content">
-                        <div className="text-center">
-                            <AccountImage account={this.props.witness.get('name')} size={{height: 64, width: 64}}/>
+                    <div style={{height:60,lineHeight:"60px",background:"#f2f2f2",fontSize:"20px",color:"#0c0D26",fontWeight:"bold",textAlign:"center"}}>
+                      #{this.props.rank}: {this.props.witness.get('name')}
+                    </div>
+                    <div className="card-content" style={{margin:0}}>
+                        <div className="text-center" style={{margin:"30px 0"}}>
+                            <AccountImage account={this.props.witness.get('name')} size={{height: 80, width: 80}}/>
                         </div>
-                        <br/>
                         <table className="table key-value-table">
                             <tbody>
-                                <tr>
-                                    <td><Translate content="explorer.witnesses.total_collateral" /></td>
-                                    <td><FormattedAsset amount={total_collateral} asset="1.3.0" decimalOffset={5} /></td>
+                                <tr style={{height:44}}>
+                                    <td><Translate content="explorer.witnesses.total_collateral" style={{marginLeft:20}}/></td>
+                                    <td style={{textAlign:"right"}}>
+                                      <span style={{marginRight:20}}><FormattedAsset amount={total_collateral} asset="1.3.0" decimalOffset={5} /></span>
+                                    </td>
                                 </tr>
-                                <tr>
-                                    <td><Translate content="explorer.witnesses.collateral_profit" /></td>
-                                    <td><FormattedAsset amount={collateral_profit} asset="1.3.0" decimalOffset={5} /></td>
+                                <tr style={{height:44}}>
+                                    <td><Translate content="explorer.witnesses.collateral_profit" style={{marginLeft:20}}/></td>
+                                    <td style={{textAlign:"right"}}>
+                                      <span style={{marginRight:20}}><FormattedAsset amount={collateral_profit} asset="1.3.0" decimalOffset={5} /></span></td>
                                 </tr>
-                                <tr>
-                                    <td><Translate content="explorer.blocks.last_block" /></td>
-                                    <td><TimeAgo time={new Date(last_aslot_time)} /></td>
+                                <tr style={{height:44}}>
+                                    <td><Translate content="explorer.blocks.last_block" style={{marginLeft:20}}/></td>
+                                    <td style={{textAlign:"right"}}>
+                                      <span style={{marginRight:20}}><TimeAgo time={new Date(last_aslot_time)} /></span>
+                                    </td>
                                 </tr>
-                                <tr>
-                                    <td><Translate content="explorer.witnesses.missed" /></td>
-                                    <td>{witness_data.get('total_missed')}</td>
+                                <tr style={{height:44,border:"none"}}>
+                                    <td><Translate content="explorer.witnesses.missed" style={{marginLeft:20}}/></td>
+                                    <td style={{textAlign:"right"}}>
+                                      <span style={{marginRight:20}}>{witness_data.get('total_missed')}</span>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -111,10 +122,10 @@ class WitnessRow extends React.Component {
         let witness_aslot = witness_data.get('last_aslot')
         let color = {};
         if( this.props.most_recent - witness_aslot > 100 ) {
-           color = {borderLeft: "1px solid #FCAB53"};
+          // color = {borderLeft: "1px solid #FCAB53"};
         }
         else {
-           color = {borderLeft: "1px solid #50D2C2"};
+           //color = {borderLeft: "1px solid #50D2C2"};
         }
         let last_aslot_time = new Date(Date.now() - ((this.props.most_recent - witness_aslot ) * ChainStore.getObject( "2.0.0" ).getIn( ["parameters","block_interval"] )*1000));
 
@@ -134,7 +145,9 @@ class WitnessRow extends React.Component {
                 <td style={color}>{witness.get("name")}</td>
                 <td><TimeAgo time={new Date(last_aslot_time)} /></td>
                 <td>{witness_data.get('last_confirmed_block_num')}</td>
-                <td className={missedClass}>{missed}</td>
+                <td>
+                    <span className={missedClass}>{missed}</span>
+                </td>
                 <td><FormattedAsset amount={witness_data.get('total_collateral')} asset="1.3.0" decimalOffset={5} /></td>
                 <td><FormattedAsset amount={witness_data.get('collateral_profit')} asset="1.3.0" decimalOffset={5} /></td>
             </tr>
@@ -254,16 +267,16 @@ class WitnessList extends React.Component {
         // table view
         if (!cardView) {
             return (
-                <table className="table table-hover">
+                <table className="table table-hover dashboard-table even-bg">
                     <thead>
                         <tr>
-                            <th className="clickable" onClick={this._setSort.bind(this, 'rank')}><Translate content="explorer.witnesses.rank" /></th>
-                            <th className="clickable" onClick={this._setSort.bind(this, 'name')}><Translate content="account.votes.name" /></th>
-                            <th className="clickable" onClick={this._setSort.bind(this, 'last_aslot')}><Translate content="explorer.blocks.last_block" /></th>
-                            <th className="clickable" onClick={this._setSort.bind(this, 'last_confirmed_block_num')}><Translate content="explorer.witnesses.last_confirmed" /></th>
-                            <th className="clickable" onClick={this._setSort.bind(this, 'total_missed')}><Translate content="explorer.witnesses.missed" /></th>
-                            <th className="clickable" onClick={this._setSort.bind(this, 'total_collateral')}><Translate content="explorer.witnesses.total_collateral" /></th>
-                            <th className="clickable" onClick={this._setSort.bind(this, 'collateral_profit')}><Translate content="explorer.witnesses.collateral_profit" /></th>
+                            <th style={{fontWeight:"bold",background:"#F8F8FA",color:"#0C0D26"}} className="clickable" onClick={this._setSort.bind(this, 'rank')}><Translate content="explorer.witnesses.rank" /></th>
+                            <th style={{fontWeight:"bold",background:"#F8F8FA",color:"#0C0D26"}} className="clickable" onClick={this._setSort.bind(this, 'name')}><Translate content="account.votes.name" /></th>
+                            <th style={{fontWeight:"bold",background:"#F8F8FA",color:"#0C0D26"}} className="clickable" onClick={this._setSort.bind(this, 'last_aslot')}><Translate content="explorer.blocks.last_block" /></th>
+                            <th style={{fontWeight:"bold",background:"#F8F8FA",color:"#0C0D26"}} className="clickable" onClick={this._setSort.bind(this, 'last_confirmed_block_num')}><Translate content="explorer.witnesses.last_confirmed" /></th>
+                            <th style={{fontWeight:"bold",background:"#F8F8FA",color:"#0C0D26"}} className="clickable" onClick={this._setSort.bind(this, 'total_missed')}><Translate content="explorer.witnesses.missed" /></th>
+                            <th style={{fontWeight:"bold",background:"#F8F8FA",color:"#0C0D26"}} className="clickable" onClick={this._setSort.bind(this, 'total_collateral')}><Translate content="explorer.witnesses.total_collateral" /></th>
+                            <th style={{fontWeight:"bold",background:"#F8F8FA",color:"#0C0D26"}} className="clickable" onClick={this._setSort.bind(this, 'collateral_profit')}><Translate content="explorer.witnesses.collateral_profit" /></th>
                         </tr>
                     </thead>
                 <tbody>
@@ -396,63 +409,103 @@ class Witnesses extends React.Component {
             );
         };
 
+      let gridValueStyle = {
+        fontSize:"18px",
+        color:"#0C0D26",
+        fontWeight:"bold",
+        marginTop:"20px"
+      };
+
+      let placeholder = counterpart.translate("markets.input_account_filter").toUpperCase();
+
         let content =
-            <div className="grid-block">
-                <div className="grid-block">
-                    <div className="grid-block vertical small-5 medium-3">
-                        <div className="grid-content">
-                            <br/>
-                            <table className="table key-value-table">
-                                <tbody>
-                                    <tr>
-                                        <td><Translate content="explorer.witnesses.current"/></td>
-                                        <td>{currentAccount ? currentAccount.get("name") : null}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><Translate content="explorer.blocks.active_witnesses"/></td>
-                                        <td>{Object.keys(globalObject.active_witnesses).length}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><Translate content="explorer.witnesses.participation"/></td>
-                                        <td>{dynGlobalObject.participation}%</td>
-                                    </tr>
-                                    <tr>
-                                        <td><Translate content="explorer.witnesses.pay"/></td>
-                                        <td><FormattedAsset amount={globalObject.parameters.witness_pay_per_block} asset="1.3.0" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td><Translate content="explorer.witnesses.budget"/></td>
-                                        <td> <FormattedAsset amount={dynGlobalObject.witness_budget} asset="1.3.0" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td><Translate content="explorer.witnesses.next_vote"/></td>
-                                        <td> <TimeAgo time={new Date(dynGlobalObject.next_maintenance_time + "Z")} /></td>
-                                    </tr>
-                                    <tr>
-                                       <td> <Translate component="h4" content="markets.filter" /> </td>
-                                       <td> <input type="text" value={this.state.filterWitness} onChange={this._onFilter.bind(this)} /> </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div>
-                                <td><span className="button outline" onClick={this._activeView.bind(this)}>{<Translate content="explorer.witnesses.active"/>}</span></td>
-                                <td><span className="button outline" onClick={this._collateralView.bind(this)}>{<Translate content="explorer.witnesses.collateral"/>}</span></td>
-                                <td><span className="button outline" onClick={this._allView.bind(this)}>{<Translate content="explorer.witnesses.all"/>}</span></td>
-                            </div>
-                            <div className="view-switcher">
-                                <td><span className="button outline" onClick={this._toggleView.bind(this)}>{!this.state.cardView ? <Translate content="explorer.witnesses.card"/> : <Translate content="explorer.witnesses.table"/>}</span></td>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="grid-block">
-                            <div className="grid-content ">
-                                {witlst}
-                            </div>
-                    </div>
+            <div ref="outerWrapper" className="grid-block vertical">
+
+              <div className="align-center grid-block shrink small-horizontal blocks-row" style={{marginTop:41}}>
+                <div className="grid-block text-center small-6 medium-2">
+                  <div className="grid-content no-overflow">
+                    <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.witnesses.current" /></div>
+                    <div style={gridValueStyle}>{currentAccount ? currentAccount.get("name") : null}</div>
+                  </div>
                 </div>
+                <div className="grid-block text-center small-6 medium-2">
+                  <div className="grid-content no-overflow">
+                    <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.blocks.active_witnesses" /></div>
+                    <div style={gridValueStyle}>{Object.keys(globalObject.active_witnesses).length}</div>
+                  </div>
+                </div>
+                <div className="grid-block text-center small-6 medium-2">
+                  <div className="grid-content no-overflow">
+                    <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.witnesses.participation" /></div>
+                    <div style={gridValueStyle}>{dynGlobalObject.participation}%</div>
+                  </div>
+                </div>
+                <div className="grid-block text-center small-6 medium-2">
+                  <div className="grid-content no-overflow">
+                    <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.witnesses.pay" />(SEER)</div>
+                    <div style={gridValueStyle}>
+                      <FormattedAsset amount={globalObject.parameters.witness_pay_per_block}
+                                      asset="1.3.0"
+                                      hide_asset={true}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="grid-block text-center small-6 medium-2">
+                  <div className="grid-content no-overflow clear-fix">
+                    <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.witnesses.budget" />(SEER)</div>
+                    <div className="txtlabel success"  style={gridValueStyle}>
+                      <FormattedAsset amount={dynGlobalObject.witness_budget} asset="1.3.0" hide_asset={true} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid-block text-center small-6 medium-2">
+                  <div className="grid-content no-overflow clear-fix">
+                    <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.witnesses.next_vote" /></div>
+                    <div className="txtlabel success" style={gridValueStyle}>
+                      <TimeAgo time={new Date(dynGlobalObject.next_maintenance_time + "Z")} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <h1 style={{backgroundColor:"#f2f2f2",height:"18px",marginTop:"40px",marginBottom:0}}>&nbsp;</h1>
+
+             <div style={{padding:"20px"}}>
+
+              <div>
+                <div style={{display:"inline-block"}}>
+                  <div className="input-search" style={{marginBottom: "1rem",maxWidth: "16rem"}} >
+                    <svg className="icon" aria-hidden="true">
+                      <use xlinkHref="#icon-sousuo"></use>
+                    </svg>
+                    <input placeholder={placeholder} type="text" value={this.state.filterWitness} onChange={this._onFilter.bind(this)} />
+                  </div>
+                </div>
+
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span className="button outline tiny" style={{borderRadius:"15px",marginBottom:12}} onClick={this._activeView.bind(this)}>{<Translate content="explorer.witnesses.active"/>}</span>
+                <span className="button outline tiny" style={{borderRadius:"15px",marginBottom:12}} onClick={this._collateralView.bind(this)}>{<Translate content="explorer.witnesses.collateral"/>}</span>
+                <span className="button outline tiny" style={{borderRadius:"15px",marginBottom:12}} onClick={this._allView.bind(this)}>{<Translate content="explorer.witnesses.all"/>}</span>
+
+                <span className="flex-align-middle" onClick={this._toggleView.bind(this)} style={{float:"right",color:"#449E7B",fontSize:"15px"}}>
+                    <svg className="icon" aria-hidden="true" style={{width:18,height:18}}>
+                      <use xlinkHref="#icon-qiapianshitu"></use>
+                    </svg>
+                    &nbsp;&nbsp;
+                  {
+                      !this.state.cardView ? <Translate content="explorer.witnesses.card"/> :
+                  <Translate content="explorer.witnesses.table"/>
+                  }
+                  </span>
+              </div>
+                 <br/>
+              {witlst}
+             </div>
             </div>
         ;
-        return (<Explorer tab="witnesses" content={content}/>);
+        return content;//(<Explorer tab="witnesses" content={content}/>);
     }
 }
 Witnesses = BindToChainState(Witnesses, {keep_updating: true});

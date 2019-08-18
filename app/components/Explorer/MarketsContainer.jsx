@@ -9,7 +9,7 @@ class MarketsContainer extends React.Component {
 
         let content = <RealMarketsContainer/>;
 
-        return (<Explorer tab="markets" content={content}/>);
+        return content;//(<Explorer tab="markets" content={content}/>);
 
     }
 }

@@ -1224,10 +1224,15 @@ $input-border
         }
     }
 
-
     // Exchange
     .mymarkets-header {
-        border-bottom-color: $button-bg-color;
+        border:none;
+        font-size: 18px;
+        font-weight: bold;
+        color: #0C0D26;
+        width: auto;
+
+
         &.inactive {
             border-bottom-color: transparent;
             color: $secondary-text-color;
@@ -1365,10 +1370,6 @@ $input-border
         > tbody > tr:nth-of-type(even) {
             background-color: $row-accent-color;
         }
-    }
-
-    .mymarkets-header {
-        background-color: $header-color;
     }
 
     tr.activeMarket, tr.activeMarket:hover {
@@ -1862,6 +1863,15 @@ $input-border
           font-size: 16px;
         }
       }
+
+      &.even-bg{
+        >thead > tr > th {
+          background: #F8F8FA;
+          font-weight: bold;
+        }
+
+        tr:nth-child(even) td{background-color:#F8F8FA;}
+      }
     }
 
     div.account-creation {
@@ -2123,7 +2133,7 @@ $input-border
 
   .icon{
       &.color-primary > svg > path {
-        fill: $button-bg-color;
+        fill: $button-bg-color !important;
       }
   }
 }

@@ -83,7 +83,7 @@ class Assets extends React.Component {
 
     render() {
         let {assets} = this.props;
-        let placeholder = counterpart.translate("markets.filter").toUpperCase();
+        let placeholder = counterpart.translate("markets.input_code_filter").toUpperCase();
         let coreAsset = ChainStore.getAsset("1.3.0");
 
         let uia;
@@ -100,10 +100,14 @@ class Assets extends React.Component {
                 let  current_supply = asset.dynamic?parseInt(asset.dynamic.current_supply):0;
                 return (
                     <tr key={asset.symbol}>
-                        <td><Link to={`/asset/${asset.symbol}`}><AssetName name={asset.symbol} /></Link></td>
+                        <td><Link to={`/explorer/asset/${asset.symbol}`}><AssetName name={asset.symbol} /></Link></td>
                         <td>{this.linkToAccount(asset.issuer)}</td>
                         <td><FormattedAsset amount={current_supply} asset={asset.id} hide_asset={true}/></td>
-                        <td><Link className="button outline" to={`/market/${marketID}`}><Translate content="header.exchange" /></Link></td>
+                        <td style={{textAlign:"right"}}>
+                          <Link className="button outline small" to={`/market/${marketID}`}>
+                            <Translate content="account.trade" component="div"/>
+                          </Link>
+                        </td>
                     </tr>
                 );
             }).sort((a, b) => {
@@ -118,40 +122,27 @@ class Assets extends React.Component {
         }
 
         return (
-            <div className="grid-block vertical">
-                <div className="grid-block vertical">
-                    <div className="grid-block main-content small-12 medium-10 medium-offset-1 main-content vertical">
-                        <div className="generic-bordered-box tab-content">
-
-                            {
-                                <div className="grid-block shrink">
-                                    <div className="grid-content">
-                                        <input style={{maxWidth: "500px"}} placeholder={placeholder} type="text" value={this.state.filterUIA} onChange={this._onFilter.bind(this, "filterUIA")}></input>
-                                    </div>
-                                </div> }
-
-                            {
-                                <div className="grid-block" style={{paddingBottom: 20}}>
-                                    <div className="grid-content">
-                                        <table className="table">
-                                            <thead>
-                                            <tr>
-                                                <th><Translate component="span" content="explorer.assets.symbol" /></th>
-                                                <th><Translate component="span" content="explorer.assets.issuer" /></th>
-                                                <th><Translate component="span" content="markets.supply" /></th>
-                                                <th></th>
-                                            </tr>
-                                            </thead>
-
-                                            <tbody>
-                                            {uia}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div> }
-                        </div>
-                    </div>
-                </div>
+            <div style={{padding:"50px 20px 70px 20px"}}>
+              <div className="input-search" style={{marginBottom: "1rem",maxWidth: "16rem"}} >
+                <svg className="icon" aria-hidden="true">
+                  <use xlinkHref="#icon-sousuo"></use>
+                </svg>
+                <input placeholder={placeholder} type="text" value={this.state.filterUIA} onChange={this._onFilter.bind(this, "filterUIA")} />
+              </div>
+              <br/>
+              <table className="table dashboard-table">
+                <thead>
+                <tr>
+                  <th style={{backgroundColor:"#f8f8fa",color:"#999"}} width="30%"><Translate component="span" content="explorer.assets.symbol" /></th>
+                  <th style={{backgroundColor:"#f8f8fa",color:"#999"}} width="25%"><Translate component="span" content="explorer.assets.issuer" /></th>
+                  <th style={{backgroundColor:"#f8f8fa",color:"#999"}} width="30%"><Translate component="span" content="markets.supply" /></th>
+                  <th style={{backgroundColor:"#f8f8fa",color:"#999"}}></th>
+                </tr>
+                </thead>
+                <tbody>
+                {uia}
+                </tbody>
+              </table>
             </div>
         );
     }

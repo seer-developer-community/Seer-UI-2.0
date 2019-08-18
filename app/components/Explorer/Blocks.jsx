@@ -205,16 +205,21 @@ class Blocks extends React.Component {
                 return b.id - a.id;
             })
             .take(20)
-            .map((block) => {
+            .map((block,index) => {
                 return (
-                        <tr key={block.id}>
-                            <td><Link to={`/block/${block.id}`}>#{utils.format_number(block.id, 0)}</Link></td>
-                            <td><FormattedDate
-                                value={block.timestamp}
-                                format="time"
-                            /></td>
-                            <td><LinkToWitnessById witness={block.witness} /></td>
-                            <td>{utils.format_number(block.transactions.length, 0)}</td>
+                        <tr key={block.id} style={{height:42,borderBottom:"none"}}>
+                            <td style={{background:(index % 2 === 0) ? "#f8f8fa" : "#fff" }}>
+                              <Link to={`/block/${block.id}`}>#{utils.format_number(block.id, 0)}</Link>
+                            </td>
+                            <td style={{background:(index % 2 === 0) ? "#f8f8fa" : "#fff" }}>
+                              <FormattedDate value={block.timestamp} format="time"/>
+                            </td>
+                            <td style={{background:(index % 2 === 0) ? "#f8f8fa" : "#fff" }}>
+                              <LinkToWitnessById witness={block.witness} />
+                            </td>
+                            <td style={{background:(index % 2 === 0) ? "#f8f8fa" : "#fff" }}>
+                              {utils.format_number(block.transactions.length, 0)}
+                            </td>
                         </tr>
                     );
             }).toArray();
@@ -260,7 +265,6 @@ class Blocks extends React.Component {
             fontWeight:"bold",
             marginTop:"20px"
         };
-
 
         return (
             <div ref="outerWrapper" className="grid-block vertical">
@@ -314,11 +318,15 @@ class Blocks extends React.Component {
                     <div  className="align-center grid-block shrink small-horizontal  blocks-row" style={{marginTop:63}}>
                       <div className="grid-block text-center small-12 medium-2">
                         <div className="grid-content no-overflow clear-fix">
-                          <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.asset.summary.current_supply" /></div>
+                          <div className="label-text color-8e8e8e">
+                            <Translate component="span" content="explorer.asset.summary.current_supply" />
+                            ({coreAsset.get("symbol")})
+                          </div>
                           <div className="txtlabel" style={gridValueStyle}>
                             <FormattedAsset
                               amount={dynamic?dynamic.toJS().current_supply:0}
                               asset={coreAsset.get("id")}
+                              hide_asset={true}
                               decimalOffset={5}
                             />
                           </div>
@@ -326,11 +334,15 @@ class Blocks extends React.Component {
                       </div>
                       <div className="grid-block text-center small-12 medium-2">
                         <div className="grid-content no-overflow clear-fix">
-                          <div className="label-text color-8e8e8e"><Translate component="span" content="explorer.asset.summary.stealth_supply" /></div>
+                          <div className="label-text color-8e8e8e">
+                            <Translate component="span" content="explorer.asset.summary.stealth_supply" />
+                            ({coreAsset.get("symbol")})
+                          </div>
                           <div className="txtlabel" style={gridValueStyle}>
                             <FormattedAsset
                               amount={dynamic?dynamic.toJS().confidential_supply:0}
                               asset={coreAsset.get("id")}
+                              hide_asset={true}
                               decimalOffset={5}
                             />
                           </div>
@@ -364,60 +376,81 @@ class Blocks extends React.Component {
                       </div>
                     </div>
 
+              <h1 style={{backgroundColor:"#f2f2f2",height:"18px",marginTop:"30px",marginBottom:0}}>&nbsp;</h1>
+
+              <div style={{display:"flex",flexDirection:"row",width:"100%"}}>
+                <div style={{flex:1,padding:7}}>
+                  <div className="grid-block vertical no-overflow generic-bordered-box">
+                    <div ref="operationsText">
+                      <div ref="blocksText" className="flex-align-middle" style={{marginTop:10,paddingBottom:16,borderBottom:"1px solid #efefef"}}>
+                        <div style={{display:"flex",width:42,height:42,justifyContent:"center",alignItems:"center"}}>
+                          <svg className="icon" aria-hidden="true" style={{width:32,height:32}}>
+                            <use xlinkHref="#icon-jilu1"></use>
+                          </svg>
+                        </div>
+                        <Translate component="span" content="account.recent" style={{fontSize:16,color:"#0C0D26",fontWeight:"bold",marginLeft:2}}/>
+                      </div>
+                        <table className="table">
+                          <thead>
+                          <tr>
+                            <th><Translate content="account.votes.info" /></th>
+                          </tr>
+                          </thead>
+                        </table>
+                      </div>
+                      <div className="grid-block" style={{maxHeight: operationsHeight || "400px", overflow: "hidden", }} ref="operations">
+                        <table className="table">
+                          <tbody>
+                          {transactions}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+                <div style={{backgroundColor:"#f2f2f2",width:"18px"}}>
+                 &nbsp;
+                </div>
+                <div style={{flex:1,padding:7}}>
+                  <div className="grid-block vertical no-overflow generic-bordered-box">
+                    <div ref="blocksText" className="flex-align-middle" style={{marginTop:10,paddingBottom:16,borderBottom:"1px solid #efefef"}}>
+                      <svg className="icon" aria-hidden="true" style={{width:42,height:42}}>
+                        <use xlinkHref="#icon-qukuailianxiangmu"></use>
+                      </svg>
+                      <Translate component="span" content="explorer.blocks.recent" style={{fontSize:16,color:"#0C0D26",fontWeight:"bold",marginLeft:2}}/>
+                    </div>
+                    <div className="grid-block vertical" style={{maxHeight: blocksHeight || "438px", overflow: "hidden", }} ref="blocks">
+
+                      <table className="table dashboard-table">
+                        <thead>
+                        <tr>
+                          <th style={{fontWeight:"bold"}}><Translate component="span" content="explorer.block.id" /></th>
+                          <th style={{fontWeight:"bold"}}><Translate component="span" content="explorer.block.date" /></th>
+                          <th style={{fontWeight:"bold"}}><Translate component="span" content="explorer.block.witness" /></th>
+                          <th style={{fontWeight:"bold"}}><Translate component="span" content="explorer.block.count" /></th>
+                        </tr>
+                        </thead>
+
+                        <TransitionWrapper
+                          component="tbody"
+                          transitionName="newrow"
+                        >
+                          {blocks}
+                        </TransitionWrapper>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             { /* Fourth row: transactions and blocks */ }
                 <div ref ="transactionsBlock" className="grid-block no-overflow">
 
                     <div className="grid-block small-12 medium-6 vertical no-overflow" style={{paddingBottom: 0}}>
-                        <div className="grid-block vertical no-overflow generic-bordered-box">
-                            <div ref="operationsText">
-                                <div className="block-content-header">
-                                    <Translate content="account.recent" />
-                                </div>
-                                <table className="table">
-                                    <thead>
-                                        <tr>
-                                            <th><Translate content="account.votes.info" /></th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                            <div className="grid-block" style={{maxHeight: operationsHeight || "400px", overflow: "hidden", }} ref="operations">
-                                <table className="table">
-                                    <tbody>
-                                        {transactions}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+
                     </div>
                     <div className="grid-block medium-6 show-for-medium vertical no-overflow" style={{paddingBottom: 0, paddingLeft: 5}}>
-                        <div className="grid-block vertical no-overflow generic-bordered-box">
-                                <div ref="blocksText">
-                                    <div className="block-content-header">
-                                        <Translate component="span" content="explorer.blocks.recent" />
-                                    </div>
-                                </div>
-                                <div className="grid-block vertical" style={{maxHeight: blocksHeight || "438px", overflow: "hidden", }} ref="blocks">
 
-                                <table className="table">
-                                    <thead>
-                                        <tr>
-                                            <th><Translate component="span" content="explorer.block.id" /></th>
-                                            <th><Translate component="span" content="explorer.block.date" /></th>
-                                            <th><Translate component="span" content="explorer.block.witness" /></th>
-                                            <th><Translate component="span" content="explorer.block.count" /></th>
-                                        </tr>
-                                    </thead>
-
-                                    <TransitionWrapper
-                                        component="tbody"
-                                        transitionName="newrow"
-                                    >
-                                        {blocks}
-                                    </TransitionWrapper>
-                                </table>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

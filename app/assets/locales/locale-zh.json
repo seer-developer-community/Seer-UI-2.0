@@ -1226,7 +1226,7 @@
         "show_star_1": "仅显示",
         "show_star_2": "",
         "quote": "报价货币：",
-        "search": "搜索更多交易对",
+        "search": "请输入交易对查询",
         "order_value": "委单价值"
     },
     "fees": {
@@ -1237,6 +1237,8 @@
         "base": "基准资产",
         "market_search": "交易对市场搜索",
         "filter": "筛选",
+        "input_code_filter":"请输入代码查询",
+        "input_account_filter":"请输入账户名查询",
         "core_rate": "手续费汇率",
         "supply": "供应量",
         "search": "搜索",

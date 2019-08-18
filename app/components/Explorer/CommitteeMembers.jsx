@@ -10,6 +10,7 @@ import { connect } from "alt-react";
 import SettingsActions from "actions/SettingsActions";
 import SettingsStore from "stores/SettingsStore";
 import Explorer from "./Explorer";
+import counterpart from "counterpart";
 
 class CommitteeMemberCard extends React.Component {
 
@@ -35,15 +36,17 @@ class CommitteeMemberCard extends React.Component {
 
         return (
             <div className="grid-content account-card" onClick={this._onCardClick.bind(this)}>
-                <div className="card">
-                    <h4 className="text-center">{this.props.committee_member.get("name")}</h4>
+                <div className="card" style={{background:"#fff",border:"1px solid #EFEFEF"}}>
+                    <div style={{height:60,lineHeight:"60px",background:"#f2f2f2",fontSize:"20px",color:"#0c0D26",fontWeight:"bold",textAlign:"center"}}>
+                      #{this.props.rank}:{this.props.committee_member.get("name")}
+                    </div>
                     <div className="card-content clearfix">
-                        <div className="float-left">
-                            <AccountImage account={this.props.committee_member.get("name")} size={{height: 64, width: 64}}/>
+                        <div style={{textAlign:"center",marginTop:"15px"}}>
+                            <AccountImage account={this.props.committee_member.get("name")} size={{height: 80, width: 80}}/>
                         </div>
-                        <ul className="balances">
-                            <li><Translate content="account.votes.votes" />: <FormattedAsset decimalOffset={5} amount={committee_member_data.get("total_votes")} asset={"1.3.0"}/></li>
-                        </ul>
+                        <div style={{fontSize:"14px",color:"#666",margin:"31px 0 18px 0",textAlign:"center"}}>
+                          <Translate content="account.votes.votes" />: <FormattedAsset decimalOffset={5} amount={committee_member_data.get("total_votes")} asset={"1.3.0"}/>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -185,13 +188,13 @@ class CommitteeMemberList extends React.Component {
         // table view
         if (!cardView) {
             return (
-                <table className="table table-hover">
+                <table className="table table-hover dashboard-table even-bg">
                     <thead>
                         <tr>
-                            <th className="clickable" onClick={this._setSort.bind(this, 'rank')}><Translate content="explorer.witnesses.rank" /></th>
-                            <th className="clickable" onClick={this._setSort.bind(this, 'name')}><Translate content="account.votes.name" /></th>
-                            <th className="clickable" onClick={this._setSort.bind(this, 'total_votes')}><Translate content="account.votes.votes" /></th>
-                            <th ><Translate content="account.votes.url" /></th>
+                            <th width="25%" className="clickable" onClick={this._setSort.bind(this, 'rank')}><Translate content="explorer.witnesses.rank" /></th>
+                            <th width="25%" className="clickable" onClick={this._setSort.bind(this, 'name')}><Translate content="account.votes.name" /></th>
+                            <th width="25%" className="clickable" onClick={this._setSort.bind(this, 'total_votes')}><Translate content="account.votes.votes" /></th>
+                            <th width="25%"><Translate content="account.votes.url" /></th>
                         </tr>
                     </thead>
                 <tbody>
@@ -268,38 +271,51 @@ class CommitteeMembers extends React.Component {
             }
         }
 
-        let content = 
-            <div className="grid-block">
-                <div className="grid-block vertical medium-horizontal">
-                    <div className="grid-block shrink">
-                        <div className="grid-content">
-                            <h5><Translate content="explorer.committee_members.active" />: {Object.keys(globalObject.active_committee_members).length}</h5>
-                            <br/>
-                            <div className="view-switcher">
-                                <span className="button outline" onClick={this._toggleView.bind(this)}>{!this.state.cardView ? <Translate content="explorer.witnesses.card"/> : <Translate content="explorer.witnesses.table"/>}</span>
-                            </div>
-                        </div>
+        let placeholder = counterpart.translate("markets.input_account_filter").toUpperCase();
 
-                    </div>
-                    <div className="grid-block vertical">
-                            <div className="grid-block vertical shrink">
-                                <Translate component="h3" content="markets.filter" />
-                                <input type="text" value={this.state.filterCommitteeMember} onChange={this._onFilter.bind(this)} />
+        let content =
+          <div style={{padding:"37px 20px 20px 20px"}}>
+
+              <table width="100%">
+                  <tr>
+                        <td>
+                          <div style={{fontSize:16,color:"#0c0d26",fontWeight:"bold",display:"inline-block"}}>
+                            <Translate content="explorer.committee_members.active" />: {Object.keys(globalObject.active_committee_members).length}
+                          </div>
+                        </td>
+                        <td style={{"text-align":"right"}}>
+                          <div style={{display:"inline-block"}}>
+                            <div className="input-search" style={{marginBottom: "1rem",maxWidth: "16rem"}} >
+                              <svg className="icon" aria-hidden="true">
+                                <use xlinkHref="#icon-sousuo"></use>
+                              </svg>
+                              <input placeholder={placeholder} type="text" value={this.state.filterCommitteeMember} onChange={this._onFilter.bind(this)} />
                             </div>
-                            <div className="grid-content">
-                                <CommitteeMemberList
-                                    committee_members={Immutable.List(globalObject.active_committee_members)}
-                                    membersList={globalObject.active_committee_members}
-                                    filter={this.state.filterCommitteeMember}
-                                    cardView={this.state.cardView}
-                                />
-                            </div>
-                        </div>
-                </div>
-            </div>
+                          </div>
+                          &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                            <span className="flex-align-middle" onClick={this._toggleView.bind(this)} style={{color:"#449E7B",fontSize:"15px",float:"right",position:"relative",top:20}}>
+                              <svg className="icon" aria-hidden="true" style={{width:18,height:18}}>
+                                <use xlinkHref="#icon-qiapianshitu"></use>
+                              </svg>
+                                &nbsp;&nbsp;
+                                {
+                                  !this.state.cardView ? <Translate content="explorer.witnesses.card"/> : <Translate content="explorer.witnesses.table"/>
+                                }
+                          </span>
+                        </td>
+                  </tr>
+              </table>
+                <br/><br/>
+            <CommitteeMemberList
+              committee_members={Immutable.List(globalObject.active_committee_members)}
+              membersList={globalObject.active_committee_members}
+              filter={this.state.filterCommitteeMember}
+              cardView={this.state.cardView}
+            />
+          </div>
         ;
         
-        return (<Explorer tab="committee_members" content={content}/>);
+        return content;//(<Explorer tab="committee_members" content={content}/>);
         
     }
 }

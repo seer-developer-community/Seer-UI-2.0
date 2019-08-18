@@ -19,7 +19,7 @@
 @include font-face(Roboto-Medium, 'vendors/Roboto-Medium', normal, normal);
 @mixin RobotoMedium {
   font-family: 'Roboto-Medium', arial, sans-serif;
-  font-weight: normal;
+  //font-weight: normal;
   font-style: normal;
 }
 

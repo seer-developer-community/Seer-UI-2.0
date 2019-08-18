@@ -26,7 +26,7 @@ class AssetsContainer extends React.Component {
                         <Assets/>
                     </AltContainer>;
         
-        return (<Explorer tab="assets" content={content}/>);
+        return content;// (<Explorer tab="assets" content={content}/>);
         }
     }
 

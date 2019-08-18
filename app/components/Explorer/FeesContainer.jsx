@@ -9,7 +9,7 @@ class FeesContainer extends React.Component {
 
         let content = <RealFeesContainer/>;
 
-        return (<Explorer tab="fees" content={content}/>);
+        return content;//(<Explorer tab="fees" content={content}/>);
 
     }
 }
