@@ -98,7 +98,7 @@ class LoginSelector extends React.Component {
                             <div>
                                 <Translate content="account.intro_text_title" component="h4"/>
                                 <Translate unsafe content="account.intro_text_1" component="p" />
-                               
+
                                 <div className="shrink text-center">
                                     <div className="grp-menu-item overflow-visible account-drop-down">
                                         <div className="grp-menu-item overflow-visible" style={{margin:"0 auto"}} data-intro={translator.translate("walkthrough.language_flag")}>
@@ -108,7 +108,7 @@ class LoginSelector extends React.Component {
                                 </div>
                             </div>
                         }
-                        
+
                         {!!childCount ? null :
                         <div className="grid-block account-login-options">
                             <Link to="/create-account/wallet" className="button primary" data-intro={translator.translate("walkthrough.create_cloud_wallet")}>
@@ -128,7 +128,6 @@ class LoginSelector extends React.Component {
                         <div className="additional-account-options">
                             <p>Optionally, <Link to="/wallet/backup/restore" data-intro={translator.translate("walkthrough.restore_account")}>restore your account</Link> or create an account using the <Link to="/create-account/wallet" data-intro={translator.translate("walkthrough.create_local_wallet")}>advanced form</Link>.</p>
                         </div>}
-
                         {this.props.children}
                     </div>
                 </div>

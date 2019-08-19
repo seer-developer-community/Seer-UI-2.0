@@ -35,29 +35,37 @@ const routes = (
         }}/>
         <Route path="explorer" getComponent={(location, cb) => {
             System.import("components/Explorer/Explorer").then(loadRoute(cb)).catch(errorLoading);
-        }}/>
-        <Route path="/explorer/fees" getComponent={(location, cb) => {
-            System.import("components/Explorer/FeesContainer").then(loadRoute(cb)).catch(errorLoading);
-        }}/>
-        <Route path="/explorer/blocks" getComponent={(location, cb) => {
-            System.import("components/Explorer/BlocksContainer").then(loadRoute(cb)).catch(errorLoading);
-        }}/>
-        <Route path="/explorer/assets" getComponent={(location, cb) => {
-            System.import("components/Explorer/AssetsContainer").then(loadRoute(cb)).catch(errorLoading);
-        }}/>
-        <Route path="/explorer/accounts" getComponent={(location, cb) => {
-            System.import("components/Explorer/AccountsContainer").then(loadRoute(cb)).catch(errorLoading);
-        }}/>
-        <Route path="/explorer/witnesses" getComponent={(location, cb) => {
-            System.import("components/Explorer/Witnesses").then(loadRoute(cb)).catch(errorLoading);
-        }}/>
-        <Route path="/explorer/committee-members" getComponent={(location, cb) => {
-            System.import("components/Explorer/CommitteeMembers").then(loadRoute(cb)).catch(errorLoading);
-        }}/>
+        }}>
+            <Route path="/explorer/fees" getComponent={(location, cb) => {
+                System.import("components/Explorer/FeesContainer").then(loadRoute(cb)).catch(errorLoading);
+            }}/>
+            <Route path="/explorer/blocks" getComponent={(location, cb) => {
+                System.import("components/Explorer/BlocksContainer").then(loadRoute(cb)).catch(errorLoading);
+            }}/>
+            <Route path="/explorer/assets" getComponent={(location, cb) => {
+                System.import("components/Explorer/AssetsContainer").then(loadRoute(cb)).catch(errorLoading);
+            }}/>
+            <Route path="/explorer/accounts" getComponent={(location, cb) => {
+                System.import("components/Explorer/AccountsContainer").then(loadRoute(cb)).catch(errorLoading);
+            }}/>
+            <Route path="/explorer/witnesses" getComponent={(location, cb) => {
+                System.import("components/Explorer/Witnesses").then(loadRoute(cb)).catch(errorLoading);
+            }}/>
+            <Route path="/explorer/committee-members" getComponent={(location, cb) => {
+                System.import("components/Explorer/CommitteeMembers").then(loadRoute(cb)).catch(errorLoading);
+            }}/>
+            <Route path="/explorer/oracles" getComponent={(location, cb) => {
+                System.import("components/Explorer/Oracles").then(loadRoute(cb)).catch(errorLoading);
+            }}/>
+            <Route path="asset/:symbol" getComponent={(location, cb) => {
+                System.import("components/Blockchain/Asset").then(loadRoute(cb)).catch(errorLoading);
+            }}/>
+            <Route path="markets" getComponent={(location, cb) => {
+                System.import("components/Explorer/MarketsContainer").then(loadRoute(cb)).catch(errorLoading);
+            }}/>
+        </Route>
 
-        <Route path="/explorer/oracles" getComponent={(location, cb) => {
-            System.import("components/Explorer/Oracles").then(loadRoute(cb)).catch(errorLoading);
-        }}/>
+
         <Route path="/houses" getComponent={(location, cb) => {
             System.import("components/Explorer/Houses").then(loadRoute(cb)).catch(errorLoading);
         }}/>
@@ -121,9 +129,6 @@ const routes = (
         <Route path="invoice/:data" getComponent={(location, cb) => {
             System.import("components/Transfer/Invoice").then(loadRoute(cb)).catch(errorLoading);
         }}/>
-        <Route path="explorer/markets" getComponent={(location, cb) => {
-            System.import("components/Explorer/MarketsContainer").then(loadRoute(cb)).catch(errorLoading);
-        }}/>
         <Route path="market/:marketID" getComponent={(location, cb) => {
             System.import("components/Exchange/ExchangeContainer").then(loadRoute(cb)).catch(errorLoading);
         }}/>
@@ -136,9 +141,7 @@ const routes = (
         <Route path="block/:height" getComponent={(location, cb) => {
             System.import("components/Blockchain/BlockContainer").then(loadRoute(cb)).catch(errorLoading);
         }}/>
-        <Route path="asset/:symbol" getComponent={(location, cb) => {
-            System.import("components/Blockchain/Asset").then(loadRoute(cb)).catch(errorLoading);
-        }}/>
+
         <Route path="create-account" getComponent={(location, cb) => {
             System.import("components/LoginSelector").then(loadRoute(cb)).catch(errorLoading);
         }}>

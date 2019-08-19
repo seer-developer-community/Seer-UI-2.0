@@ -172,6 +172,14 @@ class Fees extends React.Component {
             let groupNameText = FeeGroupsTitle[groupName];
             let feeIds = fee_grouping[groupName];
             feeGroups.push(<FeeGroup key={groupName} settings={this.props.settings} opIds={feeIds} title={groupNameText}/>);
+
+
+            if(!this.state.currentFeeIds){
+                this.state.currentFeeIds = feeIds;
+                this.state.currentGroupName = groupName;
+                this.state.currentGroupNameText = groupNameText;
+            }
+
             if(this.state.currentGroupName === groupName){
               typesButton.push(
                 <div key={groupName} onClick={e=>{this.typeSelect(feeIds)}} style={{display:"inline-block",width:99,height:35,lineHeight:"35px",
@@ -188,12 +196,6 @@ class Fees extends React.Component {
                   {groupNameText}
                 </div>
               );
-            }
-
-            if(!this.state.currentFeeIds){
-                this.state.currentFeeIds = feeIds;
-                this.state.currentGroupName = groupName;
-                this.state.currentGroupNameText = groupNameText;
             }
         }
 

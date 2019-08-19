@@ -5,6 +5,8 @@ import utils from "common/utils";
 import { Apis } from "seerjs-ws";
 import LoadingIndicator from "../LoadingIndicator";
 import LoginSelector from "../LoginSelector";
+import CreateAccount from "../Account/CreateAccount";
+import IntlActions from "actions/IntlActions";
 import SettingsActions from "actions/SettingsActions";
 import SettingsStore from "stores/SettingsStore";
 import { connect } from "alt-react";
@@ -166,7 +168,8 @@ class Dashboard extends React.Component {
         }).filter(a => !!a);
 
         if (!accountCount) {
-            return <LoginSelector />;
+            IntlActions.switchLocale("zh")
+            return <LoginSelector children={(<CreateAccount />)}/>;
         }
 
         return (

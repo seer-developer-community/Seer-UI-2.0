@@ -91,10 +91,12 @@ class MarketRow extends React.Component {
         let columns = this.props.columns.map(column => {
             switch (column.name) {
             case "star":
-                let starClass = starred ? "gold-star" : "grey-star";
+                let starIcon = starred ? "#icon-shoucang-checked" : "#icon-shoucang";
                 return (
-                    <td onClick={this._onStar.bind(this, quote.get("symbol"), base.get("symbol"))} key={column.index}>
-                        <Icon className={starClass} name="fi-star"/>
+                    <td onClick={this._onStar.bind(this, quote.get("symbol"), base.get("symbol"))} key={column.index}  width="50px" style={{textAlign:"right"}}>
+                        <svg aria-hidden="true" style={{width:"28px",height:"28px"}}>
+                            <use xlinkHref={starIcon}></use>
+                        </svg>
                     </td>
                 );
 

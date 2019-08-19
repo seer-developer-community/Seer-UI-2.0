@@ -1870,6 +1870,10 @@ $input-border
           font-weight: bold;
         }
 
+        >tbody > tr {
+          border-bottom: none;
+        }
+
         tr:nth-child(even) td{background-color:#F8F8FA;}
       }
     }

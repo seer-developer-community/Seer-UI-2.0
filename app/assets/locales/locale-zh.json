@@ -1223,7 +1223,7 @@
         "featured": "热门市场",
         "new": "新增",
         "market_frozen": "%(asset)s 资产发行人未创建该交易对",
-        "show_star_1": "仅显示",
+        "show_star_1": "仅显示收藏",
         "show_star_2": "",
         "quote": "报价货币：",
         "search": "请输入交易对查询",

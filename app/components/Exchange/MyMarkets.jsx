@@ -124,13 +124,13 @@ class MarketGroup extends React.Component {
         let headers = columns.map(header => {
             switch (header.name) {
             case "market":
-                return <th key={header.name} className="clickable" onClick={this._changeSort.bind(this, "name")}><Translate content="exchange.market" /></th>;
+                return <th key={header.name} className="clickable" onClick={this._changeSort.bind(this, "name")} colSpan={2}><Translate content="exchange.market"/></th>;
 
             case "vol":
-                return <th key={header.name} className="clickable" onClick={this._changeSort.bind(this, "volume")}style={{textAlign: "right"}}><Translate content="exchange.vol_short" /></th>;
+                return <th key={header.name} className="clickable" onClick={this._changeSort.bind(this, "volume")}><Translate content="exchange.vol_short" /></th>;
 
             case "price":
-                return <th key={header.name} style={{textAlign: "right"}}><Translate content="exchange.price" /></th>;
+                return <th key={header.name}><Translate content="exchange.price" /></th>;
 
             case "quoteSupply":
                 return <th key={header.name}><Translate content="exchange.quote_supply" /></th>;
@@ -139,7 +139,7 @@ class MarketGroup extends React.Component {
                 return <th key={header.name}><Translate content="exchange.base_supply" /></th>;
 
             case "change":
-                return <th key={header.name} className="clickable" onClick={this._changeSort.bind(this, "change")} style={{textAlign: "right"}}><Translate content="exchange.change" /></th>;
+                return <th key={header.name} className="clickable" onClick={this._changeSort.bind(this, "change")}><Translate content="exchange.change" /></th>;
 
             case "issuer":
                 return <th key={header.name}><Translate content="explorer.assets.issuer" /></th>;
@@ -148,7 +148,7 @@ class MarketGroup extends React.Component {
                 return <th key={header.name} style={{textAlign: "right"}}><Translate content="account.perm.confirm_add" /></th>;
 
             default:
-                return <th key={header.name}></th>;
+                return null;//<th key={header.name}></th>;
             }
         });
 
@@ -228,7 +228,7 @@ class MarketGroup extends React.Component {
         return (
             <div style={{paddingRight: 10}}>
                 {open ? (
-                <table className="table table-hover text-right">
+                <table className="table table-hover text-right dashboard-table even-bg">
                     <thead>
                         <tr>{headers}</tr>
                     </thead>
@@ -682,28 +682,28 @@ class MyMarkets extends React.Component {
                   <td>
 
                     {myMarketTab ?
-                      <div className="grid-block shrink" style={{width: "100%", textAlign: "left"}}>
-                        <div className="input-search" style={{marginBottom: "1rem",maxWidth: "16rem"}} >
+                      <div style={{display:"flex",justifyContent:"flex-end",alignItems: "flex-end"}}>
+                        <div className="input-search" style={{maxWidth: "16rem"}} >
                           <svg className="icon" aria-hidden="true">
                             <use xlinkHref="#icon-sousuo"></use>
                           </svg>
                           <input placeholder={placeholder} type="text" value={this.state.myMarketFilter} onChange={this.handleSearchUpdate}  />
                         </div>
-
-                        <label style={{margin: "3px 0 0"}}>
-                          <input style={{position: "relative", top: 3}} className="no-margin" type="checkbox" checked={this.props.onlyStars} onChange={() => {MarketsActions.toggleStars();}}/>
-                          <span>&nbsp;<Translate content="exchange.show_star_1" /><Icon className="gold-star" name="fi-star"/> <Translate content="exchange.show_star_2" /></span>
-                        </label>
-
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          <div className="agree-auxiliaries flex-align-middle">
+                              <input className="cbox" id="ck_agree" type="checkbox" checked={this.props.onlyStars} onChange={() => {MarketsActions.toggleStars();}}/>
+                              <label className="checkbox-mask" htmlFor="ck_agree" style={{width:"22px"}}></label>
+                              <Translate content="exchange.show_star_1" style={{display:"inline",fontSize:"14px",color:"#666"}}/>
+                          </div>
                       </div> :
 
                       <div style={{display:"flex",justifyContent:"flex-end",alignItems: "flex-end"}}>
-                        <div className="input-search" style={{marginBottom: "1rem",maxWidth: "16rem"}} >
+                        <div className="input-search" style={{maxWidth: "16rem"}} >
                           <Translate content="exchange.quote" style={{fontSize:"14px",color:"#666",width:"120px",height:"25px",lineHeight:"25px",position:"relative",top:10}}/>
                           <input style={{fontSize:14,position:"relative",top:5}} placeholder={placeholder} type="text" value={this.state.findBaseInput} onChange={e=>{this._onInputBaseAsset.bind(this)(e.target.value); }} />
                         </div>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <div className="input-search" style={{marginBottom: "1rem",maxWidth: "16rem"}} >
+                        <div className="input-search" style={{maxWidth: "16rem"}} >
                           <svg className="icon" aria-hidden="true">
                             <use xlinkHref="#icon-sousuo"></use>
                           </svg>
@@ -759,11 +759,11 @@ class MyMarkets extends React.Component {
                         </li>) : null}
                 </ul>
 
+                    <br/><br/>
                 <div
                     style={listStyle}
                     className="table-container grid-block vertical mymarkets-list"
-                    ref="favorites"
-                >
+                    ref="favorites">
                     {assetsLoading ? <div style={{position: "absolute", paddingTop: "3rem", textAlign: "center", width: "100%"}}><LoadingIndicator type="three-bounce" /></div> : null}
                     {preferredBases.filter(a => {return a === preferredBases.get(activeMarketTab);}).map((base, index) => {
                         return <MarketGroup
