@@ -537,7 +537,7 @@ class HeaderNav extends React.Component {
                                 </a>
                             </li>
                             <li>
-                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("exchange") !== -1 ? null : "column-hide-xs", {active: active.indexOf("exchange") !== -1})} onClick={this._onNavigate.bind(this, "/exchange")}>
+                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("market") !== -1 ? null : "column-hide-xs", {active: active.indexOf("market") !== -1})} onClick={this._onNavigate.bind(this, tradeUrl)}>
                                     <Translate className="column-hide-small" component="span" content="header.exchange" />
                                 </a>
                             </li>

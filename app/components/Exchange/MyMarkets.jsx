@@ -275,7 +275,8 @@ class MyMarkets extends React.Component {
             inputValue: "",
             minWidth: "100%",
             findBaseInput: "SEER",
-            activeFindBase: "SEER"
+            activeFindBase: "SEER",
+            myMarketFilter:""
         };
 
         this._setMinWidth = this._setMinWidth.bind(this);
@@ -667,52 +668,54 @@ class MyMarkets extends React.Component {
         return (
             <div style={{width:"100%"}}>
               <table width="100%">
-                <tr>
-                  <td>
-                    <div className="flex-align-middle">
-                      <div ref="myMarkets" className={starClass} onClick={this._changeTab.bind(this, "my-market")} data-intro={translator.translate("walkthrough.my_markets_tab")}>
-                        <Translate content="exchange.market_name" />
-                      </div>
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <div className={allClass} onClick={this._changeTab.bind(this, "find-market")} data-intro={translator.translate("walkthrough.find_markets_tab")}>
-                        <Translate content="exchange.more" />
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-
-                    {myMarketTab ?
-                      <div style={{display:"flex",justifyContent:"flex-end",alignItems: "flex-end"}}>
-                        <div className="input-search" style={{maxWidth: "16rem"}} >
-                          <svg className="icon" aria-hidden="true">
-                            <use xlinkHref="#icon-sousuo"></use>
-                          </svg>
-                          <input placeholder={placeholder} type="text" value={this.state.myMarketFilter} onChange={this.handleSearchUpdate}  />
-                        </div>
-                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                          <div className="agree-auxiliaries flex-align-middle">
-                              <input className="cbox" id="ck_agree" type="checkbox" checked={this.props.onlyStars} onChange={() => {MarketsActions.toggleStars();}}/>
-                              <label className="checkbox-mask" htmlFor="ck_agree" style={{width:"22px"}}></label>
-                              <Translate content="exchange.show_star_1" style={{display:"inline",fontSize:"14px",color:"#666"}}/>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <div className="flex-align-middle">
+                          <div ref="myMarkets" className={starClass} onClick={this._changeTab.bind(this, "my-market")} data-intro={translator.translate("walkthrough.my_markets_tab")}>
+                            <Translate content="exchange.market_name" />
                           </div>
-                      </div> :
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          <div className={allClass} onClick={this._changeTab.bind(this, "find-market")} data-intro={translator.translate("walkthrough.find_markets_tab")}>
+                            <Translate content="exchange.more" />
+                          </div>
+                        </div>
+                      </td>
+                      <td>
 
-                      <div style={{display:"flex",justifyContent:"flex-end",alignItems: "flex-end"}}>
-                        <div className="input-search" style={{maxWidth: "16rem"}} >
-                          <Translate content="exchange.quote" style={{fontSize:"14px",color:"#666",width:"120px",height:"25px",lineHeight:"25px",position:"relative",top:10}}/>
-                          <input style={{fontSize:14,position:"relative",top:5}} placeholder={placeholder} type="text" value={this.state.findBaseInput} onChange={e=>{this._onInputBaseAsset.bind(this)(e.target.value); }} />
-                        </div>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <div className="input-search" style={{maxWidth: "16rem"}} >
-                          <svg className="icon" aria-hidden="true">
-                            <use xlinkHref="#icon-sousuo"></use>
-                          </svg>
-                          <input placeholder={placeholder} type="text" value={this.state.inputValue} onChange={this._onInputName.bind(this)} />
-                        </div>
-                      </div>
-                    }
-                  </td>
-                </tr>
+                        {myMarketTab ?
+                          <div style={{display:"flex",justifyContent:"flex-end",alignItems: "flex-end"}}>
+                            <div className="input-search" style={{maxWidth: "16rem"}} >
+                              <svg className="icon" aria-hidden="true">
+                                <use xlinkHref="#icon-sousuo"></use>
+                              </svg>
+                              <input placeholder={placeholder} type="text" value={this.state.myMarketFilter} onChange={this.handleSearchUpdate}  />
+                            </div>
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                              <div className="agree-auxiliaries flex-align-middle">
+                                  <input className="cbox" id="ck_agree" type="checkbox" checked={this.props.onlyStars} onChange={() => {MarketsActions.toggleStars();}}/>
+                                  <label className="checkbox-mask" htmlFor="ck_agree" style={{width:"22px"}}></label>
+                                  <Translate content="exchange.show_star_1" style={{display:"inline",fontSize:"14px",color:"#666"}}/>
+                              </div>
+                          </div> :
+
+                          <div style={{display:"flex",justifyContent:"flex-end",alignItems: "flex-end"}}>
+                            <div className="input-search" style={{maxWidth: "16rem"}} >
+                              <Translate content="exchange.quote" style={{fontSize:"14px",color:"#666",width:"120px",height:"25px",lineHeight:"25px",position:"relative",top:10}}/>
+                              <input style={{fontSize:14,position:"relative",top:5}} placeholder={placeholder} type="text" value={this.state.findBaseInput} onChange={e=>{this._onInputBaseAsset.bind(this)(e.target.value); }} />
+                            </div>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <div className="input-search" style={{maxWidth: "16rem"}} >
+                              <svg className="icon" aria-hidden="true">
+                                <use xlinkHref="#icon-sousuo"></use>
+                              </svg>
+                              <input placeholder={placeholder} type="text" value={this.state.inputValue} onChange={this._onInputName.bind(this)} />
+                            </div>
+                          </div>
+                        }
+                      </td>
+                    </tr>
+                  </tbody>
               </table>
                 <div className={this.props.className} style={this.props.style}>
                     {/*<div style={this.props.headerStyle} className="grid-block shrink left-orderbook-header bottom-header">*/}
