@@ -1296,10 +1296,18 @@ $input-border
         }
     }
 
-    .order-table .my-order {
+  .order-table{
+    > tbody > tr > td {
+      color: #666;
+      font-size: 12px;
+      font-weight: normal;
+    }
+  }
+  .order-table .my-order {
         > .vertical-order-table-cell, > td {
-          font-weight: bold;
-          color: $info-color;
+          color: #666;
+          font-size: 12px;
+          font-weight: normal;
         }
 
         span.price-integer, span.price-decimal {

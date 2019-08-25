@@ -328,17 +328,12 @@ class MyOpenOrders extends React.Component {
                 key="open_orders"
                 className={this.props.className}
             >
-                <div className="exchange-bordered small-12" style={{height: 266}}>
-                    <div className="grid-block shrink left-orderbook-header">
-                        <div style={{width: myOrdersWidth}} className={myOrdersClass} onClick={this._changeTab.bind(this, "my_orders")}>
-                            <Translate content="exchange.my_orders" />
-                        </div>
-                        <div style={{display: openSettlementWidth}} className={openSettlementClass} onClick={this._changeTab.bind(this, "open_settlement")}>
-                            <Translate content="exchange.settle_orders" />
-                        </div>
-                    </div>
+                <div className="exchange-bordered small-12" style={{height: 266,margin:0,padding:0}}>
+                  <div style={{background:"#f7f7f7",height:"37px",lineHeight:"37px",fontSize:"14px",color:"#333",fontWeight:"bold",paddingLeft:12}}>
+                    <Translate content="exchange.my_orders"/>
+                  </div>
                     <div className="grid-block shrink left-orderbook-header market-right-padding-only">
-                        <table className="table order-table text-right fixed-table market-right-padding">
+                        <table className="table order-table text-right fixed-table market-right-padding dashboard-table">
                             {activeTab == "my_orders" ? 
                                 <TableHeader rightAlign type="sell" baseSymbol={baseSymbol} quoteSymbol={quoteSymbol} />
                                 :

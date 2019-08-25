@@ -1204,6 +1204,8 @@
         "settle_orders": "清算单",
         "asks": "卖单",
         "bids": "买单",
+        "bids_and_asks":"盘口",
+        "depth_chart":"深度图",
         "no_data": "暂无数据",
         "time": "时间周期",
         "zoom": "缩放",

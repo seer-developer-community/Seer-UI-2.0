@@ -60,13 +60,14 @@ class OrderBookRowHorizontal extends React.Component {
     }
 
     render() {
-        let {order, quote, base, position} = this.props;
+        let {order, quote, base, position,priceColor} = this.props;
         const isBid = order.isBid();
         const isCall = order.isCall();
 
         let integerClass = isCall ? "orderHistoryCall" : isBid ? "orderHistoryBid" : "orderHistoryAsk";
 
-        let price = <PriceText price={order.getPrice()} quote={quote} base={base} />;
+        let price = utils.price_to_text(order.getPrice(), quote, base);
+
         let amount = isBid ?
             utils.format_number(order.amountToReceive().getAmount({real: true}), quote.get("precision")) :
             utils.format_number(order.amountForSale().getAmount({real: true}), quote.get("precision"));
@@ -81,14 +82,18 @@ class OrderBookRowHorizontal extends React.Component {
             <tr onClick={this.props.onClick} className={order.isMine(this.props.currentAccount) ? "my-order" : ""} >
                 {position === "left" ? <td>{total}</td> :
                 <td style={{width: "25%"}} className={integerClass}>
-                    {price}
+                  {price.int}.
+                  {price.dec ? price.dec :null}
+                  {price.trailing ? price.trailing :null}
                 </td>
                 }
                 <td>{position === "left" ? value : amount}</td>
                 <td>{position === "left" ? amount : value}</td>
                 {position === "right" ? <td>{total}</td> :
-                <td style={{width: "25%"}} className={integerClass}>
-                    {price}
+                <td style={{width: "25%",color:priceColor}} className={integerClass}>
+                  {price.int}.
+                  {price.dec ? price.dec :null}
+                  {price.trailing ? price.trailing :null}
                 </td>
                 }
             </tr>
@@ -259,6 +264,7 @@ class OrderBook extends React.Component {
                         base={base}
                         quote={quote}
                         position={!this.state.flip ? "left" : "right"}
+                        priceColor="#EC5857"
                         currentAccount={this.props.currentAccount}
                     /> :
                     <OrderBookRowVertical
@@ -291,7 +297,8 @@ class OrderBook extends React.Component {
                         base={base}
                         quote={quote}
                         type={order.type}
-                        position={!this.state.flip ? "right" : "left"}
+                        position={!this.state.flip ? "left" : "right"}
+                        priceColor="#4EA382"
                         currentAccount={this.props.currentAccount}
                     /> :
                     <OrderBookRowVertical
@@ -326,126 +333,154 @@ class OrderBook extends React.Component {
 
             let leftHeader = (
                 <thead>
-                    <tr key="top-header" className="top-header">
-                        <th><Translate className="header-sub-title" content="exchange.total" /><span className="header-sub-title"> (<AssetName dataPlace="top" name={baseSymbol} />)</span></th>
-                        <th><span className="header-sub-title"><AssetName dataPlace="top" name={baseSymbol} /></span></th>
-                        <th><span className="header-sub-title"><AssetName dataPlace="top" name={quoteSymbol} /></span></th>
-                        <th>
-                            <Translate className={(this.state.flip ? "ask-total" : "bid-total") + " header-sub-title"} content="exchange.price" />
-                        </th>
-                    </tr>
-                </thead>
-            );
-
-            let rightHeader = (
-                <thead>
-                    <tr key="top-header" className="top-header">
-                        <th>
-                            <Translate className={(!this.state.flip ? "ask-total" : "bid-total") + " header-sub-title"} content="exchange.price" />
-                        </th>
-                        <th><span className="header-sub-title"><AssetName dataPlace="top" name={quoteSymbol} /></span></th>
-                        <th><span className="header-sub-title"><AssetName dataPlace="top" name={baseSymbol} /></span></th>
-                        <th><Translate className="header-sub-title" content="exchange.total" /><span className="header-sub-title"> (<AssetName dataPlace="top" name={baseSymbol} />)</span></th>
+                    <tr key="top-header" className="top-header" height="32px">
+                        <th style={{border:"none",fontSize:"12px",color:"#333",fontWeight:"bold",whiteSpace:"nowrap"}}><Translate className="header-sub-title" content="exchange.total" /><span className="header-sub-title"> (<AssetName dataPlace="top" name={baseSymbol} />)</span></th>
+                        <th style={{border:"none",fontSize:"12px",color:"#333",fontWeight:"bold"}}><span className="header-sub-title"><AssetName dataPlace="top" name={baseSymbol} /></span></th>
+                        <th style={{border:"none",fontSize:"12px",color:"#333",fontWeight:"bold"}}><span className="header-sub-title"><AssetName dataPlace="top" name={quoteSymbol} /></span></th>
+                        <th style={{border:"none",fontSize:"12px",color:"#333",fontWeight:"bold"}}><span className="header-sub-title"><Translate content="exchange.price" /></span></th>
                     </tr>
                 </thead>
             );
 
             const translator = require("counterpart");
 
-            return (
-                    <div className={classnames(this.props.wrapperClass, "grid-block orderbook no-padding small-vertical align-spaced no-overflow small-12 xlarge-8")}>
-                      {/*<div className={classnames(this.props.wrapperClass, "grid-block orderbook no-padding small-vertical medium-horizontal align-spaced no-overflow small-12 xlarge-8")}>*/}
-                        <div className={classnames("small-12 medium-6 middle-content", this.state.flip ? "order-1" : "order-2")}>
-                            <div className="exchange-bordered">
-                                <div className="exchange-content-header ask" data-intro={translator.translate("walkthrough.sell_orders")}>
-                                    <Translate content="exchange.asks" />
-                                    {this.state.flip ? (
-                                    <div style={{display:"inline-block"}}>
-                                        <span onClick={this._flipBuySell.bind(this)} style={{cursor: "pointer", fontSize: "1rem", marginLeft: "4px", position: "relative", top: "-2px"}} className="flip-arrow">  &#8646;</span>
-                                        <span className="order-book-button-v" onClick={this.props.moveOrderBook}>
-                                            <Icon name="thumb-tack" className="icon-14px" />
-                                        </span>
-                                    </div>) : null}
-                                    <div style={{lineHeight: "16px"}} className="float-right header-sub-title">
-                                        <Translate content="exchange.total" />
-                                        <span>: </span>
-                                        {utils.format_number(totalAsks, quote.get("precision"))}
-                                        <span> (<AssetName name={quoteSymbol} />)</span>
-                                    </div>
-                                </div>
-                                <div style={{paddingRight: "0.6rem"}}>
-                                    <table className="table order-table table-hover fixed-table text-right">
-                                        {!this.state.flip ? rightHeader : leftHeader}
-                                    </table>
-                                </div>
-                                <div className="grid-block" ref="hor_asks" style={{paddingRight: "0.6rem", overflow: "hidden", maxHeight: 210}}>
-                                    <table style={{paddingBottom: 5}} className="table order-table table-hover fixed-table text-right no-overflow">
-                                        <TransitionWrapper
-                                            ref="askTransition"
-                                            className="orderbook clickable"
-                                            component="tbody"
-                                            transitionName="newrow"
-                                        >
-                                            {askRows}
-                                        </TransitionWrapper>
-                                    </table>
-                                </div>
-                                {totalAsksLength > rowCount ? (
-                                <div className="orderbook-showall">
-                                    <a onClick={this._onToggleShowAll.bind(this, "asks")}>
-                                        <Translate content={showAllAsks ? "exchange.hide" : "exchange.show_asks"} />
-                                        {!showAllAsks ? <span> ({totalAsksLength})</span> : null}
-                                    </a>
-                                </div>) : null}
-                            </div>
-                        </div>
+          return (
+            <div className={classnames(this.props.wrapperClass, "grid-block orderbook no-padding small-vertical align-spaced no-overflow")}>
+              <div className={classnames("middle-content", this.state.flip ? "order-2" : "order-1")}>
+                <div className="exchange-bordered" style={{marginLeft:0}}>
+                  <div style={{background:"#f7f7f7",height:"37px",lineHeight:"37px",fontSize:"14px",color:"#333",fontWeight:"bold",paddingLeft:12}}>
+                    <Translate content="exchange.bids_and_asks" />
+                  </div>
+                  <div style={{paddingRight: "0.6rem"}}>
+                    <table className="table order-table table-hover fixed-table text-right">
+                      {leftHeader}
+                    </table>
+                  </div>
+                  <div className="grid-block" ref="hor_bids" style={{paddingRight: "0.6rem", overflow: "hidden", height:400,maxHeight: 400}}>
+                    <table style={{marginTop: 8}} className="table order-table table-hover fixed-table text-right no-overflow">
+                      <TransitionWrapper
+                        ref="bidTransition"
+                        className="orderbook clickable"
+                        component="tbody"
+                        transitionName="newrow"
+                      >
+                        {bidRows}
+                      </TransitionWrapper>
+                    </table>
+                  </div>
+                  <div style={{height:"1px",background:"#e7e7e7",margin:"8px 0"}}>&nbsp;</div>
+                  <div className="grid-block" ref="hor_asks" style={{paddingRight: "0.6rem", overflow: "hidden",  height:400,maxHeight: 400}}>
+                    <table style={{marginBottom: 8}} className="table order-table table-hover fixed-table text-right no-overflow">
+                      <TransitionWrapper
+                        ref="askTransition"
+                        className="orderbook clickable"
+                        component="tbody"
+                        transitionName="newrow"
+                      >
+                        {askRows}
+                      </TransitionWrapper>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
 
-                        <div className={classnames("small-12 medium-6 middle-content", this.state.flip ? "order-2" : "order-1")}>
-                            <div className="exchange-bordered">
-                                <div className="exchange-content-header bid" data-intro={translator.translate("walkthrough.buy_orders")}>
-                                    <Translate content="exchange.bids" />
-                                    {!this.state.flip ? (
-                                    <div style={{display:"inline-block"}}>
-                                        <span onClick={this._flipBuySell.bind(this)} style={{cursor: "pointer", fontSize: "1rem", marginLeft: "4px", position: "relative", top: "-2px"}} className="flip-arrow">  &#8646;</span>
-                                        <span className="order-book-button-v" onClick={this.props.moveOrderBook}>
-                                            <Icon name="thumb-tack" className="icon-14px" />
-                                        </span>
-                                    </div>) : null}
-                                    <div style={{lineHeight: "16px"}} className="float-right header-sub-title">
-                                        <Translate content="exchange.total" />
-                                        <span>: </span>
-                                        {utils.format_number(totalBids, base.get("precision"))}
-                                        <span> (<AssetName name={baseSymbol} />)</span>
-                                    </div>
-                                </div>
-                                <div style={{paddingRight: "0.6rem"}}>
-                                    <table className="table order-table table-hover fixed-table text-right">
-                                        {this.state.flip ? rightHeader : leftHeader}
-                                    </table>
-                                </div>
-                                <div className="grid-block" ref="hor_bids" style={{paddingRight: "0.6rem", overflow: "hidden", maxHeight: 210}}>
-                                    <table style={{paddingBottom: 5}} className="table order-table table-hover fixed-table text-right no-overflow">
-                                        <TransitionWrapper
-                                            ref="bidTransition"
-                                            className="orderbook clickable"
-                                            component="tbody"
-                                            transitionName="newrow"
-                                        >
-                                            {bidRows}
-                                        </TransitionWrapper>
-                                    </table>
-                                </div>
-                                {totalBidsLength > rowCount ? (
-                                <div className="orderbook-showall">
-                                    <a onClick={this._onToggleShowAll.bind(this, "bids")}>
-                                        <Translate content={showAllBids ? "exchange.hide" : "exchange.show_bids"} />
-                                        {!showAllBids ? <span> ({totalBidsLength})</span> : null}
-                                    </a>
-                                </div>) : null}
-                            </div>
-                        </div>
-                    </div>
-            );
+            //
+            // return (
+            //         <div className={classnames(this.props.wrapperClass, "grid-block orderbook no-padding small-vertical align-spaced no-overflow")}>
+            //           {/*<div className={classnames(this.props.wrapperClass, "grid-block orderbook no-padding small-vertical medium-horizontal align-spaced no-overflow small-12 xlarge-8")}>*/}
+            //             <div className={classnames("middle-content", this.state.flip ? "order-1" : "order-2")}>
+            //                 <div className="exchange-bordered">
+            //                     <div className="exchange-content-header ask" data-intro={translator.translate("walkthrough.sell_orders")}>
+            //                         <Translate content="exchange.asks" />
+            //                         {this.state.flip ? (
+            //                         <div style={{display:"inline-block"}}>
+            //                             <span onClick={this._flipBuySell.bind(this)} style={{cursor: "pointer", fontSize: "1rem", marginLeft: "4px", position: "relative", top: "-2px"}} className="flip-arrow">  &#8646;</span>
+            //                             <span className="order-book-button-v" onClick={this.props.moveOrderBook}>
+            //                                 <Icon name="thumb-tack" className="icon-14px" />
+            //                             </span>
+            //                         </div>) : null}
+            //                         <div style={{lineHeight: "16px"}} className="float-right header-sub-title">
+            //                             <Translate content="exchange.total" />
+            //                             <span>: </span>
+            //                             {utils.format_number(totalAsks, quote.get("precision"))}
+            //                             <span> (<AssetName name={quoteSymbol} />)</span>
+            //                         </div>
+            //                     </div>
+            //                     <div style={{paddingRight: "0.6rem"}}>
+            //                         <table className="table order-table table-hover fixed-table text-right">
+            //                             {!this.state.flip ? rightHeader : leftHeader}
+            //                         </table>
+            //                     </div>
+            //                     <div className="grid-block" ref="hor_asks" style={{paddingRight: "0.6rem", overflow: "hidden", maxHeight: 210}}>
+            //                         <table style={{paddingBottom: 5}} className="table order-table table-hover fixed-table text-right no-overflow">
+            //                             <TransitionWrapper
+            //                                 ref="askTransition"
+            //                                 className="orderbook clickable"
+            //                                 component="tbody"
+            //                                 transitionName="newrow"
+            //                             >
+            //                                 {askRows}
+            //                             </TransitionWrapper>
+            //                         </table>
+            //                     </div>
+            //                     {totalAsksLength > rowCount ? (
+            //                     <div className="orderbook-showall">
+            //                         <a onClick={this._onToggleShowAll.bind(this, "asks")}>
+            //                             <Translate content={showAllAsks ? "exchange.hide" : "exchange.show_asks"} />
+            //                             {!showAllAsks ? <span> ({totalAsksLength})</span> : null}
+            //                         </a>
+            //                     </div>) : null}
+            //                 </div>
+            //             </div>
+            //
+            //             <div className={classnames("middle-content", this.state.flip ? "order-2" : "order-1")}>
+            //                 <div className="exchange-bordered">
+            //                     <div className="exchange-content-header bid" data-intro={translator.translate("walkthrough.buy_orders")}>
+            //                         <Translate content="exchange.bids" />
+            //                         {!this.state.flip ? (
+            //                         <div style={{display:"inline-block"}}>
+            //                             <span onClick={this._flipBuySell.bind(this)} style={{cursor: "pointer", fontSize: "1rem", marginLeft: "4px", position: "relative", top: "-2px"}} className="flip-arrow">  &#8646;</span>
+            //                             <span className="order-book-button-v" onClick={this.props.moveOrderBook}>
+            //                                 <Icon name="thumb-tack" className="icon-14px" />
+            //                             </span>
+            //                         </div>) : null}
+            //                         <div style={{lineHeight: "16px"}} className="float-right header-sub-title">
+            //                             <Translate content="exchange.total" />
+            //                             <span>: </span>
+            //                             {utils.format_number(totalBids, base.get("precision"))}
+            //                             <span> (<AssetName name={baseSymbol} />)</span>
+            //                         </div>
+            //                     </div>
+            //                     <div style={{paddingRight: "0.6rem"}}>
+            //                         <table className="table order-table table-hover fixed-table text-right">
+            //                             {this.state.flip ? rightHeader : leftHeader}
+            //                         </table>
+            //                     </div>
+            //                     <div className="grid-block" ref="hor_bids" style={{paddingRight: "0.6rem", overflow: "hidden", maxHeight: 210}}>
+            //                         <table style={{paddingBottom: 5}} className="table order-table table-hover fixed-table text-right no-overflow">
+            //                             <TransitionWrapper
+            //                                 ref="bidTransition"
+            //                                 className="orderbook clickable"
+            //                                 component="tbody"
+            //                                 transitionName="newrow"
+            //                             >
+            //                                 {bidRows}
+            //                             </TransitionWrapper>
+            //                         </table>
+            //                     </div>
+            //                     {totalBidsLength > rowCount ? (
+            //                     <div className="orderbook-showall">
+            //                         <a onClick={this._onToggleShowAll.bind(this, "bids")}>
+            //                             <Translate content={showAllBids ? "exchange.hide" : "exchange.show_bids"} />
+            //                             {!showAllBids ? <span> ({totalBidsLength})</span> : null}
+            //                         </a>
+            //                     </div>) : null}
+            //                 </div>
+            //             </div>
+            //         </div>
+            // );
         } else {
             // Vertical orderbook
             return (

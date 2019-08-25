@@ -39,7 +39,13 @@ class BlockchainActions {
                     return false;
                 }
                 result.id = height; // The returned object for some reason does not include the block height..
-
+// console.log(result.transactions[0]);
+//
+// Apis.instance().db_api().exec("get_transaction_id",[result.transactions[0]]).then((rrr)=>{
+//   console.log(rrr);
+// }).catch((error) => {
+//   console.log(error);
+// });
                 dispatch(result);
             }).catch((error) => {
                 console.log("Error in BlockchainActions.getBlock: ", error);

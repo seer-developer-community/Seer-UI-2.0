@@ -82,6 +82,8 @@ const routes = (
         <Route path="/auth/:data" component={Auth}/>
         <Route path="/dashboard" component={DashboardContainer}/>
         <Route path="explorer" component={Explorer}>
+          <IndexRoute component={BlocksContainer}/>
+
           <Route path="fees" component={FeesContainer} />
           <Route path="blocks" component={BlocksContainer} />
           <Route path="assets" component={AssetsContainer} />

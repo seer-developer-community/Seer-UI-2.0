@@ -179,7 +179,7 @@ class BuySell extends React.Component {
 
         let disabled = noBalance || invalidPrice || invalidAmount;
 
-        let buttonClass = classNames("button buySellButton", type, {disabled: disabled});
+        let buttonClass = classNames("button ", type, {disabled: disabled});
         let balanceSymbol = isBid ? base.get("symbol") : quote.get("symbol");
 
         let disabledText = invalidPrice ? counterpart.translate("exchange.invalid_price") :
@@ -223,132 +223,100 @@ class BuySell extends React.Component {
         }
 
         return (
-            <div className={this.props.className}>
-                <div className="exchange-bordered buy-sell-container">
-                    <div className={"exchange-content-header " + type} data-intro={dataIntro}>
-                        <span>{buttonText} <AssetName dataPlace="top" name={quote.get("symbol")} /></span>
-                        {this.props.onFlip ? <span onClick={this.props.onFlip} style={{cursor: "pointer", fontSize: "1rem"}} className="flip-arrow">  &#8646;</span> : "null"}
-                        {this.props.onTogglePosition ? <span onClick={this.props.onTogglePosition} style={{cursor: "pointer", fontSize: "1rem"}} className="flip-arrow">  &#8645;</span> : "null"}
-                        {<div onClick={this.props.onToggleOpen} className="float-right clickable hide-for-xlarge" style={{paddingLeft: 10}}>{caret}</div>}
-                        {this.props.currentBridges ? <div className="float-right buy-sell-deposit"><a onClick={this._onBuy.bind(this)}><Translate content="exchange.buy" />&nbsp;<span className="asset-name">{buyBorrowDepositName}</span></a></div> : null}
-                        {this.props.backedCoin ? <div className="float-right buy-sell-deposit"><a onClick={this._onDeposit.bind(this)}><Translate content="modal.deposit.submit" /> <span className="asset-name">{buyBorrowDepositName}</span></a></div> : null}
-                        {this.props.onBorrow ? <div className="float-right buy-sell-deposit"><a onClick={this.props.onBorrow}><Translate content="exchange.borrow" />&nbsp;<span className="asset-name">{buyBorrowDepositName}</span></a></div> : null}
+            <div className={this.props.className} style={{height:"342px"}}>
+                <div className="exchange-bordered buy-sell-container" style={{height:"100%"}}>
+                    <div style={{background:"#f7f7f7",height:"37px",lineHeight:"37px",fontSize:"14px",color:"#333",fontWeight:"bold",paddingLeft:12}}>
+                      {buttonText} <AssetName dataPlace="top" name={quote.get("symbol")} />
                     </div>
 
-                    <form className={(!this.props.isOpen ? "hide-container " : "") + "order-form"} noValidate>
-                        <div className="grid-block vertical no-overflow no-padding">
-
-                                <div className="grid-block no-padding buy-sell-row">
-                                    <div className="grid-block small-3 no-margin no-overflow buy-sell-label">
-                                        <Translate content="exchange.price" />:
-                                    </div>
-                                    <div className="grid-block small-5 no-margin no-overflow buy-sell-input">
-                                        <ExchangeInput id={`${type}Price`} value={price} onChange={priceChange} autoComplete="off" placeholder="0.0" />
-                                    </div>
-                                    <div className="grid-block small-4 no-margin no-overflow buy-sell-box">
-                                        <AssetName dataPlace="right" name={base.get("symbol")} />
-                                        &nbsp;/&nbsp;
-                                        <AssetName dataPlace="right" name={quote.get("symbol")} />
-                                    </div>
-                                </div>
-
-                                <div className="grid-block no-padding buy-sell-row">
-                                    <div className="grid-block small-3 no-margin no-overflow buy-sell-label">
-                                        <Translate content="transfer.amount" />:
-                                    </div>
-                                    <div className="grid-block small-5 no-margin no-overflow buy-sell-input">
-                                        <ExchangeInput id={`${type}Amount`} value={amount} onChange={amountChange} autoComplete="off" placeholder="0.0"/>
-                                    </div>
-                                    <div className="grid-block small-4 no-margin no-overflow buy-sell-box">
-                                        <AssetName dataPlace="right" name={quote.get("symbol")} />
-                                    </div>
-                                </div>
-
-                                <div className="grid-block buy-sell-row bottom-row">
-                                    <div className="grid-block small-3 no-margin no-overflow buy-sell-label">
-                                        <Translate content="exchange.total" />:
-                                    </div>
-                                    <div className="grid-block small-5 no-margin no-overflow buy-sell-input">
-                                        <ExchangeInput id={`${type}Total`} value={total} onChange={totalChange} autoComplete="off" placeholder="0.0"/>
-                                    </div>
-                                    <div className="grid-block small-4 no-margin no-overflow buy-sell-box">
-                                        <AssetName dataPlace="right" name={base.get("symbol")} />
-                                    </div>
-                                </div>
-
-                                <div className="grid-block no-padding buy-sell-row">
-                                    <div className="grid-block small-3 no-margin no-overflow buy-sell-label">
-                                        <Translate content="transfer.fee" />:
-                                    </div>
-                                    <div className="grid-block small-5 no-margin no-overflow buy-sell-input">
-                                        <input className={!hasFeeBalance ? "no-balance" : ""} disabled type="text" id={`${type}Fee`} value={!hasFeeBalance ? counterpart.translate("transfer.errors.insufficient") : fee.getAmount({real: true})} autoComplete="off"/>
-                                    </div>
-
-                                    <div className="grid-block small-4 no-margin no-overflow buy-sell-box" style={{paddingLeft: feeAssets.length !== 1 ? 0 : 5}}>
-                                        <select
-                                            style={feeAssets.length === 1 ? {background: "none"} : null}
-                                            disabled={feeAssets.length === 1}
-                                            value={feeAssets.indexOf(this.props.feeAsset)}
-                                            className={"form-control" + (feeAssets.length !== 1 ? " buysell-select" : "")}
-                                            onChange={this.props.onChangeFeeAsset}
-                                        >
-                                            {options}
-                                        </select>
-                                    </div>
-                                </div>
-
-                                {marketFee}
+                    <div style={{padding:"12px"}}>
+                    <table style={{fontSize:"14px",width:"100%",color:"#666"}}>
+                      <tr height="28px">
+                        <td width="81px"><Translate content="exchange.balance" /></td>
+                        <td>
+                            <span style={{borderBottom: "#A09F9F 1px dotted", cursor: "pointer"}} onClick={this._addBalance.bind(this, balanceToAdd)}>
+                                      {utils.format_number(balanceAmount.getAmount({real: true}), balancePrecision)} <AssetName name={balanceSymbol} />
+                                  </span>
+                        </td>
+                      </tr>
+                      <tr height="40px">
+                        <td width="81px"><Translate content="exchange.price" /></td>
+                        <td>
+                            <div className="grid-block buy-sell-row" style={{border:"1px solid #e7e7e7",width:"100%",height:30,lineHeight:"30px",overflow:"hidden",marginBottom:0,padding:"0 10px"}}>
+                              <ExchangeInput id={`${type}Price`} value={price} onChange={priceChange} autoComplete="off" placeholder="0.0" style={{border:"none",height:"28px",margin:0,padding:0,fontSize:"12px"}}/>
+                              <span style={{fontSize:"12px",color:"#666"}}>
+                              <AssetName dataPlace="right" name={base.get("symbol")} />
+                              &nbsp;/&nbsp;
+                              <AssetName dataPlace="right" name={quote.get("symbol")} />
+                              </span>
                             </div>
-                            <div>
-                                <div className="grid-content clear-fix no-padding">
-
-                                    <table className="float-left">
-                                        <tbody>
-                                          <tr className="buy-sell-info">
-                                                <td><Translate content="exchange.balance" />:</td>
-                                                <td style={{paddingLeft: 5, textAlign: "right"}}>
-                                                    <span style={{borderBottom: "#A09F9F 1px dotted", cursor: "pointer"}} onClick={this._addBalance.bind(this, balanceToAdd)}>
-                                                        {utils.format_number(balanceAmount.getAmount({real: true}), balancePrecision)} <AssetName name={balanceSymbol} />
-                                                    </span>
-                                                </td>
-                                          </tr>
-
-                                          <tr className="buy-sell-info">
-                                                <td style={{paddingTop: 5}}>{isBid ? <Translate content="exchange.lowest_ask" /> : <Translate content="exchange.highest_bid" />}:&nbsp;</td>
-                                                {currentPrice ? (
-                                                <td style={{paddingLeft: 5, textAlign: "right", paddingTop: 5, verticalAlign: "bottom"}}>
-                                                    <span style={{borderBottom: "#A09F9F 1px dotted", cursor: "pointer"}} onClick={this.props.setPrice.bind(this, type, currentPriceObject.sellPrice())}>
+                        </td>
+                      </tr>
+                      <tr height="40px">
+                        <td width="81px"><Translate content="transfer.amount" /></td>
+                        <td>
+                          <div className="grid-block buy-sell-row" style={{border:"1px solid #e7e7e7",width:"100%",height:30,lineHeight:"30px",overflow:"hidden",marginBottom:0,padding:"0 10px"}}>
+                            <ExchangeInput id={`${type}Amount`} value={amount} onChange={amountChange} autoComplete="off" placeholder="0.0" style={{border:"none",height:"28px",margin:0,padding:0,fontSize:"12px"}}/>
+                            <span style={{fontSize:"12px",color:"#666"}}>
+                              <AssetName dataPlace="right" name={quote.get("symbol")} />
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr height="40px">
+                        <td width="81px"><Translate content="exchange.total" /></td>
+                        <td>
+                          <div className="grid-block buy-sell-row" style={{border:"1px solid #e7e7e7",width:"100%",height:30,lineHeight:"30px",overflow:"hidden",marginBottom:0,padding:"0 10px"}}>
+                            <ExchangeInput id={`${type}Total`} value={total} onChange={totalChange} autoComplete="off" placeholder="0.0" style={{border:"none",height:"28px",margin:0,padding:0,fontSize:"12px"}}/>
+                            <span style={{fontSize:"12px",color:"#666"}}>
+                              <AssetName dataPlace="right" name={base.get("symbol")} />
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr height="40px">
+                        <td width="81px"><Translate content="transfer.fee" /></td>
+                        <td>
+                          <div className="grid-block buy-sell-row" style={{border:"1px solid #e7e7e7",width:"100%",height:30,lineHeight:"30px",overflow:"hidden",marginBottom:0,padding:"0 10px"}}>
+                            <input className={!hasFeeBalance ? "no-balance" : ""} disabled type="text" id={`${type}Fee`} value={!hasFeeBalance ? counterpart.translate("transfer.errors.insufficient") : fee.getAmount({real: true})} autoComplete="off"
+                                   style={{border:"none",height:"28px",margin:0,padding:0,fontSize:"12px"}}/>
+                            <select
+                              style={{
+                                background: "none",border:"none",fontSize:"12px",color:"#666",
+                                width:"auto",height:"auto",margin:0,padding:0
+                              }}
+                              disabled={feeAssets.length === 1}
+                              value={feeAssets.indexOf(this.props.feeAsset)}
+                              className={"form-control" + (feeAssets.length !== 1 ? " buysell-select" : "")}
+                              onChange={this.props.onChangeFeeAsset}>
+                              {options}
+                            </select>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr height="40px">
+                        <td width="81px">{isBid ? <Translate content="exchange.lowest_ask" /> : <Translate content="exchange.highest_bid" />}</td>
+                        <td>
+                          {currentPrice ? (
+                            <span style={{borderBottom: "#A09F9F 1px dotted", cursor: "pointer"}} onClick={this.props.setPrice.bind(this, type, currentPriceObject.sellPrice())}>
                                                     <PriceText price={currentPrice} quote={quote} base={base} /> <AssetName name={base.get("symbol")} />/<AssetName name={quote.get("symbol")} />
-                                                    </span>
-                                                </td>) : null}
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                                    </span>) : null}
+                        </td>
+                      </tr>
+                      <tr height="52px">
+                        <td colSpan={2}>
+                          {/* BUY/SELL button */}
+                          <div data-tip={disabledText ? disabledText : ""} data-place="right">
+                            <button className={buttonClass + " small"} onClick={onSubmit.bind(this, true)} style={{width:"100%"}}>{buttonText}</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                    </div>
+                  {marketFee}
 
-                                    {/* BUY/SELL button */}
-                                    {disabledText ?
-                                        (<div className="float-right" data-tip={disabledText} data-place="right">
-                                            <input style={{margin: 0}} className={buttonClass} type="submit" onClick={onSubmit.bind(this, true)} value={buttonText} />
-                                        </div>) :
-                                        (<div className="float-right" data-tip={""}>
-                                            <input style={{margin: 0}} className={buttonClass} type="submit" onClick={onSubmit.bind(this, true)} value={buttonText} />
-                                        </div>)
-                                    }
 
-                                {/* SHORT button */}
-                                    {disabledText && isPredictionMarket ? (
-                                        <div style={{paddingRight: 10}} className="float-right" data-tip={disabledText} data-place="right">
-                                            <input style={{margin: 0}} className={buttonClass} type="submit" onClick={onSubmit.bind(this, false)} value={forceSellText} />
-                                        </div>) : isPredictionMarket ? (
-                                        <div style={{paddingRight: 10}} className="float-right" data-tip={""}>
-                                            <input style={{margin: 0}} className={buttonClass} type="submit" onClick={onSubmit.bind(this, false)} value={forceSellText} />
-                                        </div>) : null
-                                    }
 
-                                  </div>
-                            </div>
-
-                    </form>
                 </div>
                 <SimpleDepositWithdraw
                     ref="deposit_modal"

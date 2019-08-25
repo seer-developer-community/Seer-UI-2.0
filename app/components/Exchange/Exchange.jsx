@@ -28,6 +28,7 @@ import { Apis } from "seerjs-ws";
 import GatewayActions from "actions/GatewayActions";
 import { checkFeeStatusAsync } from "common/trxHelper";
 import LoadingIndicator from "../LoadingIndicator";
+import AssetName from "../Utility/AssetName";
 
 Highcharts.setOptions({
     global: {
@@ -997,7 +998,7 @@ class Exchange extends React.Component {
         }
 
         let orderMultiplier = leftOrderBook ? 2 : 1;
-        const minChartHeight = 300;
+        const minChartHeight = 500;
         const height = Math.max(
             this.state.height > 1100 ? chartHeight : chartHeight - 125,
             minChartHeight
@@ -1013,9 +1014,8 @@ class Exchange extends React.Component {
                 isOpen={this.state.buySellOpen}
                 onToggleOpen={this._toggleOpenBuySell.bind(this)}
                 className={cnames(
-                    "small-12 no-padding middle-content",
+                    "small-12 no-padding",
                     {disabled: notMyAccount},
-                    leftOrderBook || smallScreen ? "medium-6" : "medium-6 xlarge-4",
                     this.state.flipBuySell ? `order-${buySellTop ? 2 : 5 * orderMultiplier} sell-form` : `order-${buySellTop ? 1 : 4 * orderMultiplier} buy-form`
                 )}
                 type="bid"
@@ -1058,9 +1058,8 @@ class Exchange extends React.Component {
                 isOpen={this.state.buySellOpen}
                 onToggleOpen={this._toggleOpenBuySell.bind(this)}
                 className={cnames(
-                    "small-12 no-padding middle-content",
+                    "small-12 no-padding",
                     {disabled: notMyAccount},
-                    leftOrderBook || smallScreen ? "medium-6" : "medium-6 xlarge-4",
                     this.state.flipBuySell ? `order-${buySellTop ? 1 : 4 * orderMultiplier} buy-form` : `order-${buySellTop ? 2 : 5 * orderMultiplier} sell-form`
                 )}
                 type="ask"
@@ -1122,7 +1121,7 @@ class Exchange extends React.Component {
 
         
 
-        return (<div className="grid-block vertical">
+        return (<div className="grid-block vertical" style={{padding:18}}>
             {!this.props.marketReady ? <LoadingIndicator /> : null}
                     <ExchangeHeader
                         account={this.props.currentAccount}
@@ -1140,13 +1139,14 @@ class Exchange extends React.Component {
                     />
 
             <table>
-              <tr>
-                <td rowSpan={2} width="25%">
+              <tr height="536px">
+                <td rowSpan={2} style={{width:"386px"}}>
                   {!leftOrderBook ? orderBook : null}
                 </td>
                 <td colSpan={2}>
+                    <div className="exchange-bordered" style={{height:"536px"}} >
                   {!showDepthChart ? (
-                    <div className="grid-block shrink no-overflow" id="market-charts" >
+                    <div className="grid-block shrink no-overflow" id="market-charts">
                       {/* Price history chart */}
                       <PriceChartD3
                         priceData={this.props.priceData}
@@ -1166,7 +1166,6 @@ class Exchange extends React.Component {
                         tools={tools}
                         showVolumeChart={showVolumeChart}
                         enableChartClamp={enableChartClamp}
-
                         buckets={buckets} bucketSize={bucketSize}
                         currentPeriod={this.state.currentPeriod}
                         changeBucketSize={this._changeBucketSize.bind(this)}
@@ -1222,16 +1221,118 @@ class Exchange extends React.Component {
                         centerRef={this.refs.center}
                       />
                     </div>)}
+                    </div>
                 </td>
-                <td width="25%">4</td>
+                <td style={{width:"270px"}}>
+                    <div className="exchange-bordered" style={{height:"536px"}}>
+                  <MyMarkets
+                    className="left-order-book no-padding no-overflow"
+                    headerStyle={{paddingTop: 0}}
+                    columns={
+                      [
+                        {name: "star", index: 1},
+                        {name: "market", index: 2},
+                        {name: "vol", index: 3},
+                        {name: "price", index: 4},
+                        {name: "change", index: 5}
+                      ]
+                    }
+                    findColumns={
+                      [
+                        {name: "market", index: 1},
+                        {name: "issuer", index: 2},
+                        {name: "vol", index: 3},
+                        {name: "add", index: 4}
+                      ]
+                    }
+                    current={`${quoteSymbol}_${baseSymbol}`}
+                  />
+                    </div>
+                </td>
               </tr>
               <tr>
-                <td width="25%">{buyForm}</td>
-                <td width="25%">{sellForm}</td>
-                <td width="25%">5</td>
+                <td>{buyForm}</td>
+                <td>{sellForm}</td>
+                <td>
+                  <div style={{height:"342px"}} className="grid-block no-margin vertical shrink exchange-bordered">
+                    <div style={{background:"#f7f7f7",height:"37px",lineHeight:"37px",fontSize:"14px",color:"#333",fontWeight:"bold",paddingLeft:12}}>
+                      <Translate content="exchange.depth_chart"/>
+                    </div>
+                      <div style={{padding:6}}>
+                     <DepthHighChart
+                      marketReady={marketReady}
+                      orders={marketLimitOrders}
+                      showCallLimit={showCallLimit}
+                      call_orders={marketCallOrders}
+                      flat_asks={flatAsks}
+                      flat_bids={flatBids}
+                      flat_calls={ showCallLimit ? flatCalls : []}
+                      flat_settles={this.props.settings.get("showSettles") && flatSettles}
+                      settles={marketSettleOrders}
+                      invertedCalls={invertedCalls}
+                      totalBids={totals.bid}
+                      totalAsks={totals.ask}
+                      base={base}
+                      quote={quote}
+                      height={300}
+                      onClick={this._depthChartClick.bind(this, base, quote)}
+                      settlementPrice={(!hasPrediction && feedPrice) && feedPrice.toReal()}
+                      spread={spread}
+                      LCP={showCallLimit ? lowestCallPrice : null}
+                      leftOrderBook={leftOrderBook}
+                      hasPrediction={hasPrediction}
+                      noText={true}
+                      theme={this.props.settings.get("themes")}
+                    />
+                      </div>
+                  </div>
+                </td>
               </tr>
             </table>
 
+
+            {marketLimitOrders.size > 0 && base && quote ? (
+              <div>
+              <MyOpenOrders
+                smallScreen={this.props.smallScreen}
+                className={cnames(
+                  {disabled: notMyAccount},
+                  !smallScreen && !leftOrderBook ? "medium-12 xlarge-12" : "",
+                  `small-12 medium-12 no-padding align-spaced ps-container middle-content order-${buySellTop ? 6 : 6}`
+                )}
+                key="open_orders"
+                orders={marketLimitOrders}
+                settleOrders={marketSettleOrders}
+                currentAccount={currentAccount}
+                base={base}
+                quote={quote}
+                baseSymbol={baseSymbol}
+                quoteSymbol={quoteSymbol}
+                activeTab={this.props.viewSettings.get("ordersTab")}
+                onCancel={this._cancelLimitOrder.bind(this)}
+                flipMyOrders={this.props.viewSettings.get("flipMyOrders")}
+                feedPrice={this.props.feedPrice}
+              />
+              </div>
+                ) : null}
+
+          <div>
+            <MarketHistory
+              className={cnames(
+                !smallScreen && !leftOrderBook ? "medium-12 xlarge-12" : "",
+                "no-padding no-overflow middle-content small-12 medium-12 order-5 xlarge-order-3"
+              )}
+              headerStyle={{paddingTop: 0}}
+              history={activeMarketHistory}
+              currentAccount={currentAccount}
+              myHistory={currentAccount.get("history")}
+              base={base}
+              quote={quote}
+              baseSymbol={baseSymbol}
+              quoteSymbol={quoteSymbol}
+              notMyAccount={notMyAccount}
+            />
+          </div>
 
               <div className="grid-block page-layout market-layout">
                     <AccountNotifications/>
@@ -1253,23 +1354,6 @@ class Exchange extends React.Component {
 
                                 {isFrozen ? <div className="error small-12 no-overflow" style={{margin: "0 10px", lineHeight: "1.2rem"}}><Translate content="exchange.market_frozen" asset={frozenAsset} component="p"/></div> : null}
 
-                                <MarketHistory
-                                    className={cnames(
-                                        !smallScreen && !leftOrderBook ? "medium-6 xlarge-4" : "",
-                                        "no-padding no-overflow middle-content small-12 medium-6 order-5 xlarge-order-3"
-                                    )}
-                                    headerStyle={{paddingTop: 0}}
-                                    history={activeMarketHistory}
-                                    currentAccount={currentAccount}
-                                    myHistory={currentAccount.get("history")}
-                                    base={base}
-                                    quote={quote}
-                                    baseSymbol={baseSymbol}
-                                    quoteSymbol={quoteSymbol}
-                                    notMyAccount={notMyAccount}
-                                />
-
-
 
                                 <ConfirmOrderModal
                                     type="buy"
@@ -1287,27 +1371,6 @@ class Exchange extends React.Component {
                                     hasOrders={combinedBids.length > 0}
                                 />
 
-                                {marketLimitOrders.size > 0 && base && quote ? (
-                                <MyOpenOrders
-                                    smallScreen={this.props.smallScreen}
-                                    className={cnames(
-                                        {disabled: notMyAccount},
-                                        !smallScreen && !leftOrderBook ? "medium-6 xlarge-4" : "",
-                                        `small-12 medium-6 no-padding align-spaced ps-container middle-content order-${buySellTop ? 6 : 6}`
-                                    )}
-                                    key="open_orders"
-                                    orders={marketLimitOrders}
-                                    settleOrders={marketSettleOrders}
-                                    currentAccount={currentAccount}
-                                    base={base}
-                                    quote={quote}
-                                    baseSymbol={baseSymbol}
-                                    quoteSymbol={quoteSymbol}
-                                    activeTab={this.props.viewSettings.get("ordersTab")}
-                                    onCancel={this._cancelLimitOrder.bind(this)}
-                                    flipMyOrders={this.props.viewSettings.get("flipMyOrders")}
-                                    feedPrice={this.props.feedPrice}
-                                />) : null}
                             </div>
                         </div>{ /* end CenterContent */}
 
@@ -1317,57 +1380,9 @@ class Exchange extends React.Component {
                     <div className="grid-block shrink right-column no-overflow vertical show-for-medium" style={{paddingTop: 0, minWidth: 358, maxWidth: 400}}>
                         {/* Market History */}
                         <div className="grid-block no-padding no-margin vertical" >
-                            <MyMarkets
-                                className="left-order-book no-padding no-overflow"
-                                headerStyle={{paddingTop: 0}}
-                                columns={
-                                    [
-                                        {name: "star", index: 1},
-                                        {name: "market", index: 2},
-                                        {name: "vol", index: 3},
-                                        {name: "price", index: 4},
-                                        {name: "change", index: 5}
-                                    ]
-                                }
-                                findColumns={
-                                    [
-                                        {name: "market", index: 1},
-                                        {name: "issuer", index: 2},
-                                        {name: "vol", index: 3},
-                                        {name: "add", index: 4}
-                                    ]
-                                }
-                                current={`${quoteSymbol}_${baseSymbol}`}
-                            />
+
                         </div>
-                        <div style={{padding: !this.props.miniDepthChart ? 0 : "0 0 40px 0"}} className="grid-block no-margin vertical shrink">
-                            <div onClick={this._toggleMiniChart.bind(this)} className="exchange-content-header clickable" style={{textAlign: "left", paddingRight: 10}}>{this.props.miniDepthChart ? <span>&#9660;</span> : <span>&#9650;</span>}</div>
-                            {this.props.miniDepthChart ? <DepthHighChart
-                                    marketReady={marketReady}
-                                    orders={marketLimitOrders}
-                                    showCallLimit={showCallLimit}
-                                    call_orders={marketCallOrders}
-                                    flat_asks={flatAsks}
-                                    flat_bids={flatBids}
-                                    flat_calls={ showCallLimit ? flatCalls : []}
-                                    flat_settles={this.props.settings.get("showSettles") && flatSettles}
-                                    settles={marketSettleOrders}
-                                    invertedCalls={invertedCalls}
-                                    totalBids={totals.bid}
-                                    totalAsks={totals.ask}
-                                    base={base}
-                                    quote={quote}
-                                    height={200}
-                                    onClick={this._depthChartClick.bind(this, base, quote)}
-                                    settlementPrice={(!hasPrediction && feedPrice) && feedPrice.toReal()}
-                                    spread={spread}
-                                    LCP={showCallLimit ? lowestCallPrice : null}
-                                    leftOrderBook={leftOrderBook}
-                                    hasPrediction={hasPrediction}
-                                    noText={true}
-                                    theme={this.props.settings.get("themes")}
-                                /> : null}
-                        </div>
+
                     </div>
 
                     {!notMyAccount && quoteIsBitAsset  ?
