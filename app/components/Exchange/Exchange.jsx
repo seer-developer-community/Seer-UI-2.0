@@ -1119,8 +1119,6 @@ class Exchange extends React.Component {
             />
         );
 
-        
-
         return (<div className="grid-block vertical" style={{padding:18}}>
             {!this.props.marketReady ? <LoadingIndicator /> : null}
                     <ExchangeHeader
@@ -1138,9 +1136,9 @@ class Exchange extends React.Component {
                         showVolumeChart={showVolumeChart}
                     />
 
-            <table>
+            <table style={{marginTop:12,width:"100%"}}>
               <tr height="536px">
-                <td rowSpan={2} style={{width:"386px"}}>
+                <td rowSpan={2} style={{width:"386px",minWidth:"386px",maxWidth:"386px"}}>
                   {!leftOrderBook ? orderBook : null}
                 </td>
                 <td colSpan={2}>
@@ -1223,8 +1221,8 @@ class Exchange extends React.Component {
                     </div>)}
                     </div>
                 </td>
-                <td style={{width:"270px",maxWidth:"270px"}}>
-                    <div className="exchange-bordered" style={{height:"536px"}}>
+                <td style={{width:"270px",maxWidth:"270px",minWidth:"270px"}}>
+                    <div className="exchange-bordered" style={{height:"536px",marginRight:0}}>
                   <EmbedMyMarkets
                     className="left-order-book no-padding no-overflow"
                     headerStyle={{paddingTop: 0}}
@@ -1253,7 +1251,7 @@ class Exchange extends React.Component {
                 <td>{buyForm}</td>
                 <td>{sellForm}</td>
                 <td>
-                  <div style={{height:"342px"}} className="grid-block no-margin vertical shrink exchange-bordered">
+                  <div style={{height:"342px",marginRight:0}} className="grid-block vertical shrink exchange-bordered">
                     <div style={{background:"#f7f7f7",height:"37px",lineHeight:"37px",fontSize:"14px",color:"#333",fontWeight:"bold",paddingLeft:12}}>
                       <Translate content="exchange.depth_chart"/>
                     </div>

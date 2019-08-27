@@ -9,6 +9,7 @@ import Translate from "react-translate-component";
 import counterpart from "counterpart";
 import {ChainStore} from "seerjs/es";
 import ExchangeHeaderCollateral from "./ExchangeHeaderCollateral";
+import utils from "../../lib/common/utils";
 
 export default class ExchangeHeader extends React.Component {
 
@@ -51,7 +52,6 @@ export default class ExchangeHeader extends React.Component {
 
         // Favorite star
         const marketID = `${quoteSymbol}_${baseSymbol}`;
-        const starClass = starredMarkets.has(marketID) ? "gold-star" : "grey-star";
 
         // Market stats
         const dayChange = marketStats.get("change");
@@ -106,86 +106,105 @@ export default class ExchangeHeader extends React.Component {
         }
 
         const translator = require("counterpart");
+        const labelStyle = {fontSize:14,color:"#666"};
+        const valStyle = {fontSize:16,color:"#333"};
+
+        let last_price = utils.price_text(latestPrice ? latestPrice.full : 0, quoteAsset, baseAsset);
+        let day_volume = utils.format_volume(volume24h);
 
         return (
                 <div className="grid-block shrink no-padding overflow-visible">
-                    <div className="grid-block overflow-visible">
-                        <div className="grid-block shrink">
-                            <div style={{padding: "10px"}}>
-                                {!hasPrediction ? (
-                                    <div style={{padding: "0 5px", fontSize: "18px", marginTop: "1px"}}>
-                                        <Link to={`/asset/${quoteSymbol}`} className="asset-prefix"><AssetName name={quoteSymbol} replace={true} /></Link>
-                                        <span style={{padding:"0px"}}>/</span>
-                                        <Link to={`/asset/${baseSymbol}`} className="asset-prefix"><AssetName name={baseSymbol} replace={true} /></Link>
-                                    </div>
-                                ) : (
-                                    <a className="market-symbol">
-                                        <span>{`${quoteSymbol} : ${baseSymbol}`}</span>
-                                    </a>
-                                )}
-                                <div className="label-actions">
-                                    <Translate component="span" style={{padding: "5px 0 0 5px"}} className="stat-text" content="exchange.trading_pair" />
-                                    <Link
-                                        onClick={() => {
-                                            MarketsActions.switchMarket();
-                                        }}
-                                        to={`/market/${baseSymbol}_${quoteSymbol}`}
-                                        data-intro={translator.translate("walkthrough.switch_button")}
-                                    >
-                                        <Icon className="shuffle" name="shuffle"/>
-                                    </Link>
-
-                                    <Link
-                                        onClick={() => { this._addMarket(this.props.quoteAsset.get("symbol"), this.props.baseAsset.get("symbol")); }}
-                                        data-intro={translator.translate("walkthrough.favourite_button")}
-                                    >
-                                        <Icon className={starClass} name="fi-star"/>
-                                    </Link>
-                                </div>
+                  <table width="100%">
+                      <tbody>
+                        <tr height="26px">
+                          <td style={{width:100}}>
+                            {!hasPrediction ? (
+                              <div>
+                                <Link to={`/asset/${quoteSymbol}`} className="asset-prefix" style={{fontSize:18,fontWeight:"bold"}}><AssetName name={quoteSymbol} replace={true}/></Link>
+                                <span style={{padding:"0px"}}>/</span>
+                                <Link to={`/asset/${baseSymbol}`} className="asset-prefix" style={{fontSize:18,fontWeight:"bold"}}><AssetName name={baseSymbol} replace={true}/></Link>
+                              </div>
+                            ) : (
+                              <a className="market-symbol" style={{fontSize:18,fontWeight:"bold"}}>
+                                <span>{`${quoteSymbol} : ${baseSymbol}`}</span>
+                              </a>
+                            )}
+                          </td>
+                          <td width="115px">
+                            <Link onClick={() => { this._addMarket(this.props.quoteAsset.get("symbol"), this.props.baseAsset.get("symbol")); }}
+                                  data-intro={translator.translate("walkthrough.favourite_button")}>
+                              {
+                                starredMarkets.has(marketID) ? <svg className="icon" aria-hidden="true" style={{width:"16px",height:"16px"}}>
+                                  <use xlinkHref="#icon-shoucang-checked"></use>
+                                </svg>:
+                                  <i className="iconfont icon-shoucang" style={{color:"#CCC"}}></i>
+                              }
+                            </Link>
+                          </td>
+                          <td width="187px">
+                            <Translate style={labelStyle} content="exchange.latest" />
+                          </td>
+                          <td width="131px">
+                            <Translate style={labelStyle} content="account.hour_24" />
+                          </td>
+                          <td width="131px">
+                            <Translate style={labelStyle} content="exchange.volume_24" onClick={this.changeVolumeBase.bind(this)} className="clickable"/>
+                          </td>
+                          <td rowSpan={2}>
+                            <div style={{textAlign:"right"}}>
+                              <span className="clickable" onClick={this.props.onToggleCharts} style={{fontSize:14,color:"#449E7B",fontWeight:"bold"}}>
+                            {!showDepthChart ?
+                              <Translate
+                                content="exchange.order_depth"
+                                data-intro={translator.translate("walkthrough.depth_chart")}
+                              /> : <Translate
+                                content="exchange.price_history"
+                                data-intro={translator.translate("walkthrough.price_chart")}
+                              />}
+                              </span>
                             </div>
-                        </div>
-
-                        <div className="grid-block vertical" style={{overflow: "visible"}}>
-                            <div className="grid-block wrap market-stats-container">
-                                <ul className="market-stats stats top-stats">
-                                    {latestPrice ? <PriceStatWithLabel ignoreColorChange={true} ready={marketReady} price={latestPrice.full} quote={quoteAsset} base={baseAsset} market={marketID} content="exchange.latest"/> : null}
-
-                                    <li className={"hide-order-1 stressed-stat daily_change " + dayChangeClass}>
-                                        <span>
-                                            <b className="value">{marketReady ? dayChangeWithSign : 0}</b>
-                                            <span> %</span>
-                                        </span>
-                                        <Translate component="div" className="stat-text" content="account.hour_24" />
-                                    </li>
-
-                                    {(volumeBase >= 0) ? <PriceStatWithLabel ignoreColorChange={true} onClick={this.changeVolumeBase.bind(this)} ready={marketReady} decimals={0} volume={true} price={volume24h} className="hide-order-2 clickable" base={volume24hAsset} market={marketID} content="exchange.volume_24"/> : null}
-                                    {!hasPrediction && feedPrice ?
-                                        <PriceStatWithLabel ignoreColorChange={true} toolTip={counterpart.translate("tooltip.settle_price")} ready={marketReady} className="hide-order-3" price={feedPrice.toReal()} quote={quoteAsset} base={baseAsset} market={marketID} content="exchange.feed_price"/> : null}
-                                    {!hasPrediction && feedPrice ?
-                                        <PriceStatWithLabel ignoreColorChange={true} toolTip={counterpart.translate("tooltip.settle_price")} ready={marketReady} className="hide-order-4" price={settlePrice} quote={quoteAsset} base={baseAsset} market={marketID} content="exchange.settle"/> : null}
-                                    {showCollateralRatio ?<ExchangeHeaderCollateral object={collOrderObject} account={account}/>:null}
-                                    {lowestCallPrice && showCallLimit ?
-                                        <PriceStatWithLabel toolTip={counterpart.translate("tooltip.call_limit")} ready={marketReady} className="hide-order-5 is-call" price={lowestCallPrice} quote={quoteAsset} base={baseAsset} market={marketID} content="explorer.block.call_limit"/> : null}
-
-                                    {feedPrice && showCallLimit ?<PriceStatWithLabel toolTip={counterpart.translate("tooltip.margin_price")} ready={marketReady} className="hide-order-6 is-call" price={feedPrice.getSqueezePrice({real: true})} quote={quoteAsset} base={baseAsset} market={marketID} content="exchange.squeeze"/> : null}
-                                </ul>
-                                <ul className="market-stats stats top-stats">
-                                    <li className="stressed-stat input clickable" style={{padding:"16px"}} onClick={this.props.onToggleCharts}>
-
-                                        {!showDepthChart ?
-                                            <Translate
-                                                content="exchange.order_depth"
-                                                data-intro={translator.translate("walkthrough.depth_chart")}
-                                            /> : <Translate
-                                                content="exchange.price_history"
-                                                data-intro={translator.translate("walkthrough.price_chart")}
-                                            />}
-
-                                    </li>
-                                </ul>
+                          </td>
+                        </tr>
+                        <tr height="26px">
+                          <td>
+                            <div className="label-actions">
+                              <span style={{fontSize:14,color:"#666"}}>TRADING PAIR</span>
+                              {/*<Translate component="span" style={{padding: "5px 0 0 5px",fontSize:14,color:"#666"}} className="stat-text" content="exchange.trading_pair" />*/}
                             </div>
-                        </div>
-                    </div>
+                          </td>
+                          <td>
+                            <Link onClick={() => {
+                              MarketsActions.switchMarket();
+                            }}
+                                  to={`/market/${baseSymbol}_${quoteSymbol}`}
+                                  data-intro={translator.translate("walkthrough.switch_button")}>
+                              <i className="iconfont icon-qiehuan" style={{color:"#CCC"}}></i>
+                            </Link>
+                          </td>
+                          <td>
+                            <span style={valStyle}> {!marketReady ? 0 : last_price} <AssetName name={baseSymbol} /></span>
+                          </td>
+                          <td>
+                            <span style={{...valStyle,color:"#4EA382"}}> {marketReady ? dayChangeWithSign : 0}%</span>
+                          </td>
+                          <td>
+                            <span style={valStyle} onClick={this.changeVolumeBase.bind(this)} className="clickable"> {!marketReady ? 0 : day_volume} <AssetName name={volume24hAsset.get("symbol")} /></span>
+                          </td>
+                          {/*<td>*/}
+                            {/*{(volumeBase >= 0) ? <PriceStatWithLabel ignoreColorChange={true} onClick={this.changeVolumeBase.bind(this)} ready={marketReady} decimals={0} volume={true} price={volume24h} className="hide-order-2 clickable" base={volume24hAsset} market={marketID} content="exchange.volume_24"/> : null}*/}
+                            {/*{!hasPrediction && feedPrice ?*/}
+                              {/*<PriceStatWithLabel ignoreColorChange={true} toolTip={counterpart.translate("tooltip.settle_price")} ready={marketReady} className="hide-order-3" price={feedPrice.toReal()} quote={quoteAsset} base={baseAsset} market={marketID} content="exchange.feed_price"/> : null}*/}
+                            {/*{!hasPrediction && feedPrice ?*/}
+                              {/*<PriceStatWithLabel ignoreColorChange={true} toolTip={counterpart.translate("tooltip.settle_price")} ready={marketReady} className="hide-order-4" price={settlePrice} quote={quoteAsset} base={baseAsset} market={marketID} content="exchange.settle"/> : null}*/}
+                            {/*{showCollateralRatio ?<ExchangeHeaderCollateral object={collOrderObject} account={account}/>:null}*/}
+                            {/*{lowestCallPrice && showCallLimit ?*/}
+                              {/*<PriceStatWithLabel toolTip={counterpart.translate("tooltip.call_limit")} ready={marketReady} className="hide-order-5 is-call" price={lowestCallPrice} quote={quoteAsset} base={baseAsset} market={marketID} content="explorer.block.call_limit"/> : null}*/}
+
+                            {/*{feedPrice && showCallLimit ?<PriceStatWithLabel toolTip={counterpart.translate("tooltip.margin_price")} ready={marketReady} className="hide-order-6 is-call" price={feedPrice.getSqueezePrice({real: true})} quote={quoteAsset} base={baseAsset} market={marketID} content="exchange.squeeze"/> : null}*/}
+                          {/*</td>*/}
+                        </tr>
+                      </tbody>
+                  </table>
                 </div>
                 );
             }

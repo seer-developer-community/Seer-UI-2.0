@@ -153,7 +153,7 @@
         "welcome": "欢迎使用 Seer 系统",
         "asset": "资产",
         "market_value": "市值",
-        "hour_24": "日涨跌幅%",
+        "hour_24": "日涨跌幅",
         "hour_24_short": "日涨跌%",
         "recent": "近期活动",
         "name": "账户名",
@@ -1205,7 +1205,7 @@
         "asks": "卖单",
         "bids": "买单",
         "bids_and_asks":"盘口",
-        "depth_chart":"深度图",
+        "trading_pair":"深度图",
         "no_data": "暂无数据",
         "time": "时间周期",
         "zoom": "缩放",
@@ -1230,7 +1230,9 @@
         "quote": "报价货币：",
         "input_quote":"请输入报价货币",
         "search": "请输入交易对查询",
-        "order_value": "委单价值"
+        "order_value": "委单价值",
+        "depth_chart":"深度图",
+        "cancel_order":"撤单"
     },
     "fees": {
         "title": "费率表"

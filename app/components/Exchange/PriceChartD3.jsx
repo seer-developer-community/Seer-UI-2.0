@@ -616,34 +616,33 @@ export default class Wrapper extends React.Component {
 			}
 			return content;
 		});
-
-        if (!this.props.priceData.length) {
-            return (
-                <div className="grid-content text-center">
-                    <div style={{paddingTop: this.props.height / 2, height: this.props.height}}>
-                        <Translate content="exchange.no_data" component="h2" />
-                    </div>
-                </div>
-            );
-        }
+        let chart = !this.props.priceData.length ?
+          <div className="grid-content text-center">
+            <div style={{paddingTop: this.props.height / 2, height: this.props.height}}>
+              <Translate content="exchange.no_data" component="h2" />
+            </div>
+          </div>
+          :
+          <CandleStickChartWithZoomPan ref="FitWidth" {...this.props} />;
 
         const translator = require("counterpart");
 
         return (
             <div className="no-margin no-padding" style={{overflow: "visible", width: "100%"}}>
-                <CandleStickChartWithZoomPan ref="FitWidth" {...this.props} />
+                {chart}
                 <div style={{paddingBottom: 10}}>
-                    <ul style={{justifyContent: "center"}} className="market-stats stats bottom-stats">
+                  <ul className="market-stats stats bottom-stats">
+                    {/*<ul style={{justifyContent: "center"}} className="market-stats stats bottom-stats">*/}
                         {/* Chart controls */}
                             <li className="stat" data-intro={translator.translate("walkthrough.chart_tool_zoom")}>
                                 <span>
-                                    <span><Translate content="exchange.zoom" />:</span>
+                                    <span style={{color:"#666"}}><Translate content="exchange.zoom" />:</span>
                                     <span>{zoomOptions}</span>
                                 </span>
                             </li>
                             <li className="stat" data-intro={translator.translate("walkthrough.chart_tool_duration")}>
                                 <span>
-                                    <span><Translate content="exchange.time" />:</span>
+                                    <span style={{color:"#666"}}><Translate content="exchange.time" />:</span>
                                     <span>{bucketOptions}</span>
                                 </span>
                             </li>

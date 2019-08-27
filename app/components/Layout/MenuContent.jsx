@@ -3,8 +3,6 @@ import Translate from "react-translate-component";
 import AccountImage from "components/Account/AccountImage";
 import AccountStore from "../../stores/AccountStore";
 
-require("imports-loader?!lib/common/iconfont.js");
-
 class MenuContent extends React.Component {
 
     static contextTypes = {

@@ -28,11 +28,11 @@ class TableHeader extends React.Component {
         return !dashboard ? (
             <thead>
                 <tr>
-                    <th style={{textAlign: this.props.leftAlign ? "left" : ""}}><Translate className="header-sub-title" content="exchange.price" /></th>
-                    <th style={this.props.leftAlign ? {textAlign: "left"} : null}>{baseSymbol ? <span className="header-sub-title"><AssetName dataPlace="top" name={quoteSymbol} /></span> : null}</th>
-                    <th style={this.props.leftAlign ? {textAlign: "left"} : null}>{baseSymbol ? <span className="header-sub-title"><AssetName dataPlace="top" name={baseSymbol} /></span> : null}</th>
-                    <th style={{textAlign: this.props.leftAlign ? "left" : ""}}><Translate className="header-sub-title" content="transaction.expiration" /></th>
-                    <th style={{width: "6%"}} />
+                    <th style={{width: "22.5%",textAlign: this.props.leftAlign ? "left" : ""}}><Translate className="header-sub-title" content="exchange.price" /></th>
+                    <th style={{width: "22.5%",textAlign: this.props.leftAlign ? "left" : ""}}>{baseSymbol ? <span className="header-sub-title"><AssetName dataPlace="top" name={quoteSymbol} /></span> : null}</th>
+                    <th style={{width: "22.5%",textAlign: this.props.leftAlign ? "left" : ""}}>{baseSymbol ? <span className="header-sub-title"><AssetName dataPlace="top" name={baseSymbol} /></span> : null}</th>
+                    <th style={{width: "22.5%",textAlign: this.props.leftAlign ? "left" : ""}}><Translate className="header-sub-title" content="transaction.expiration" /></th>
+                    <th style={{width: "10%"}} />
                 </tr>
             </thead>
         ) : (
@@ -83,19 +83,20 @@ class OrderRow extends React.Component {
 
         return !dashboard ? (
             <tr key={order.id}>
-                <td className={tdClass} style={{paddingLeft: 10}}>
+                <td className={tdClass} width="22.5%">
                     <PriceText price={order.getPrice()} base={base} quote={quote} />
                     {priceSymbol}
                 </td>
-                <td>{utils.format_number(order[!isBid ? "amountForSale" : "amountToReceive"]().getAmount({real: true}), quote.get("precision"))} {amountSymbol}</td>
-                <td>{utils.format_number(order[!isBid ? "amountToReceive" : "amountForSale"]().getAmount({real: true}), base.get("precision"))} {valueSymbol}</td>
-                <td style={{width: "25%", textAlign: "right"}} className="tooltip" data-tip={new Date(order.expiration)}>
-                    {counterpart.localize(new Date(order.expiration), {type: "date", format: "short_custom"})}
+                <td width="22.5%">{utils.format_number(order[!isBid ? "amountForSale" : "amountToReceive"]().getAmount({real: true}), quote.get("precision"))} {amountSymbol}</td>
+                <td width="22.5%">{utils.format_number(order[!isBid ? "amountToReceive" : "amountForSale"]().getAmount({real: true}), base.get("precision"))} {valueSymbol}</td>
+                <td  width="22.5%" className="tooltip" data-tip={new Date(order.expiration)}>
+                    {counterpart.localize(new Date(order.expiration), {type: "date", format: "market_history"})}
                 </td>
-                <td className="text-center" style={{width: "6%"}}>
-                    {isCall ? null : <a style={{marginRight: 0}} className="order-cancel" onClick={this.props.onCancel}>
-                        <Icon name="cross-circle" className="icon-14px" />
-                    </a>}
+                <td  width="10%" className="text-center">
+                    {isCall ? null :
+                            <button className="button tiny outline-dark fillet" onClick={this.props.onCancel}>
+                              <Translate content="exchange.cancel_order"/>
+                            </button>}
                 </td>
             </tr>
         ) : (
@@ -333,7 +334,7 @@ class MyOpenOrders extends React.Component {
                     <Translate content="exchange.my_orders"/>
                   </div>
                     <div className="grid-block shrink left-orderbook-header market-right-padding-only">
-                        <table className="table order-table text-right fixed-table market-right-padding dashboard-table">
+                        <table className="table fixed-table market-right-padding market-order-table">
                             {activeTab == "my_orders" ? 
                                 <TableHeader rightAlign type="sell" baseSymbol={baseSymbol} quoteSymbol={quoteSymbol} />
                                 :
@@ -350,7 +351,7 @@ class MyOpenOrders extends React.Component {
                     </div>
                     
                     <div className="table-container grid-block market-right-padding-only no-overflow" ref="container" style={{overflow: "hidden", maxHeight: 200}}>
-                        <table className="table order-table text-right fixed-table market-right-padding">
+                        <table className="table fixed-table market-right-padding market-order-table">
                             {contentContainer}
                         </table>
                     </div>

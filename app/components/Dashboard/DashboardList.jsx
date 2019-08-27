@@ -16,8 +16,6 @@ import AccountStore from "stores/AccountStore";
 import counterpart from "counterpart";
 import WalletDb from "stores/WalletDb";
 
-require("imports-loader?!lib/common/iconfont.js");
-
 const starSort = function(a, b, inverse, starredAccounts) {
 	let aName = a.get("name");
 	let bName = b.get("name");

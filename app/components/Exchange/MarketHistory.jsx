@@ -142,12 +142,12 @@ class MarketHistory extends React.Component {
                 let parsed_order = market_utils.parse_order_history(order, paysAsset, receivesAsset, isAsk, flipped);
                 return (
                     <tr key={"history_" + keyIndex}>
-                        <td className={parsed_order.className}>
+                        <td className={parsed_order.className} width="25%">
                             <PriceText preFormattedPrice={parsed_order} />
                         </td>
-                        <td>{parsed_order.receives}</td>
-                        <td>{parsed_order.pays}</td>
-                        <td className="tooltip" data-tip={new Date(order.time)}>
+                        <td width="25%">{parsed_order.receives}</td>
+                        <td width="25%">{parsed_order.pays}</td>
+                        <td className="tooltip" data-tip={new Date(order.time)} width="25%">
                             {counterpart.localize(new Date(order.time), {type: "date", format: getLocale().toLowerCase().indexOf("en-us") !== -1 ? "market_history_us": "market_history"})}
                         </td>
                     </tr>
@@ -172,13 +172,13 @@ class MarketHistory extends React.Component {
                   </div>
 
                     <div className="grid-block shrink left-orderbook-header market-right-padding-only">
-                        <table className="table order-table text-right fixed-table market-right-padding dashboard-table">
+                        <table className="table fixed-table market-right-padding market-order-table"> {/*text-right*/}
                             <thead>
                                 <tr>
-                                    <th><Translate className="header-sub-title" content="exchange.price" /></th>
-                                    <th><span className="header-sub-title"><AssetName dataPlace="top" name={quoteSymbol} /></span></th>
-                                    <th><span className="header-sub-title"><AssetName dataPlace="top" name={baseSymbol} /></span></th>
-                                    <th><Translate className="header-sub-title" content="explorer.block.date" /></th>
+                                    <th width="25%"><Translate content="exchange.price" /></th>
+                                    <th width="25%"><span><AssetName dataPlace="top" name={quoteSymbol} /></span></th>
+                                    <th width="25%"><span><AssetName dataPlace="top" name={baseSymbol} /></span></th>
+                                    <th width="25%"><Translate content="explorer.block.date" /></th>
                                 </tr>
                             </thead>
                         </table>
@@ -188,7 +188,7 @@ class MarketHistory extends React.Component {
                         ref="history"
                         style={{maxHeight: 210, overflow: "hidden"}}
                     >
-                        <table className="table order-table text-right fixed-table market-right-padding">
+                        <table className="table fixed-table market-right-padding market-order-table">
                             <TransitionWrapper
                                 component="tbody"
                                 transitionName="newrow"
