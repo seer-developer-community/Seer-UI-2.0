@@ -1736,6 +1736,17 @@ $input-border
             border-bottom: 2px solid #DCDCDC;
             overflow: visible;
         }
+
+
+        &.thin-border{
+          > div.service-selector {
+            border-bottom-width: 1px;
+          }
+          ul.account-overview li {
+            border-bottom-width: 1px;
+            top: 1px;
+          }
+        }
     }
 
     ul.account-overview {
@@ -1780,6 +1791,22 @@ $input-border
                 }
             }
         }
+
+      &.small{
+        li{
+          >a{
+            font-size: 14px;
+          }
+        }
+      }
+
+      &.title-bold{
+        li{
+          >a{
+            font-weight: bold;
+          }
+        }
+      }
     }
 
     table.table.dashboard-table {
@@ -2077,6 +2104,37 @@ $input-border
         width: 34px;
         fill:#333333;
       }
+
+    &.fillet-small{
+      height: 24px;
+      border: 1px solid $account-border !important;
+      border-radius: 12px;
+
+      svg.icon{
+        width:24px;
+        height:24px;
+        fill:$account-border;
+        position: static;
+      }
+
+      input{
+        font-size: 12px;
+        padding:0;
+        height:22px;
+      }
+
+      input::-webkit-input-placeholder {
+        font-size: 12px;
+      }
+
+      input::-moz-placeholder {
+        font-size: 12px;
+      }
+
+      input:-ms-input-placeholder {
+        font-size: 12px;
+      }
+    }
   }
 
   .type-label{
@@ -2148,7 +2206,47 @@ $input-border
         fill: $button-bg-color !important;
       }
   }
+
+  table.dashboard-table.market-table-mini{
+    >thead > tr {
+      height:24px;
+      max-height: 24px;
+
+      >th {
+        padding: 0 8px;
+        margin: 0;
+        font-size: 12px;
+        font-weight: normal !important;
+        color: #333!important;
+      }
+    }
+
+    >tbody{
+      >tr{
+        height:24px;
+        max-height: 24px;
+
+        >td{
+          color:#666;
+          font-size: 12px;
+
+          svg.icon{
+            width:16px!important;
+            height:16px!important;
+          }
+
+          &:first-child{
+            width: 24px!important;
+            padding: 0;
+          }
+        }
+      }
+    }
+  }
+
+
 }
+
 
 .midnightTheme .gate_fee .amount-selector {
   width: 100%;

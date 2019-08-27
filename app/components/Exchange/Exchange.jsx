@@ -4,7 +4,7 @@ import MarketsActions from "actions/MarketsActions";
 import { MyOpenOrders } from "./MyOpenOrders";
 import OrderBook from "./OrderBook";
 import MarketHistory from "./MarketHistory";
-import MyMarkets from "./MyMarkets";
+import EmbedMyMarkets from "./EmbedMyMarkets";
 import BuySell from "./BuySell";
 import utils from "common/utils";
 import PriceChartD3 from "./PriceChartD3";
@@ -1223,26 +1223,25 @@ class Exchange extends React.Component {
                     </div>)}
                     </div>
                 </td>
-                <td style={{width:"270px"}}>
+                <td style={{width:"270px",maxWidth:"270px"}}>
                     <div className="exchange-bordered" style={{height:"536px"}}>
-                  <MyMarkets
+                  <EmbedMyMarkets
                     className="left-order-book no-padding no-overflow"
                     headerStyle={{paddingTop: 0}}
                     columns={
                       [
-                        {name: "star", index: 1},
-                        {name: "market", index: 2},
-                        {name: "vol", index: 3},
-                        {name: "price", index: 4},
-                        {name: "change", index: 5}
+                          {name: "star", index: 1},
+                          {name: "market", index: 2},
+                          {name: "price", index: 3},
+                          {name: "change", index: 4}
                       ]
                     }
                     findColumns={
                       [
-                        {name: "market", index: 1},
-                        {name: "issuer", index: 2},
-                        {name: "vol", index: 3},
-                        {name: "add", index: 4}
+                        {name: "star", index: 1},
+                        {name: "market", index: 2},
+                        {name: "price", index: 3},
+                        {name: "change", index: 4}
                       ]
                     }
                     current={`${quoteSymbol}_${baseSymbol}`}

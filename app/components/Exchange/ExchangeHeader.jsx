@@ -115,7 +115,7 @@ export default class ExchangeHeader extends React.Component {
                                 {!hasPrediction ? (
                                     <div style={{padding: "0 5px", fontSize: "18px", marginTop: "1px"}}>
                                         <Link to={`/asset/${quoteSymbol}`} className="asset-prefix"><AssetName name={quoteSymbol} replace={true} /></Link>
-                                        <span style={{padding:"0 5px"}}>/</span>
+                                        <span style={{padding:"0px"}}>/</span>
                                         <Link to={`/asset/${baseSymbol}`} className="asset-prefix"><AssetName name={baseSymbol} replace={true} /></Link>
                                     </div>
                                 ) : (

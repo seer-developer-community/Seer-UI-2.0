@@ -93,8 +93,8 @@ class MarketRow extends React.Component {
             case "star":
                 let starIcon = starred ? "#icon-shoucang-checked" : "#icon-shoucang";
                 return (
-                    <td onClick={this._onStar.bind(this, quote.get("symbol"), base.get("symbol"))} key={column.index}  width="50px" style={{textAlign:"right"}}>
-                        <svg aria-hidden="true" style={{width:"28px",height:"28px"}}>
+                    <td onClick={this._onStar.bind(this, quote.get("symbol"), base.get("symbol"))} key={column.index} style={{textAlign:"right",width:50}}>
+                        <svg className="icon" aria-hidden="true" style={{width:"28px",height:"28px"}}>
                             <use xlinkHref={starIcon}></use>
                         </svg>
                     </td>
