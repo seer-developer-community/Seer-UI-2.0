@@ -68,6 +68,7 @@ import OracleInput from "./components/Account/OracleInput";
 import ERC20Gateway from "./components/Balances/ERC20Gateway";
 import AccountWitness from "./components/Account/AccountWitness";
 import AccountDashboard from "./components/Account/AccountDashboard";
+import Transaction from "./components/Explorer/Transaction";
 
 
 const history = __HASH_HISTORY__ ? hashHistory : browserHistory;
@@ -93,6 +94,7 @@ const routes = (
           <Route path="oracles" component={Oracles}/>
           <Route path="asset/:symbol" component={Asset} />
           <Route path="markets" component={MarketsContainer} />
+          <Route path="tx/:tx_id" component={Transaction} />
         </Route>
 
         <Route path="/houses" components={Houses}/>
