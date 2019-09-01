@@ -9,7 +9,7 @@ let icons = ["user", "trash", "chevron-down", "menu", "database", "download", "s
     "thumb-tack", "thumb-untack", "clock", "clippy", "shuffle", "transfer", "dollar", "dollar-green", "deposit", "withdraw",
     "settle", "trade", "adjust", "excel", "share", "minus-circle", "cogs", "dashboard",
     "server", "power", "thumbs-up", "folder", "warning", "gift", "text", "list","houses",
-    "hourglass", "news", "hamburger", "hamburger-x","gateway"];
+    "hourglass", "news", "hamburger", "hamburger-x","gateway","arrow_down","sort"];
 
 let icons_map = {};
 for (let i of icons) icons_map[i] = require(`./${i}.svg`);
@@ -31,7 +31,7 @@ class Icon extends React.Component {
 
 Icon.propTypes = {
     name: React.PropTypes.string.isRequired,
-    size: React.PropTypes.oneOf(["1x", "1_5x", "2x", "3x", "4x", "5x", "10x","24px","32px"]),
+    size: React.PropTypes.oneOf(["1x", "1_5x", "2x", "3x", "4x", "5x", "10x","18px","24px","32px"]),
     inverse: React.PropTypes.bool,
     className: React.PropTypes.string
 };

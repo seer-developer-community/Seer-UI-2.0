@@ -18,6 +18,7 @@ import ProposedOperation from "./ProposedOperation";
 import marketUtils from "common/market_utils";
 import {connect} from "alt-react";
 import SettingsStore from "stores/SettingsStore";
+import AccountImage from "../Account/AccountImage";
 
 const {operations} = grapheneChainTypes;
 require("./operations.scss");
@@ -25,133 +26,19 @@ require("./operations.scss");
 let ops = Object.keys(operations);
 let listings = account_constants.account_listing;
 
-class TransactionLabel extends React.Component {
-    shouldComponentUpdate(nextProps) {
-        return (
-            nextProps.color !== this.props.color ||
-            nextProps.type !== this.props.type
-        );
-    }
-    render() {
-        let trxTypes = counterpart.translate("transaction.trxTypes");
-        let labelClass = classNames("label", this.props.color || "info");
-        return (
-            <span className={labelClass}>
-                {trxTypes[ops[this.props.type]]}
-            </span>
-        );
-    }
-}
-
-class Row extends React.Component {
-    static contextTypes = {
-        router: React.PropTypes.object.isRequired
-    }
-
-    static propTypes = {
-        dynGlobalObject: ChainTypes.ChainObject.isRequired,
-    };
-
-    static defaultProps = {
-        dynGlobalObject: "2.1.0",
-        tempComponent: "tr"
-    };
-
-    constructor(props) {
-        super(props);
-        // this.showDetails = this.showDetails.bind(this);
-    }
-    //
-    // showDetails(e) {
-    //     e.preventDefault();
-    //     this.context.router.push(`/block/${this.props.block}`);
-    // }
-
-    shouldComponentUpdate(nextProps) {
-        let {block, dynGlobalObject} = this.props;
-        let last_irreversible_block_num = dynGlobalObject.get("last_irreversible_block_num" );
-        if (nextProps.dynGlobalObject === this.props.dynGlobalObject) {
-            return false;
-        }
-        return block > last_irreversible_block_num;
-    }
-
-    render() {
-        let {block, fee, color, type, hideOpLabel} = this.props;
-
-        let last_irreversible_block_num = this.props.dynGlobalObject.get("last_irreversible_block_num" );
-        let pending = null;
-        if( block > last_irreversible_block_num ) {
-            pending = <span>(<Translate content="operation.pending" blocks={block - last_irreversible_block_num} />)</span>;
-        }
-
-        fee.amount = parseInt(fee.amount, 10);
-
-        if(!this.props.withTxId){
-          return (
-            <tr>
-              {hideOpLabel ? null : (
-                <td style={{textAlign: "left"}} className="left-td column-hide-tiny">
-                  <Link className="inline-block type-label" data-place="bottom" data-tip={counterpart.translate("tooltip.show_block", {block: utils.format_number(this.props.block, 0)})} to={`/block/${this.props.block}`} ><TransactionLabel color={color} type={type} /></Link>
-                </td>)}
-              <td style={{ padding: "8px 5px", textAlign: "left" }}>
-                <div className="log-detail">
-                  <span>{this.props.info}</span>
-                </div>
-                <div style={{ fontSize: 14, paddingTop: 5 }}>
-                  {/*<span>{counterpart.translate("explorer.block.title").toLowerCase()} <Link to={`/block/${block}`}>{utils.format_number(block, 0)}</Link></span>*/}
-                  {!this.props.hideFee ? <span className="facolor-fee"> - <FormattedAsset amount={fee.amount}
-                                                                                          asset={fee.asset_id}/></span> : null}
-                  {pending ? <span> - {pending}</span> : null}
-                </div>
-              </td>
-              <td>
-                <span>{!this.props.hideDate ? <BlockTime block_number={block}/> : null}</span>
-              </td>
-            </tr>
-          );
-        }else{
-          let link = "/explorer/tx/" + this.props.txId;
-          return (
-            <tr height="57px">
-              {hideOpLabel ? null : (
-                <td style={{textAlign: "left"}} className="left-td column-hide-tiny">
-                  <Link className="inline-block type-label" data-place="bottom" data-tip={counterpart.translate("tooltip.show_block", {block: utils.format_number(this.props.block, 0)})} to={`/block/${this.props.block}`} ><TransactionLabel color={color} type={type} /></Link>
-                </td>)}
-              <td style={{ padding: "8px 5px", textAlign: "left" }}>
-                <div className="log-detail">
-                  <span style={{color:"#666"}}>{this.props.info}</span>
-                  &nbsp;&nbsp;&nbsp;&nbsp;
-                  <span style={{fontSize:12,color:"#999"}}>{!this.props.hideDate ? <BlockTime block_number={block}/> : null}</span>
-                </div>
-              </td>
-              <td width="80px">
-                <Link to={link} style={{fontSize:14,color:"#449E7B"}}>
-                  {this.props.txId.substr(0,8)}
-                </Link>
-              </td>
-            </tr>
-          );
-        }
-    }
-}
-Row = BindToChainState(Row, {keep_updating:true});
-
-class Operation extends React.Component {
+class TransactionOperation extends React.Component {
 
     static defaultProps = {
         op: [],
         current: "",
         block: null,
-        hideOpLabel: false,
-        csvExportMode: false
+        hideOpLabel: false
     };
 
     static propTypes = {
         op: React.PropTypes.array.isRequired,
         current: React.PropTypes.string,
-        block: React.PropTypes.number,
-        csvExportMode: React.PropTypes.bool
+        block: React.PropTypes.number
     };
 
     componentWillReceiveProps(np) {
@@ -1169,46 +1056,41 @@ class Operation extends React.Component {
                 );
         }
 
-        if (this.props.csvExportMode) {
-            const globalObject = ChainStore.getObject("2.0.0");
-            const dynGlobalObject = ChainStore.getObject("2.1.0");
-            const block_time = utils.calc_block_time(block, globalObject, dynGlobalObject)
-            return (
-                <div>
-                    <div>{block_time ? block_time.toLocaleString() : ""}</div>
-                    <div>{ops[op[0]]}</div>
-                    <div>{column}</div>
-                    <div><FormattedAsset amount={parseInt(op[1].fee.amount, 10)} asset={op[1].fee.asset_id} /></div>
-                </div>
-            );
-        }
+        //
+        // line = column ? (
+        //     <Row
+        //         block={block}
+        //         type={op[0]}
+        //         color={color}
+        //         fee={op[1].fee}
+        //         hideOpLabel={this.props.hideOpLabel}
+        //         hideDate={this.props.hideDate}
+        //         info={column}
+        //         hideFee={this.props.hideFee}
+        //         withTxId={this.props.withTxId}
+        //         txId={this.props.txId}
+        //     >
+        //     </Row>
+        // ) : null;
 
-        line = column ? (
-            <Row
-                block={block}
-                type={op[0]}
-                color={color}
-                fee={op[1].fee}
-                hideOpLabel={this.props.hideOpLabel}
-                hideDate={this.props.hideDate}
-                info={column}
-                hideFee={this.props.hideFee}
-                withTxId={this.props.withTxId}
-                txId={this.props.txId}
-            >
-            </Row>
-        ) : null;
-
-
+        let account = ChainStore.getObject(op[1].from);
 
         return (
-            line ? line : <tr></tr>
+            <div className="flex-align-middle" style={{height:48,background:"#F8F8FA",padding:4,marginTop:25}}>
+              <div style={{display:"inline-block",width: 40,height: 40}}>
+                <AccountImage account={account.get("name")} size={{height: 40, width: 40}}/>
+              </div>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <span style={{color:"#0C0D26",fontSize:14}}>{column}</span>
+              &nbsp;&nbsp;&nbsp;
+              <span style={{color:"#999",fontSize:14}}><BlockTime block_number={block}/></span>
+            </div>
         );
     }
 }
 
 
-Operation = connect(Operation, {
+TransactionOperation = connect(TransactionOperation, {
     listenTo() {
         return [SettingsStore];
     },
@@ -1219,4 +1101,4 @@ Operation = connect(Operation, {
     }
 });
 
-export default Operation;
+export default TransactionOperation;

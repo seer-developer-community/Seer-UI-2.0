@@ -49,10 +49,11 @@ class BlockchainStore {
                 this.latestBlocks = this.latestBlocks.pop();
             }
 
-
             if (block.transactions.length > 0) {
-                block.transactions.forEach(trx => {
+                block.transactions.forEach((trx,index) => {
                     trx.block_num = block.id;
+                    trx.transaction_id = block.transaction_ids[index];
+
                     this.latestTransactions = this.latestTransactions.unshift(trx);
                 });
             }

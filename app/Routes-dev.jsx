@@ -51,7 +51,7 @@ import InitError from "./components/InitError";
 import LoginSelector from "./components/LoginSelector";
 import CreateWorker from "./components/Account/CreateWorker";
 import Oracles from "./components/Explorer/Oracles";
-import Houses from "./components/Explorer/Houses";
+import HousesIndex from "./components/Explorer/HousesIndex";
 import AccountHouseCreate from "./components/Account/AccountHouseCreate";
 import AccountHouse from "./components/Account/AccountHouse";
 import AccountGuaranty from "./components/Account/AccountGuaranty";
@@ -97,7 +97,7 @@ const routes = (
           <Route path="tx/:tx_id" component={Transaction} />
         </Route>
 
-        <Route path="/houses" components={Houses}/>
+        <Route path="/houses" components={HousesIndex}/>
         <Route path="/houses/:house_id" component={HouseDetail}/>
         <Route path="/explorer/rooms/:room_id" component={RoomParticipate}/>
         <Route path="/explorer/rooms/:room_id/update" component={AccountRoomUpdateWrapper}/>

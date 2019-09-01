@@ -2266,6 +2266,33 @@ $input-border
       }
     }
   }
+
+
+  table.table.tx-table{
+    background: #f8f8fa;
+    border:1px solid #E6E6F8;
+
+    >tbody{
+      >tr{
+        height:56px;
+        border-bottom: 1px solid #e6e6f8;
+
+        &.no-boder{
+          border-bottom:none;
+        }
+
+        >td{
+          padding: 0 17px;
+          font-size: 14px;
+          color: #666;
+
+          div{
+            line-height: 22px;
+          }
+        }
+      }
+    }
+  }
 }
 
 
@@ -2410,6 +2437,7 @@ $input-border
         }
       }
     }
+
   }
 
     .logo {

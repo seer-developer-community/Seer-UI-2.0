@@ -26,6 +26,13 @@ export const widechainAPIs = {
     DEPOSIT_HISTORY:"/latelyRecharge"
 };
 
+export const websiteAPIs = {
+    BASE : "https://www.seer.best/index.php",
+    HOUSES_INDEX_DATA:"?id=250",
+    HOUSES_INDEX_IMAGE:"?catid=42",
+    HOUSES_LABEL_LIST:"?id=251"
+}
+
 //for testnet
 
 // export const settingsAPIs = {

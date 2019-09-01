@@ -18,6 +18,7 @@ import Ps from "perfect-scrollbar";
 import TransitionWrapper from "../Utility/TransitionWrapper";
 import {ChainStore} from "seerjs/es";
 
+
 require("../Blockchain/json-inspector.scss");
 
 class BlockTimeAgo extends React.Component {
@@ -131,6 +132,7 @@ class Blocks extends React.Component {
 
     _getInitialBlocks() {
         let maxBlock = parseInt(this.props.dynGlobalObject.get("head_block_number"), 10);
+        //maxBlock = 13158209;
         if (maxBlock) {
             for (let i = 19; i >= 0; i--) {
                 let exists = false;
@@ -238,6 +240,8 @@ class Blocks extends React.Component {
                             result={trx.operation_results[opIndex++]}
                             block={trx.block_num}
                             hideFee={true}
+                            withTxId={true}
+                            txId={trx.transaction_id}
                             hideOpLabel={false}
                             current={"1.2.0"}
                         />
@@ -390,13 +394,6 @@ class Blocks extends React.Component {
                         </div>
                         <Translate component="span" content="account.recent" style={{fontSize:16,color:"#0C0D26",fontWeight:"bold",marginLeft:2}}/>
                       </div>
-                        <table className="table">
-                          <thead>
-                          <tr>
-                            <th><Translate content="account.votes.info" /></th>
-                          </tr>
-                          </thead>
-                        </table>
                       </div>
                       <div className="grid-block" style={{maxHeight: operationsHeight || "400px", overflow: "hidden", }} ref="operations">
                         <table className="table">
