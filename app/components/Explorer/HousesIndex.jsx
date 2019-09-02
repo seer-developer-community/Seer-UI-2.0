@@ -16,6 +16,8 @@ import {websiteAPIs} from "api/apiConfig";
 import {Link} from "react-router/es";
 import AccountStore from "../../stores/AccountStore";
 import Icon from "../Icon/Icon";
+import IntlStore from "../../stores/IntlStore";
+import Slider from "react-slick";
 
 require("./housesIndex.scss");
 
@@ -246,23 +248,67 @@ class Houses extends React.Component {
         super(props);
 
         this.state = {
-            filterWitness: props.filterWitness || "",
-            cardView: true //props.cardView
-        };
+          filterWitness: props.filterWitness || "",
+          cardView: true, //props.cardView
+          houseLabels: [],
+          currentLabel:null,
+          images:[]
+        }
+    }
+
+    _getHouseLabels(){
+      return fetch(websiteAPIs.BASE + websiteAPIs.HOUSES_INDEX_DATA, {
+        method:"post",
+        mode:"cors"
+      }).then((response) => response.json()
+        .then( json => {
+          let labelArrays = [];
+          if(json && json.result && json.result.length > 0){
+            if(IntlStore.getState().currentLocale === "zh"){
+              let labels = json.result[0].indexlabels;
+              labels = labels.replace("，",",");
+              labels = labels.split("],").join("-*-");
+              labels = labels.split(",[").join("-*-");
+              labels = labels.replace(new RegExp("\\[|\\]","gm"),"");
+              labels = labels.replace(new RegExp(",","gm"),"/");
+              labelArrays = labels.split("-*-");
+            }else{
+              let labels = json.result[0].indexlabelsen;
+              labelArrays = labels.split(",");
+            }
+          }
+          return labelArrays;
+        })
+      );
+    }
+
+    _getImages(){
+      return fetch(websiteAPIs.BASE + websiteAPIs.HOUSES_INDEX_IMAGE, {
+        method:"post",
+        mode:"cors"
+      }).then((response) => response.json()
+        .then( json => {
+          let images = [];
+          if(json && json.result && json.result.length > 0){
+            images = json.result
+          }
+          return images;
+        })
+      );
+    }
+
+    _initData(){
+      Promise.all([this._getHouseLabels.bind(this)(),this._getImages.bind(this)()])
+        .then(([houseLabels, images]) => {
+          this.setState({
+            houseLabels,
+            images
+          });
+        });
     }
 
     componentDidMount(){
-      // fetch( websiteAPIs.BASE + websiteAPIs.HOUSES_INDEX_DATA, {
-      //   method:"post",
-      //   mode:"cors",
-      //   headers: new Headers( { "Accept": "application/json", "Content-Type":"application/json" } )
-      // }).then( reply => { reply.json()
-      //   .then( json => {
-      //     console.log(json);
-      //   });
-      // }).catch(err => {
-      //   console.log("fetch error:", err);
-      // });
+      this._initData.bind(this)();
     }
 
     _onFilter(e) {
@@ -284,8 +330,10 @@ class Houses extends React.Component {
         });
     }
 
-    _redirectToEntry(entry) {
-        this.context.router.push(entry.name);
+    _onHouseLabelClick(entry) {
+        this.setState({
+          currentLabel:entry
+        });
     }
 
     render() {
@@ -298,25 +346,34 @@ class Houses extends React.Component {
         if (current) {
             currentAccount = ChainStore.getObject(current.get("witness_account"));
         }
+
+        const settings = {
+          dots: true,
+          infinite: true,
+          speed: 500,
+          arrows:false,
+          autoplay: true,
+          autoplaySpeed: 5000
+        };
+
         return (
+          <div className="container">
             <div className="main" style={{width:"100%",height:"100%"}}>
-              <div className="menu-content" style={{width:220,height:"100%"}}>
+              <div className="menu-content" style={{width:221,height:"100%"}}>
                 <div className="side-menu">
                   <ul>
                     {/*index === activeSetting ? "active" : ""*/}
                     {/*<li className={""} onClick={this._redirectToEntry.bind(this, entry)} key={entry.name}>*/}
-                    <li className={""} >
-                     <span>猫眼/票房</span>
-                    </li>
-                    <li className={""} >
-                      <span>猫眼/票房</span>
-                    </li>
-                    <li className={""} >
-                      <span>猫眼/票房</span>
-                    </li>
-                    <li className={""} >
-                      <span>猫眼/票房</span>
-                    </li>
+                    {
+                      this.state.houseLabels.map((item,index)=>{
+                        let className = this.state.currentLabel === item ? "active" : "";
+                        return (
+                          <li className={className} key={index} onClick={this._onHouseLabelClick.bind(this, item)} >
+                            <span>{item}</span>
+                          </li>
+                        );
+                      })
+                    }
                   </ul>
                 </div>
               </div>
@@ -352,6 +409,19 @@ class Houses extends React.Component {
                     </li>
                   </ul>
                 </div>
+                <div className="image-slider">
+                  <Slider {...settings}>
+                    {
+                      this.state.images.map((item,index)=>{
+                        return (
+                          <div key={index}>
+                            <Link to={"explorer/rooms/" + item[1]} style={{background:"url(" + item[0] + ")"}}/>
+                          </div>
+                        );
+                      })
+                    }
+                  </Slider>
+                </div>
                 <div className="grid-block" style={{ padding: '24px' }}>
                   <div className="grid-block">
                     {/*<div className="grid-block vertical small-5 medium-3">*/}
@@ -380,8 +450,9 @@ class Houses extends React.Component {
                   </div>
                 </div>
               </div>
-              <div style={{background: "blue",width:297}}>&nbsp;</div>
+              <div style={{background: "blue",width:297,marginRight:20}}>&nbsp;</div>
             </div>
+          </div>
         );
     }
 }
