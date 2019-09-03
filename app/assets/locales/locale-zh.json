@@ -1730,6 +1730,7 @@
             "input_duration_secs": "开奖时长(分钟)",
             "update": "更新房间",
             "room_id":"房间号",
+            "recommend":"推荐",
             "view": "查看",
             "detail": "详情",
             "reputation": "名誉",

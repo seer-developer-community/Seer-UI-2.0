@@ -18,6 +18,7 @@ import AccountStore from "../../stores/AccountStore";
 import Icon from "../Icon/Icon";
 import IntlStore from "../../stores/IntlStore";
 import Slider from "react-slick";
+import RoomCard from "../Account/RoomCard";
 
 require("./housesIndex.scss");
 
@@ -252,7 +253,8 @@ class Houses extends React.Component {
           cardView: true, //props.cardView
           houseLabels: [],
           currentLabel:null,
-          images:[]
+          images:[],
+          roomList:[]
         }
     }
 
@@ -262,7 +264,10 @@ class Houses extends React.Component {
         mode:"cors"
       }).then((response) => response.json()
         .then( json => {
-          let labelArrays = [];
+          let object = {
+            labelArrays:[],
+            roomList:[]
+          };
           if(json && json.result && json.result.length > 0){
             if(IntlStore.getState().currentLocale === "zh"){
               let labels = json.result[0].indexlabels;
@@ -271,13 +276,14 @@ class Houses extends React.Component {
               labels = labels.split(",[").join("-*-");
               labels = labels.replace(new RegExp("\\[|\\]","gm"),"");
               labels = labels.replace(new RegExp(",","gm"),"/");
-              labelArrays = labels.split("-*-");
+              object.labelArrays = labels.split("-*-");
             }else{
               let labels = json.result[0].indexlabelsen;
-              labelArrays = labels.split(",");
+              object.labelArrays = labels.split(",");
             }
+            object.roomList = json.result[0].roomoidlist.split(",");
           }
-          return labelArrays;
+          return object;
         })
       );
     }
@@ -299,9 +305,12 @@ class Houses extends React.Component {
 
     _initData(){
       Promise.all([this._getHouseLabels.bind(this)(),this._getImages.bind(this)()])
-        .then(([houseLabels, images]) => {
+        .then(([houseObj, images]) => {
           this.setState({
-            houseLabels,
+            houseLabels:houseObj.labelArrays,
+           // roomList:houseObj.roomList,
+            roomList:["1.15.10"],
+
             images
           });
         });
@@ -340,6 +349,8 @@ class Houses extends React.Component {
         let { dynGlobalObject, globalObject } = this.props;
         dynGlobalObject = dynGlobalObject.toJS();
         globalObject = globalObject.toJS();
+
+        console.log(this.state)
 
         let current = ChainStore.getObject(dynGlobalObject.current_witness),
             currentAccount = null;
@@ -421,6 +432,16 @@ class Houses extends React.Component {
                       })
                     }
                   </Slider>
+                </div>
+                <div style={{marginTop:"26px"}}>
+                  {
+                    this.state.roomList && this.state.roomList.map((room,index)=>{
+                      console.log(room)
+                        return (
+                          <RoomCard room={room} key={index}/>
+                        );
+                    })
+                  }
                 </div>
                 <div className="grid-block" style={{ padding: '24px' }}>
                   <div className="grid-block">
