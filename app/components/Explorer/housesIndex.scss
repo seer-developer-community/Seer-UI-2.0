@@ -121,6 +121,7 @@
 
         .room-card{
             border: 1px solid #DCDCDC;
+            margin-bottom: 23px;
 
             .room-title{
                 font-size: 16px;
@@ -128,6 +129,8 @@
                 color: #222;
                 line-height: 28px;
                 padding: 14px 47px 23px 18px;
+                position: relative;
+                overflow: hidden;
 
                 i.label-recommend{
                     display: inline-block;
@@ -142,10 +145,126 @@
                     position: relative;
                     top: -1px;
                 }
+
+                .room-type{
+                    background: red;
+                    position: absolute;
+                    right: -18px;
+                    top:7px;
+                    color: #fff;
+                    font-size: 14px;
+                    font-weight: normal;
+                    transform:rotate(45deg);
+                    width: 70px;
+                    height:18px;
+                    line-height: 18px;
+                    text-align: center;
+                    user-select: none;
+
+                    &.ADV{
+                        background: #7460ED;
+                    }
+
+                    &.PVP{
+                        background: #FC4C6C;
+                    }
+
+                    &.PVD{
+                        background: #FF972B;
+                    }
+                }
             }
 
             .room-options{
+                list-style: none;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                border-top: 1px solid #EFEFEF;
+                border-bottom: 1px solid #EFEFEF;
 
+                &:after{
+                    content: "";
+                    display: block;
+                    clear: both;
+                }
+
+                li{
+                    float: left;
+                    height:74px;
+                    border-right: 1px solid #efefef;
+                    color: #333333;
+                    font-size: 14px;
+                    font-weight: bold;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    user-select: none;
+
+                    &:hover{
+                        background: #F3F3F3;
+                    }
+
+                    .rate{
+                        font-weight: normal;
+                        color:#666;
+                    }
+
+                    &.empty{
+                        border-right: none;
+                        &:hover{
+                            background: #FFFF;
+                        }
+                    }
+                }
+
+
+                &.two-options li{
+                    width: 50%;
+
+                    &:last-child{
+                        border-right: none;
+                    }
+                }
+
+                &.three-options li{
+                    width: 33.33333333%;
+
+                    &:nth-of-type(3n){
+                        border-right: none;
+                    }
+
+                    &:nth-child(3) ~ li{
+                        border-top:1px solid #efefef;
+                    }
+                }
+            }
+
+
+            .room-info{
+                font-size: 14px;
+                color: #333;
+                height:54px;
+                display: flex;
+                align-items: center;
+
+                i.iconfont{
+                    margin-left: 27px;
+                    margin-right: 12px;
+                }
+
+                >div:first-child{
+                    flex: 1;
+                }
+
+                .right{
+                    font-size: 12px;
+
+                    a{
+                        margin: 0 24px 0 19px;
+                    }
+                }
             }
         }
     }

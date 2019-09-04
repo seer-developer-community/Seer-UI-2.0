@@ -7,6 +7,8 @@ import counterpart from "counterpart";
 import AssetActions from "actions/AssetActions";
 import AccountSelector from "../Account/AccountSelector";
 import AmountSelector from "../Utility/AmountSelector";
+import moment from 'moment'
+import {Link} from "react-router/es";
 import SeerActions from "../../actions/SeerActions";
 import {ChainStore} from "seerjs/es";
 var Apis =  require("seerjs-ws").Apis;
@@ -21,7 +23,7 @@ let roomType =
 {
     0:"PVD",
     1:"PVP",
-    2:"Advanced"
+    2:"ADV"
 };
 class RoomCard extends React.Component {
 
@@ -80,248 +82,7 @@ class RoomCard extends React.Component {
         */
     }
 
-    onSubmit() {
-        let obj = ChainStore.getAccount(AccountStore.getState().currentAccount);
-        if (!obj) return;
-        let id = obj.get("id");
-        let args = {
-            issuer: id,
-            room: this.state.room.id,
-            type: 0,
-            input: [this.state.checked_item],
-            input1: [],
-            input2: [],
-            amount: parseInt(this.state.amount * this.state.precision)
-        };
-        SeerActions.participate(args);
-    }
-
-    handleInputChange(idx, event) {
-        const target = event.target;
-        const checked = target.checked;
-        const value = parseInt(idx);
-
-        this.setState({checked_item: parseInt(event.currentTarget.value)});
-    }
-
-    changeAmount(e) {
-        let amount = e.target.value
-        if (this.state.room.room_type>0 && amount<0){
-            this.setState({amount: 0});
-        }
-        else {
-            this.setState({amount: amount});
-        }
-    }
-
-    renderDescription()
-    {
-        let {room} = this.state;
-
-        if(!room.option){
-            return null;
-        }
-
-        let filter =  (room.option.filter? (
-            <td>
-                <table className="table" style={{width: "100%"}}>
-                    <thead>
-                    <tr>
-                        <th><Translate content="seer.room.reputation"/></th>
-                        <th><Translate content="seer.room.guaranty"/></th>
-                        <th><Translate content="seer.room.volume"/></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>{room.option.filter.reputation}</td>
-                        <td><FormattedAsset amount={room.option.filter.guaranty} asset={"1.3.0"}/></td>
-                        <td>{room.option.filter.volume}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </td>
-        ) :
-            <td>Not Set</td>);
-
-
-/*
-        let oracles = this.state.oracles.length>0?this.state.oracles
-            .map(oracle => {
-                return (<span key={oracle.id} style={{marginRight: "20px"}}><LinkToAccountById  account={oracle}  /></span>);
-            }):
-            <span>Not Set</span>;
-*/
-        let details = null;
-        let L = null;
-        let total_shares = null;
-
-        if (this.state.room.status && (this.state.room.status !="closed")) {
-            total_shares = (
-                <tr>
-                    <td><Translate content="seer.room.total_shares"/></td>
-                    <td><FormattedAsset amount={this.state.room.running_option.total_shares} asset={room.option.accept_asset}/></td>
-                </tr>
-            );
-
-            let idx = 0;
-            if (this.state.room.room_type == 0) {
-                L = (
-                    <tr>
-                        <td><Translate content="seer.room.L"/></td>
-                        <td>{this.state.room.running_option.lmsr.L/this.state.precision}</td>
-                    </tr>
-                );
-
-                details = (
-                    this.state.room.running_option.selection_description.map(c => {
-                        let dom = (
-                            <tr key={c}>
-                                <td>{c}</td>
-                                <td>{this.state.room.running_option.player_count[idx]}</td>
-                                <td>{this.state.room.running_option.lmsr_running.items[idx]/this.state.precision} <Translate content="seer.room.part"/></td>
-                            </tr>
-                        );
-                        idx++;
-                        return dom;
-                    })
-                )
-
-            }
-            else if (this.state.room.room_type == 1) {
-                details = (
-                    this.state.room.running_option.selection_description.map(c => {
-                        let dom = (
-                            <tr key={c}>
-                                <td>{c}</td>
-                                <td>{this.state.room.running_option.player_count[idx]}</td>
-                                <td><FormattedAsset amount={this.state.room.running_option.pvp_running.total_participate[idx]} asset={room.option.accept_asset}/></td>
-                            </tr>
-                        );
-                        idx++;
-                        return dom;
-                    })
-                )
-            }
-            else if (this.state.room.room_type == 2) {
-                L = (
-                    <tr>
-                        <td><Translate content="seer.room.pool"/></td>
-                        <td><FormattedAsset amount={this.state.room.running_option.advanced.pool} asset={room.option.accept_asset}/></td>
-                    </tr>
-                );
-
-                details = (
-                    this.state.room.running_option.selection_description.map(c => {
-                        let dom = (
-                            <tr key={c}>
-                                <td>{c}</td>
-                                <td>{this.state.room.running_option.player_count[idx]}</td>
-                                <td><FormattedAsset amount={this.state.room.running_option.advanced_running.total_participate[idx][0]} asset={room.option.accept_asset}/></td>
-                            </tr>
-                        );
-                        idx++;
-                        return dom;
-                    })
-                )
-            }
-        };
-
-        return (<div>
-                <table className="table">
-                    <tbody>
-                    <tr>
-                        <td style={{width: "130px"}}><Translate content="seer.house.owner"/></td>
-                        <td><LinkToAccountById account={room.owner}/></td>
-                    </tr>
-                    <tr>
-                        <td><Translate content="seer.oracle.description"/></td>
-                        <td>{room.description}</td>
-                    </tr>
-
-                    <tr>
-                        <td><Translate content="seer.room.label"/></td>
-                        <td>{room.label.join(",")}</td>
-                    </tr>
-
-
-                    <tr>
-                        <td><Translate content="seer.oracle.script"/></td>
-                        <td>{room.script}</td>
-                    </tr>
-
-                    <tr>
-                        <td><Translate content="seer.room.type"/></td>
-                        <td>{roomType[room.room_type]}</td>
-                    </tr>
-
-                    <tr>
-                        <td><Translate content="seer.room.status"/></td>
-                        <td>{room.status}</td>
-                    </tr>
-                    <tr>
-                        <td><Translate content="seer.room.result_owner_percent"/></td>
-                        <td>{room.option.result_owner_percent/100}%</td>
-                    </tr>
-                    <tr>
-                        <td><Translate content="seer.room.reward_per_oracle"/></td>
-                        <td>{room.option.reward_per_oracle / 100000} SEER</td>
-                    </tr>
-                    <tr>
-                        <td><Translate content="seer.room.accept_asset"/></td>
-                        <td><LinkToAssetById asset={room.option.accept_asset}/></td>
-                    </tr>
-                    <tr>
-                        <td><Translate content="seer.room.min"/></td>
-                        <td>{room.option.minimum/this.state.precision}</td>
-                    </tr>
-                    <tr>
-                        <td><Translate content="seer.room.max"/></td>
-                        <td>{room.option.maximum/this.state.precision}</td>
-                    </tr>
-                    <tr>
-                        <td><Translate content="account.votes.start"/></td>
-                        <td>{room.option.start}</td>
-                    </tr>
-                    <tr>
-                        <td><Translate content="account.votes.end"/></td>
-                        <td>{room.option.stop}</td>
-                    </tr>
-                    <tr>
-                        <td><Translate content="seer.room.input_duration_secs"/></td>
-                        <td>{room.option.input_duration_secs/60}</td>
-                    </tr>
-                    {L}
-                    {total_shares}
-                    <tr>
-                        <td><Translate content="seer.room.filter"/></td>
-                        {filter}
-                    </tr>
-                    <tr>
-                        <td><Translate content="seer.room.selections"/></td>
-                        <td>
-                            <table className="table">
-                                <thead>
-                                <tr>
-                                    <th><Translate content="seer.room.selection_description"/></th>
-                                    <th><Translate content="seer.room.participators"/></th>
-                                    <th><Translate content="seer.room.amount"/></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {details}
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        );
-    }
-
     render() {
-        let tabIndex = 1;
         let {room} = this.state;
 
         let options;
@@ -336,7 +97,7 @@ class RoomCard extends React.Component {
             options = this.state.room.running_option.selection_description.map((c,index) => {
                 let dom = (
                     <li key={idx}>
-                        <input type="radio" name="radio" value={idx} checked={this.state.checked_item == idx} onChange={this.handleInputChange.bind(this, idx)}/> {c}
+                        <div>{c}</div>
                     </li>
                 );
                 idx++;
@@ -361,7 +122,8 @@ class RoomCard extends React.Component {
             options = this.state.room.running_option.selection_description.map(c => {
                 let dom = (
                     <li key={idx}>
-                        <input type="radio" name="radio" value={idx} checked={this.state.checked_item == idx} onChange={this.handleInputChange.bind(this, idx)}/> {c} (<Translate content="seer.room.current_rate"/>  1:{rate[idx]} )
+                        <div>{c}</div>
+                        <div className="rate"><Translate content="seer.room.current_rate"/>  1:{rate[idx]} </div>
                     </li>
                 );
                 idx++;
@@ -373,88 +135,61 @@ class RoomCard extends React.Component {
             options = this.state.room.running_option.selection_description.map(c => {
                 let dom = (
                     <li key={idx}>
-                        <input type="radio" name="radio" value={idx} checked={this.state.checked_item == idx} onChange={this.handleInputChange.bind(this, idx)}/> {c}(<Translate content="seer.room.current_rate"/> 1:{this.state.room.running_option.advanced.awards[idx]/10000})
-                    </li>
+                        <div>{c}</div>
+                        <div className="rate"><Translate content="seer.room.current_rate"/> 1:{this.state.room.running_option.advanced.awards[idx]/10000} </div>
+                  </li>
                 );
                 idx++;
                 return dom;
             });
         }
 
-        let showMoney=null;
 
-        if (this.state.room.room_type == 0 && this.state.room.running_option.lmsr_running){
-            let orgin0 = 0;
-            for(var i = 0;i<this.state.room.running_option.lmsr_running.items.length;i++){
-                orgin0 = orgin0 + Math.exp(this.state.room.running_option.lmsr_running.items[i]  /  this.state.room.running_option.lmsr.L);
+        let optionClass = "";
+        let patchLI = [];
+
+        if(options.length === 2){
+            optionClass = "two-options";
+        }else if(options.length % 3 === 0){
+            optionClass = "three-options";
+        }else if(options.length % 3 > 0){
+            optionClass = "three-options last-options";
+
+            let count = (3 - options.length % 3);
+            for(let i = 0;i < count;i++){
+                patchLI.push(<li key={i} className="empty"></li>);
             }
-
-            let orgin1 = 0;
-            for(var j = 0;j<this.state.room.running_option.lmsr_running.items.length;j++) {
-                if (j == this.state.checked_item) {
-                    orgin1 = orgin1 + Math.exp( (this.state.room.running_option.lmsr_running.items[j] /this.state.room.running_option.lmsr.L)  + (parseInt(this.state.amount * this.state.precision)/ this.state.room.running_option.lmsr.L));
-                }
-                else{
-                    orgin1 = orgin1 +  Math.exp(this.state.room.running_option.lmsr_running.items[j]   / this.state.room.running_option.lmsr.L);
-                }
-            }
-
-            let money = parseInt(this.state.room.running_option.lmsr.L * (Math.log(orgin1) - Math.log(orgin0)));
-            showMoney = (
-                <td>
-                    <Translate
-                        content="seer.room.show_money"
-                        _count={this.state.amount}
-                        amount={
-                            <FormattedAsset
-                                amount={money || 0}
-                                asset={this.state.room.option.accept_asset}
-                            />}
-                    />
-                    </td>
-            )
         }
 
+        let playerCount = 0;
 
-        let participate = null;
-        if (this.state.room.status && this.state.room.status=="opening" ) participate = (
-            <div className="content-block" style={{display: "inline-block", width: "35%", float: "right"}}>
-                <h3><Translate content="seer.room.participate"/></h3>
-                <div className="content-block">
-                    {options}
+        room.running_option.player_count.map(c=>{
+            playerCount += c;
+        });
+
+        return (
+            <div className="room-card">
+                <div className="room-title">
+                    <Translate className="label-recommend" component="i" content="seer.room.recommend"/>&nbsp;  {room.description}
+                    <span className={"room-type " + roomType[room.room_type]}>{roomType[room.room_type]}</span>
                 </div>
-                <div className="content-block" style={{width: "50%"}}>
-                    <label>
-                        <Translate content="transfer.amount" />
-                        ({this.state.room.room_type === 0 ? <Translate content="seer.room.part"/> : this.state.asset})
-                        <input type="text" value={this.state.amount || 0}  onChange={this.changeAmount.bind(this)}/>
-                        {showMoney}
-                    </label>
-                    {/*<AmountSelector asset={"1.3.0"} assets={[this.props.room.option.accept_asset]} onChange={this.textChange.bind(this)}/>*/}
-                </div>
-                <div className="content-block button-group">
-                    <button className="button" onClick={this.onSubmit.bind(this)}>
-                        <Translate content="seer.room.participate"/>
-                    </button>
+                <ul className={"room-options " + optionClass}>
+                    {options}{patchLI}
+                </ul>
+                <div className="room-info">
+                    <div className="flex-align-middle">
+                        <i className="iconfont icon-icon" style={{color:"#7460ED",fontSize:23}}></i>
+                        <FormattedAsset amount={room.running_option.total_shares} asset={room.option.accept_asset}/>
+                        <i className="iconfont icon-zhanbitu" style={{color:"#FF972B",fontSize:23}}></i>{room.option.result_owner_percent/100}%
+                        <i className="iconfont icon-renshu" style={{color:"#FC4C6C",fontSize:28}}></i>{playerCount}
+                    </div>
+                    <div className="right">
+                        <Translate content="seer.room.end_time"/>：&nbsp;{moment(room.option.stop).format('YYYY/MM/DD HH:mm:ss')}
+                        <Link to={"/houses/rooms/" + room.id }><Translate content="seer.room.open_detail"/></Link>
+                    </div>
                 </div>
             </div>
         );
-
-        return (
-          <div>
-            <div className="room-card">
-              <div className="room-title"><Translate className="label-recommend" component="i" content="seer.room.recommend"/>&nbsp;  {room.description}</div>
-              <ul className="room-options">
-                {options}
-              </ul>
-
-            </div>
-            <div className="grid-content app-tables no-padding" ref="appTables">
-              {this.renderDescription()}
-              {participate}
-            </div>
-          </div>
-             );
     }
 }
 

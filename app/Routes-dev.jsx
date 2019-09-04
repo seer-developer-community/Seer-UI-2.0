@@ -99,8 +99,8 @@ const routes = (
 
         <Route path="/houses" components={HousesIndex}/>
         <Route path="/houses/:house_id" component={HouseDetail}/>
-        <Route path="/explorer/rooms/:room_id" component={RoomParticipate}/>
-        <Route path="/explorer/rooms/:room_id/update" component={AccountRoomUpdateWrapper}/>
+        <Route path="/houses/rooms/:room_id" component={RoomParticipate}/>
+        <Route path="/houses/rooms/:room_id/update" component={AccountRoomUpdateWrapper}/>
 
         <Route path="wallet" component={WalletManager} >
             {/* wallet management console */}

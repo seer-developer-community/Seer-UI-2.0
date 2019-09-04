@@ -1749,11 +1749,13 @@
             "add_allowed_oracles": "添加允许的预言机",
             "confirm": "确定输入选项",
             "show_money": "购买%(_count)s份大约需要支付%(amount)s",
-            "current_rate": "当前赔率",
+            "current_rate": "赔率",
             "pool_explain": "当前余额：",
             "update_pool": "更新资产池",
             "pvp_owner_percent":"PVP房主提成(%)",
-            "owner_pay_fee_percent":"房主代付手续费(%)"
+            "owner_pay_fee_percent":"房主代付手续费(%)",
+            "end_time":"截止时间",
+            "open_detail":"查看详情"
         }
     },
   "erc20": {

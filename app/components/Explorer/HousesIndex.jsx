@@ -309,7 +309,7 @@ class Houses extends React.Component {
           this.setState({
             houseLabels:houseObj.labelArrays,
            // roomList:houseObj.roomList,
-            roomList:["1.15.10"],
+            roomList:["1.15.10","1.15.1642","1.15.1628"],
 
             images
           });
@@ -436,7 +436,6 @@ class Houses extends React.Component {
                 <div style={{marginTop:"26px"}}>
                   {
                     this.state.roomList && this.state.roomList.map((room,index)=>{
-                      console.log(room)
                         return (
                           <RoomCard room={room} key={index}/>
                         );
