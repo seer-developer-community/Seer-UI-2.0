@@ -13,6 +13,13 @@ import {ChainStore} from "seerjs/es";
 import AmountSelector from "../Utility/AmountSelector";
 import AssetStore from "stores/AssetStore";
 import FormattedAsset from "../Utility/FormattedAsset";
+import BaseModal from "../Modal/BaseModal";
+import IssueModal from "../Modal/IssueModal";
+import ZfApi from "react-foundation-apps/src/utils/foundation-api";
+import { websiteAPIs } from "../../api/apiConfig";
+import IntlStore from "../../stores/IntlStore";
+
+require("./AccountRoomCreate.scss");
 
 class AccountRoomCreate extends React.Component {
 
@@ -41,7 +48,10 @@ class AccountRoomCreate extends React.Component {
             guaranty: 0,
             volume: 0,
             pvp_owner_percent:0,
-            owner_pay_fee_percent:0
+            owner_pay_fee_percent:0,
+            labelList:[],
+            input_label:"",
+            select_label:"-1"
            // all_oracles: []
            // allowed_oracles: [] //set as account names eg:a,b,ss,seer,cef,
         };
@@ -241,8 +251,32 @@ class AccountRoomCreate extends React.Component {
                     break;
                 }
             }
-
         });
+/*
+      fetch(websiteAPIs.BASE + websiteAPIs.HOUSES_LABEL_LIST, {
+        method:"post",
+        mode:"cors"
+      }).then((response) => response.json())
+        .then( json => {
+            console.log(json);
+          // let labels = [];
+          // if(json && json.result && json.result.length > 0){
+          //   if(IntlStore.getState().currentLocale === "zh"){
+          //     labels = json.result.roomlabels.split(",");
+          //   }else{
+          //     labels = json.result.roomlabelsen.split(",");
+          //   }
+          // }
+          //
+          // this.setState({
+          //   labelList:labels
+          // });
+        });
+*/
+      this.setState({
+        labelList:"社会,大选,票房,电影,音乐榜,足球,德甲,篮球,NBA,CBA,UFC,格斗,英超,BTC,价格预测,EOS,ETH,亚冠,股市,指数".split(",")
+      });
+
 /*
         this.setState({assets: AssetStore.getState().assets});
             Apis.instance().db_api().exec("lookup_oracle_accounts", ["A", 1000]).then((results) => {
@@ -281,8 +315,8 @@ class AccountRoomCreate extends React.Component {
         this.setState({script: e.target.value});
     }
 
-    _changeRoomType(e) {
-        this.setState({room_type: parseInt(e.target.value)});
+    _changeRoomType(val) {
+        this.setState({room_type: parseInt(val)});
     }
 
     _changeRoomSelections(i, e) {
@@ -291,14 +325,29 @@ class AccountRoomCreate extends React.Component {
         this.setState({selections: selections});
     }
 
-
     _addLabel() {
-        let labels = this.state.label;
-        labels.push("");
-        this.setState({label: labels});
+        ZfApi.publish("room_label_modal", "open");
+    }
+
+    _addLabelOk(){
+        let label = this.state.select_label;
+        if(label === "-1"){
+            label = this.state.input_label;
+        }
+
+        if(!label || label.trim().length === 0){
+            return;
+        }
+
+          let labels = this.state.label;
+          labels.push(label);
+          this.setState({label: labels});
+
+        ZfApi.publish("room_label_modal", "close");
     }
 
     _removeLabel(idx) {
+        console.log(idx);
         let labels = this.state.label;
         labels.splice(idx, 1);
         this.setState({label: labels});
@@ -367,7 +416,8 @@ class AccountRoomCreate extends React.Component {
 
         let type_options = [];
         type_opts.forEach( opt => {
-            type_options.push(<option key={opt.value} value={opt.value}>{opt.label}</option>)
+            let selected = opt.value === this.state.room_type ? "" : "outline";
+            type_options.push(<button key={opt.value} className={"button btn-room-type " + selected} onClick={this._changeRoomType.bind(this,opt.value)}>{opt.label}</button>)
         });
 
         let room_type;
@@ -375,30 +425,36 @@ class AccountRoomCreate extends React.Component {
             case 0:
                 room_type = (
                     <div>
-                        <label>
-                            <Translate content="seer.room.L"/>
-                            <input type="text" value={this.state.L/this.state.accept_asset_precision} onChange={e => this.setState({L: parseInt(e.target.value*this.state.accept_asset_precision)})}/>
-                        </label>
+                      <span className="label-text" >
+                        <Translate content="seer.room.L"/>
+                        <i>*</i>
+                      </span>
+                      <input type="text" value={this.state.L/this.state.accept_asset_precision} onChange={e => this.setState({L: parseInt(e.target.value*this.state.accept_asset_precision)})}/>
                     </div>
                 );
                 break;
             case 1:
                 room_type = (
                     <div>
-                        <label>
+                        <span className="label-text" >
                             <Translate content="seer.room.pvp_owner_percent"/>
+                            <i>*</i>
+                        </span>
+                        <div className="unit-input">
                             <input type="text" value={this.state.pvp_owner_percent/100} onChange={e => this.setState({pvp_owner_percent:parseInt(e.target.value*100)})}/>
-                        </label>
+                            <i>%</i>
+                        </div>
                     </div>
                 );
                 break;
             case 2:
                 room_type = this.props.room ?null:(
                     <div>
-                        <label>
+                        <span className="label-text" >
                             <Translate content="seer.room.pool"/>
-                            <input type="text" value={this.state.pool/this.state.accept_asset_precision} onChange={e => this.setState({pool:parseInt(e.target.value*this.state.accept_asset_precision)})}/>
-                        </label>
+                            <i>*</i>
+                        </span>
+                        <input type="text" value={this.state.pool/this.state.accept_asset_precision} onChange={e => this.setState({pool:parseInt(e.target.value*this.state.accept_asset_precision)})}/>
                     </div>
                 );
         }
@@ -431,39 +487,12 @@ class AccountRoomCreate extends React.Component {
             return dom;
         });
 */
-        let oracles = (
-            <div>
-                <p>
-                    <Translate content="seer.room.reputation"/>
-                    <input type="text" value={this.state.reputation} onChange={e => this.setState({reputation: e.target.value})}/>
-                </p>
-                <label>
-                    <Translate content="seer.room.guaranty"/>
-                    <input type="text"  value={this.state.guaranty}  onChange={e => this.setState({guaranty: e.target.value})}/>
-                </label>
-                <label>
-                    <Translate content="seer.room.volume"/>
-                    <input type="text"  value={this.state.volume} onChange={e => this.setState({volume: e.target.value})}/>
-                </label>
-
-            </div>
-        );
 
 
-        i = 0;
-        let labels = this.state.label.map(l => {
-            let dom = (
-                <tr key={i}>
-                    <td><input type="text" value={l} onChange={this._changeLabel.bind(this, i)}/></td>
-                    <td>
-                        <button className="button outline" onClick={this._removeLabel.bind(this, i)}>
-                            <Translate content="settings.remove"/>
-                        </button>
-                    </td>
-                </tr>
+        let labels = this.state.label.map((l,index) => {
+            return (
+              <span key={index} className="room-label clickable" onDoubleClick={this._removeLabel.bind(this, index)}>{l}</span>
             );
-            i++;
-            return dom;
         });
 
         i = 0;
@@ -546,7 +575,7 @@ class AccountRoomCreate extends React.Component {
                 <div className="content-block small-12">
                     <div className="tabs-container generic-bordered-box">
                         <div className="tabs-header">
-                            <h3><Translate content="seer.room.update" /></h3>
+                            <h3 style={{marginLeft:0,marginTop:30}}><Translate content="seer.room.update" /></h3>
                         </div>
                         <div className="small-12 grid-content" style={{padding: "15px"}}>
                             {awards_type2}
@@ -555,7 +584,7 @@ class AccountRoomCreate extends React.Component {
                             </button>
                             <div className="tabs-container generic-bordered-box">
                                 <div className="tabs-header">
-                                    <h3><Translate content="seer.room.update_pool" /></h3>
+                                    <h3 style={{marginLeft:0,marginTop:30}}><Translate content="seer.room.update_pool" /></h3>
                                 </div>
                                 <div className="small-12 grid-content" style={{padding: "15px"}}>
                                     <Translate content="seer.room.pool_explain" />
@@ -583,105 +612,182 @@ class AccountRoomCreate extends React.Component {
                         <div className="tabs-header">
                             {
                                 this.props.room?
-                                    <h3><Translate content="seer.room.update" /></h3>
+                                    <h3 style={{marginLeft:0,marginTop:30}}><Translate content="seer.room.update" /></h3>
                                     :
-                                    <h3><Translate content="seer.room.create" /></h3>
+                                    <h3 style={{marginLeft:0,marginTop:30}}><Translate content="seer.room.create" /></h3>
                             }
 
                         </div>
-                        <div className="small-12 grid-content" style={{padding: "15px"}}>
+                      <table className="room-table" width="100%">
+                          <tbody>
+                        <tr>
+                          <td width="50%">
+                              <span className="label-text" style={{marginBottom:22}}>
+                                  <Translate content="seer.oracle.description" />
+                                  <i>*</i>
+                              </span>
+                              <textarea onChange={this._changeDescription.bind(this)} value={this.state.description}>
+                              </textarea>
+                          </td>
+                          <td width="50%">
                             {
-                                this.props.room? null:(
+                              this.props.room? null:(
                                 <div>
-                                    {
-                                        this.state.label.length ?
-                                            <table className="">
-                                                <thead>
-                                                <tr>
-                                                    <th><Translate content="seer.room.label"/></th>
-                                                    <th></th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {labels}
-                                                </tbody>
-                                            </table>
-                                            : null
-                                    }
-
-                                    <button className="button small" onClick={this._addLabel.bind(this)}><Translate
-                                        content="seer.room.add_label"/></button>
-                                </div>)
-                            }
-                            <br/>
-                            <label><Translate content="seer.oracle.description" />
-                                <input type="text" value={this.state.description} onChange={this._changeDescription.bind(this)}/>
-                            </label>
-                            {
-                                (this.props.room || this.props.params && this.props.params.ok=="true")?null:(
-                                    <label>
-                                        <Translate content="seer.room.type"/>
-                                        <select value={this.state.room_type} onChange={this._changeRoomType.bind(this)}>
-                                            {type_options}
-                                        </select>
-                                    </label>
-                                )
-                            }
-
-                            <label><Translate content="seer.oracle.script" />
-                                <input type="text" value={this.state.script} onChange={this._changeScript.bind(this)}/>
-                            </label>
-                            <label>
-                                <Translate content="seer.room.result_owner_percent" />(%)
-                                <input type="text"  value={this.state.result_owner_percent}  onChange={e => this.setState({result_owner_percent: e.target.value})}/>
-
-                            </label>
-                            <label>
-                                {oracles}
-                                    <Translate content="seer.room.reward_per_oracle" />(SEER)
-                                    <input type="text"  value={this.state.reward_per_oracle} onChange={e => this.setState({reward_per_oracle: e.target.value})}/>
-                            </label>
-                            {
-                                this.props.room?null:(
-                                    <div>
-                                        <Translate content="seer.room.accept_asset"/>
-                                        <p></p>
-                                        <select  onChange={e => {
-                                            this.setState({accept_asset: e.target.value});
-                                            let a;
-                                            for( var i = 0;i<this.state.assets.length;i++){
-                                                if(this.state.assets[i].id === e.target.value )
-                                                {
-                                                    a = this.state.assets[i];
-                                                    break;
-                                                 }
-                                            }
-                                            this.setState({accept_asset_precision:Math.pow(10,parseInt(a.precision))});
-
-                                            this.setState({accept_asset_symbol:a.symbol})}}>
-                                            {supports}
-                                        </select>
+                                    <span className="label-text" style={{marginTop:10,marginBottom:10}}>
+                                      <Translate content="seer.room.label"/>
+                                      <i>*</i>
+                                      <button className="button tiny btn-add-label" onClick={this._addLabel.bind(this)}>✚</button>
+                                      <Translate content="seer.room.click_label_remove" style={{fontWeight:"normal",fontSize:12,color:"#999"}}/>
+                                    </span>
+                                    <div className="label-panel">
+                                        {this.state.label.length ? labels : null}
                                     </div>
-                                )
+                                </div>
+                              )
                             }
-                            <label style={{width: "50%", paddingRight: "2.5%", display: "inline-block"}}>
-                                <label>
+                          </td>
+                        </tr>
+                          <tr>
+                              <td>
+                                {
+                                  (this.props.room || this.props.params && this.props.params.ok=="true")?null:(
+                                    <div>
+                                        <span className="label-text" >
+                                          <Translate content="seer.room.type"/>
+                                          <i>*</i>
+                                        </span>
+                                        <div>
+                                            {type_options}
+                                        </div>
+                                    </div>
+                                  )
+                                }
+                              </td>
+                              <td>
+                                {room_type}
+                              </td>
+                          </tr>
+                          <tr>
+                              <td>
+                                  <span className="label-text" >
+                                    <Translate content="seer.room.result_owner_percent" />
+                                    <i>*</i>
+                                  </span>
+                                  <div className="unit-input">
+                                    <input type="text"  value={this.state.result_owner_percent}  onChange={e => this.setState({result_owner_percent: e.target.value})}/>
+                                    <i>%</i>
+                                  </div>
+                              </td>
+                              <td>
+                                {
+                                  this.props.room?null:(
+                                    <div>
+                                        <span className="label-text" >
+                                            <Translate content="seer.room.accept_asset"/>
+                                            <i>*</i>
+                                        </span>
+                                      <select  onChange={e => {
+                                        this.setState({accept_asset: e.target.value});
+                                        let a;
+                                        for( var i = 0;i<this.state.assets.length;i++){
+                                          if(this.state.assets[i].id === e.target.value )
+                                          {
+                                            a = this.state.assets[i];
+                                            break;
+                                          }
+                                        }
+                                        this.setState({accept_asset_precision:Math.pow(10,parseInt(a.precision))});
+
+                                        this.setState({accept_asset_symbol:a.symbol})}}>
+                                        {supports}
+                                      </select>
+                                    </div>
+                                  )
+                                }
+                              </td>
+                          </tr>
+                          <tr>
+                              <td>
+                                <span className="label-text" >
                                     <Translate content="seer.room.min" />
-                                    ({this.state.room_type == 0?<Translate content="seer.room.part" />:this.state.accept_asset_symbol})
-                                    <input value={this.state.min} onChange={(e) => {this.setState({min: e.target.value});}} type="text"></input>
-                                </label>
-                            </label>
-                            <label style={{width: "50%", paddingLeft: "2.5%", display: "inline-block"}}>
-                                <label>
+                                    <i>*</i>
+                                </span>
+                                <div className="unit-input">
+                                  <input value={this.state.min} onChange={(e) => {this.setState({min: e.target.value});}} type="text"></input>
+                                  <i>{this.state.room_type == 0?<Translate content="seer.room.part" />:this.state.accept_asset_symbol}</i>
+                                </div>
+                              </td>
+                              <td>
+                                <span className="label-text" >
                                     <Translate content="seer.room.max" />
-                                    ({this.state.room_type == 0?<Translate content="seer.room.part" />:this.state.accept_asset_symbol})
+                                    <i>*</i>
+                                </span>
+                                <div className="unit-input">
                                     <input value={this.state.max} onChange={(e) => {this.setState({max: e.target.value});}} type="text"></input>
-                                </label>
-                            </label>
-                            <label>
-                                <Translate content="seer.room.owner_pay_fee_percent" />
-                                <input type="text" value={this.state.owner_pay_fee_percent/100} onChange={e => this.setState({owner_pay_fee_percent:parseInt(e.target.value*100)})}/>
-                            </label>
+                                    <i>{this.state.room_type == 0?<Translate content="seer.room.part" />:this.state.accept_asset_symbol}</i>
+                                </div>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td>
+                                <span className="label-text">
+                                    <Translate content="seer.room.owner_pay_fee_percent" />
+                                </span>
+                                <div className="unit-input">
+                                  <input type="text" value={this.state.owner_pay_fee_percent/100} onChange={e => this.setState({owner_pay_fee_percent:parseInt(e.target.value*100)})}/>
+                                  <i>%</i>
+                                </div>
+                              </td>
+                              <td>
+                                <span className="label-text" >
+                                    <Translate content="seer.oracle.script" />
+                                </span>
+                                <input type="text" value={this.state.script} onChange={this._changeScript.bind(this)}/>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td>
+                                <br/><br/>
+                                <Translate content="seer.room.guaranty_threshold" style={{fontSize:14,color:"#666"}}/>
+                              </td>
+                              <td></td>
+                          </tr>
+                          <tr>
+                              <td>
+                                <span className="label-text" style={{marginBottom:3}}>
+                                    <Translate content="seer.room.guaranty"/>
+                                </span>
+                                <AmountSelector style={{width:"100%"}} asset={"1.3.0"} assets={["1.3.0"]} amount={this.state.guaranty} onChange={data => this.setState({guaranty: data.amount})} />
+                              </td>
+                              <td>
+                                  <span className="label-text">
+                                    <Translate content="seer.room.reputation"/>
+                                  </span>
+                                <input type="text" value={this.state.reputation} onChange={e => this.setState({reputation: e.target.value})}/>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td>
+                                <span className="label-text">
+                                    <Translate content="seer.room.volume"/>
+                                </span>
+                                <input type="text"  value={this.state.volume} onChange={e => this.setState({volume: e.target.value})}/>
+                              </td>
+                              <td>
+                                <span className="label-text">
+                                    <Translate content="seer.room.reward_per_oracle" />
+                                </span>
+                                <div className="unit-input">
+                                  <input type="text"  value={this.state.reward_per_oracle} onChange={e => this.setState({reward_per_oracle: e.target.value})}/>
+                                  <i>SEER</i>
+                                </div>
+                              </td>
+                          </tr>
+                          </tbody>
+                      </table>
+                        <div className="small-12 grid-content" style={{padding: "15px"}}>
+
+
                             {
                                 this.state.room_type != 2 ?
                                     <div>
@@ -730,19 +836,57 @@ class AccountRoomCreate extends React.Component {
                                     </div>
                             }
                             <br/>
-                            {room_type}
+
+                          <div style={{textAlign:"center"}}>
                             {
                                 this.props.room ?
                                     <button className="button" onClick={this._updateRoom.bind(this)}>
                                         <Translate content="seer.room.update"/>
                                     </button>
                                     :
-                                    <button className="button" onClick={this._createRoom.bind(this)}>
-                                    <Translate content="seer.room.create"/>
-                                </button>
+                                    <button className="button large" onClick={this._createRoom.bind(this)} style={{width:541,height:68,fontSize:18}}>
+                                        <Translate content="seer.room.create_now"/>
+                                    </button>
                             }
+                          </div>
                         </div>
 
+
+                      <BaseModal id="room_label_modal" overlay={true}>
+                        <div>
+                            <br/>
+                            <span className="label-text">
+                                <Translate content="seer.room.input_or_select_label"/>
+                            </span>
+                            <select onChange={e => {
+                                if(e.target.value !== "-1"){
+                                    this.state.input_label = "";
+                                }
+                              this.setState({ select_label: e.target.value });
+                            }} value={this.state.select_label}>
+                              <option value="-1"><Translate content="seer.room.label_use_input_value"/></option>
+                              {
+                                this.state.labelList.map((item,index) => {
+                                    return (
+                                      <option value={item} key={index}>{item}</option>
+                                    );
+                                })
+                              }
+                            </select>
+                            <br/>
+                            <input disabled={this.state.select_label === "-1" ? "" : "disabled"} type="text" value={this.state.input_label} onChange={e => this.setState({input_label: e.target.value})}/>
+                            <br/>
+                            <br/>
+                            <div style={{width:"100%",textAlign:"center"}}>
+                                <button className="button" onClick={this._addLabelOk.bind(this)}>
+                                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                  <Translate content="modal.ok"/>
+                                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                </button>
+                            </div>
+                          <br/>
+                        </div>
+                      </BaseModal>
                     </div>
                 </div>
             </div>

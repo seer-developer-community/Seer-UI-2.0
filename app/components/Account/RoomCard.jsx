@@ -29,10 +29,13 @@ class RoomCard extends React.Component {
 
     static propTypes = {
         room: ChainTypes.ChainObject.isRequired,
+        showClosed:React.PropTypes.bool,
+        filterLabel:React.PropTypes.string
     };
 
     static defaultProps = {
-        room: "props.params.room_id"
+        room: "props.params.room_id",
+        showClosed:false
     }
 
     constructor(props) {
@@ -85,6 +88,25 @@ class RoomCard extends React.Component {
     render() {
         let {room} = this.state;
 
+        if( !this.props.showClosed && this.state.room.status == "closed" ){
+          return null;
+        }
+
+        if(this.props.filterLabel) {
+          let match = false;
+
+          for (let i = 0; i < room.label.length; i++) {
+            if (this.props.filterLabel.indexOf(room.label[i]) > -1) {
+              match = true;
+              break;
+            }
+          }
+
+          if(!match){
+            return null;
+          }
+        }
+
         let options;
         if (!this.state.room.status){
             options = null;
@@ -92,6 +114,7 @@ class RoomCard extends React.Component {
         else if( this.state.room.status == "closed" ){
             options = null;
         }
+
         else   if (this.state.room.room_type == 0) {
             let idx = 0;
             options = this.state.room.running_option.selection_description.map((c,index) => {

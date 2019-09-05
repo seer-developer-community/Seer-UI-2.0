@@ -759,6 +759,7 @@ $input-border
         color: $primary-text-color;
         border-radius: 0 !important;
         height: 3.13em;
+
         &:hover, &:focus, &:active {
             border: 1px solid $input-border;
             background-color: $input-background;
@@ -774,6 +775,27 @@ $input-border
           border: 1px solid $input-border !important;
         }
     }
+
+  .unit-input{
+    border: 1px solid $input-border;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    input[type="text"]{
+      border: none;
+      margin: 0;
+    }
+
+    i{
+      display: inline-block;
+      padding: 0 19px;
+      font-size: 0.88em;
+      font-style: normal;
+      user-select: none;
+      color: #999;
+    }
+  }
 
   ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
     color: $secondary-button-bg-color;

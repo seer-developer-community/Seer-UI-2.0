@@ -368,93 +368,6 @@ class HeaderNav extends React.Component {
         let hamburger = this.state.dropdownActive ? <Icon className="icon-14px" name="hamburger-x" /> : <Icon className="icon-14px" name="hamburger" />;
         const hasLocalWallet = !!WalletDb.getWallet();
 
-        /* Dynamic Menu Item */
-        let dynamicMenuItem;
-        if(active.indexOf("transfer") !== -1) {
-            dynamicMenuItem =
-                <a style={{flexFlow: "row"}} className={cnames({active: true})}>
-                    <Icon size="1_5x" style={{position: "relative", top: 0, left: -8}} name="transfer"/>
-                    <Translate className="column-hide-small" component="span" content="header.payments" />
-                </a>;
-        }
-        if(active.indexOf("settings") !== -1) {
-            dynamicMenuItem =
-                <a style={{flexFlow: "row"}} className={cnames({active: active.indexOf("settings") !== -1})}>
-                    <Icon size="1_5x" style={{position: "relative", top: 0, left: -8}} name="cogs"/>
-                    <Translate className="column-hide-small" component="span" content="header.settings" />
-                </a>;
-        }
-        if(active.indexOf("deposit-withdraw") !== -1) {
-            dynamicMenuItem =
-                <a style={{flexFlow: "row"}} className={cnames({active: active.indexOf("deposit-withdraw") !== -1})}>
-                    <Icon size="1_5x" style={{position: "relative", top: 0, left: -8}} name="deposit"/>
-                    <Translate className="column-hide-small" component="span" content="header.deposit-withdraw" />
-                </a>;
-        }
-        if(active.indexOf("news") !== -1) {
-            dynamicMenuItem =
-                <a style={{flexFlow: "row"}} className={cnames({active: active.indexOf("news") !== -1})}>
-                    <Icon size="1_5x" style={{position: "relative", top: 0, left: -8}} name="news"/>
-                    <Translate className="column-hide-small" component="span" content="news.news" />
-                </a>;
-        }
-        if(active.indexOf("help") !== -1) {
-            dynamicMenuItem =
-                <a style={{flexFlow: "row"}} className={cnames({active: active.indexOf("help") !== -1})}>
-                    <Icon size="1_5x" style={{position: "relative", top: 0, left: -8}} name="question-circle"/>
-                    <Translate className="column-hide-small" component="span" content="header.help" />
-                </a>;
-        }
-        if(active.indexOf("/voting") !== -1) {
-            dynamicMenuItem =
-                <a style={{flexFlow: "row"}} className={cnames({active: active.indexOf("/voting") !== -1})}>
-                    <Icon size="1_5x" style={{position: "relative", top: 0, left: -8}} name="thumbs-up"/>
-                    <Translate className="column-hide-small" component="span" content="account.voting" />
-                </a>;
-        }
-        if(active.indexOf("/assets") !== -1 && active.indexOf("explorer") === -1) {
-            dynamicMenuItem =
-                <a style={{flexFlow: "row"}} className={cnames({active: active.indexOf("/assets") !== -1})}>
-                    <Icon size="1_5x" style={{position: "relative", top: 0, left: -8}} name="assets"/>
-                    <Translate className="column-hide-small" component="span" content="explorer.assets.title" />
-                </a>;
-        }
-        if(active.indexOf("/signedmessages") !== -1) {
-            dynamicMenuItem =
-                <a style={{flexFlow: "row"}} className={cnames({active: active.indexOf("/signedmessages") !== -1})}>
-                    <Icon size="1_5x" style={{position: "relative", top: 0, left: -8}} name="text"/>
-                    <Translate className="column-hide-small" component="span" content="account.signedmessages.menuitem" />
-                </a>;
-        }
-        if(active.indexOf("/member-stats") !== -1) {
-            dynamicMenuItem =
-                <a style={{flexFlow: "row"}} className={cnames({active: active.indexOf("/member-stats") !== -1})}>
-                    <Icon size="1_5x" style={{position: "relative", top: 0, left: -8}} name="text"/>
-                    <Translate className="column-hide-small" component="span" content="account.member.stats" />
-                </a>;
-        }
-        if(active.indexOf("/vesting") !== -1) {
-            dynamicMenuItem =
-                <a style={{flexFlow: "row"}} className={cnames({active: active.indexOf("/vesting") !== -1})}>
-                    <Icon size="1_5x" style={{position: "relative", top: 0, left: -8}} name="hourglass"/>
-                    <Translate className="column-hide-small" component="span" content="account.vesting.title" />
-                </a>;
-        }
-        if(active.indexOf("/whitelist") !== -1) {
-            dynamicMenuItem =
-                <a style={{flexFlow: "row"}} className={cnames({active: active.indexOf("/whitelist") !== -1})}>
-                    <Icon size="1_5x" style={{position: "relative", top: 0, left: -8}} name="list"/>
-                    <Translate className="column-hide-small" component="span" content="account.whitelist.title" />
-                </a>;
-        }
-        if(active.indexOf("/permissions") !== -1) {
-            dynamicMenuItem =
-                <a style={{flexFlow: "row"}} className={cnames({active: active.indexOf("/permissions") !== -1})}>
-                    <Icon size="1_5x" style={{position: "relative", top: 0, left: -8}} name="warning"/>
-                    <Translate className="column-hide-small" component="span" content="account.permissions" />
-                </a>;
-        }
-
         const submenus = {
             [SUBMENUS.SETTINGS]: (
                 <ul className="dropdown header-menu header-submenu" style={{
@@ -560,12 +473,22 @@ class HeaderNav extends React.Component {
                     </div>
                 </div>
 
-
-                <div onClick={this._toggleAccountDropdownMenu} className="truncated active-account" style={{"cursor": "pointer"}}>
-                    <div className="text account-name">
+                <div className="truncated" style={{textAlign: "right",paddingRight:10}}>
+                  <i className="iconfont icon-chuangjian2" style={{color:"#449E7B"}}></i>&nbsp;&nbsp;
+                  <Link to={"/account/" + currentAccount + "/create-room/single=false"}><Translate content="seer.room.create" style={{fontSize:16,color:"#666"}}/></Link>
+                </div>
+                <div onClick={this._toggleAccountDropdownMenu} className="active-account" style={{"cursor": "pointer"}}>
+                    <div className="text account-name flex-align-middle">
+                      { this.props.currentAccount == null ? null :
+                        <span onClick={this._toggleLock.bind(this)} style={{"cursor": "pointer"}}>
+                            <Icon className="lock-unlock" size="24px" name={this.props.locked ? "locked" : "unlocked"}/>
+                        </span>
+                      }
                        {currentAccount}
+                       &nbsp;
+                      <span style={{display:"inline-block",transform:"rotate(-45deg)",position:"relative",top:-2}}>◣</span>
                      </div>
-                    {walletBalance}
+
 
                     {hasLocalWallet && (
                         <ul className="dropdown header-menu local-wallet-menu" style={{right: 0, maxHeight: !this.state.accountsListDropdownActive ? 0 : maxHeight, overflowY: "auto", position:"absolute",width:"200px"}}>
@@ -576,13 +499,6 @@ class HeaderNav extends React.Component {
                             {accountsList}
                         </ul>
                     )}
-                </div>
-                <div>
-                    { this.props.currentAccount == null ? null :
-                        <span onClick={this._toggleLock.bind(this)} style={{"cursor": "pointer"}}>
-                            <Icon className="lock-unlock" size="2x" name={this.props.locked ? "locked" : "unlocked"}/>
-                        </span>
-                    }
                 </div>
                 <div className="app-menu">
                     <div onClick={this._toggleDropdownMenu} className={cnames("menu-dropdown-wrapper dropdown-wrapper", {active: this.state.dropdownActive})}>

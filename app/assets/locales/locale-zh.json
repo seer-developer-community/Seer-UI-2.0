@@ -1682,7 +1682,15 @@
             "not_created": "您还未创建平台",
             "name":"名称",
             "owner":"属于账户",
-            "update": "更新平台"
+            "update": "更新平台",
+            "creator_rank":"设立者排行榜",
+            "oracle_rank":"预言机排行榜",
+            "my_oracle":"我的预测单",
+            "rank":"排名",
+            "account":"账户名",
+            "reputation":"声誉",
+            "reward":"奖励(SEER)",
+            "volume":"参与量"
         },
         "oracle": {
             "create": "创建预言机",
@@ -1704,8 +1712,10 @@
         "room": {
             "title": "房间",
             "create": "创建房间",
+            "create_now":"立即创建房间",
             "participate": "参与预测",
             "label": "标签",
+            "click_label_remove":"双击标签可删除",
             "status": "状态",
             "open": "开启",
             "close": "关闭",
@@ -1752,10 +1762,13 @@
             "current_rate": "赔率",
             "pool_explain": "当前余额：",
             "update_pool": "更新资产池",
-            "pvp_owner_percent":"PVP房主提成(%)",
-            "owner_pay_fee_percent":"房主代付手续费(%)",
+            "pvp_owner_percent":"PVP房主提成",
+            "owner_pay_fee_percent":"房主代付手续费",
+            "guaranty_threshold":"接受的预言机门槛",
             "end_time":"截止时间",
-            "open_detail":"查看详情"
+            "open_detail":"查看详情",
+            "input_or_select_label":"请选择或输入标签",
+            "label_use_input_value":"---使用输入值---"
         }
     },
   "erc20": {

@@ -63,16 +63,19 @@ const routes = (
             <Route path="markets" getComponent={(location, cb) => {
                 System.import("components/Explorer/MarketsContainer").then(loadRoute(cb)).catch(errorLoading);
             }}/>
+            <Route path="tx/:tx_id" getComponent={(location, cb) => {
+                System.import("components/Explorer/Transaction").then(loadRoute(cb)).catch(errorLoading);
+            }}/>
         </Route>
 
 
         <Route path="/houses" getComponent={(location, cb) => {
-            System.import("components/Explorer/Houses").then(loadRoute(cb)).catch(errorLoading);
+            System.import("components/Explorer/HousesIndex").then(loadRoute(cb)).catch(errorLoading);
         }}/>
         <Route path="/houses/:house_id" getComponent={(location, cb) => {
             System.import("components/Explorer/HouseDetail").then(loadRoute(cb)).catch(errorLoading);
         }}/>
-        <Route path="/explorer/rooms/:room_id" getComponent={(location, cb) => {
+        <Route path="/houses/rooms/:room_id" getComponent={(location, cb) => {
             System.import("components/Account/RoomParticipate").then(loadRoute(cb)).catch(errorLoading);
         }}/>
 

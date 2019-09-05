@@ -142,7 +142,8 @@ WitnessRow = BindToChainState(WitnessRow, {keep_updating: true});
 class HouseList extends React.Component {
 
     static propTypes = {
-        witnesses: ChainTypes.ChainObjectsList.isRequired
+        witnesses: ChainTypes.ChainObjectsList.isRequired,
+        filterLabel:React.PropTypes.string
     }
 
     constructor () {
@@ -182,56 +183,81 @@ class HouseList extends React.Component {
         let most_recent_aslot = 0;
         let ranks = {};
 
-        let itemRows = null;
+        let itemRows = [];
         if (witnesses.length > 0 && witnesses[1]) {
             itemRows = houses
                 .map((a) => {
-
-                    if (0) {
-                        return (
-                            <WitnessRow key={a.get("id")} rank={ranks[a.get("id")]} isCurrent={current === a.get("id")}  witness={a.get("witness_account")} most_recent={this.props.current_aslot} />
-                        );
-                    } else {
-                        return (
-                            <HouseCard key={a.id} house={a} account={a.owner}/>
-                        );
-                    }
-
-
+                  return a.rooms.map(rm=>{
+                      return <RoomCard room={rm} key={rm} filterLabel={this.props.filterLabel}/>
+                  });
                 });
         }
 
-        // table view
-        if (!cardView) {
-            return (
-                <table className="table table-hover">
-                    <thead>
-                        <tr>
-                            <th className="clickable" onClick={this._setSort.bind(this, 'rank')}><Translate content="explorer.witnesses.rank" /></th>
-                            <th className="clickable" onClick={this._setSort.bind(this, 'name')}><Translate content="account.votes.name" /></th>
-                            <th className="clickable" onClick={this._setSort.bind(this, 'last_aslot')}><Translate content="explorer.blocks.last_block" /></th>
-                            <th className="clickable" onClick={this._setSort.bind(this, 'last_confirmed_block_num')}><Translate content="explorer.witnesses.last_confirmed" /></th>
-                            <th className="clickable" onClick={this._setSort.bind(this, 'total_missed')}><Translate content="explorer.witnesses.missed" /></th>
-                            <th className="clickable" onClick={this._setSort.bind(this, 'total_votes')}><Translate content="account.votes.votes" /></th>
-                        </tr>
-                    </thead>
-                <tbody>
-                    {itemRows}
-                </tbody>
+        let rows = [];
+        for(let i = 0;i < itemRows.length; i++){
+            rows.push(...itemRows[i])
+        }
 
-            </table>
-            )
-        }
-        else {
-            return (
-                <div className="grid-block small-up-1 medium-up-2 large-up-3">
-                    {itemRows}
-                </div>
-            );
-        }
+        return (
+          <div>
+            {rows}
+          </div>
+        );
     }
 }
 HouseList = BindToChainState(HouseList, {keep_updating: true, show_loader: true});
+
+class TitlePanel extends React.Component {
+
+  static propTypes = {
+    title: React.PropTypes.string
+  }
+
+  render(){
+    return (
+      <div className="title-panel">
+        <div className="title"><Translate content={this.props.title}/></div>
+        {this.props.children}
+      </div>
+    );
+  }
+}
+
+class RankList extends React.Component {
+
+  static propTypes = {
+    isVolume:React.PropTypes.bool
+  }
+
+  render(){
+    return (
+      <table className="rank-table">
+        <thead>
+        <tr>
+          <th><Translate content="seer.house.rank"/></th>
+          <th><Translate content="seer.house.account"/></th>
+          <th><Translate content="seer.house.reputation"/></th>
+          <th>
+          {
+            this.props.isVolume ? <Translate content="seer.house.volume"/>
+              :
+              <Translate content="seer.house.reward"/>
+          }
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        </tbody>
+      </table>
+    );
+  }
+}
 
 class Houses extends React.Component {
 
@@ -350,8 +376,6 @@ class Houses extends React.Component {
         dynGlobalObject = dynGlobalObject.toJS();
         globalObject = globalObject.toJS();
 
-        console.log(this.state)
-
         let current = ChainStore.getObject(dynGlobalObject.current_witness),
             currentAccount = null;
         if (current) {
@@ -368,7 +392,7 @@ class Houses extends React.Component {
         };
 
         return (
-          <div className="container">
+          <div className="container" style={{width:"100%",height:"100%"}}>
             <div className="main" style={{width:"100%",height:"100%"}}>
               <div className="menu-content" style={{width:221,height:"100%"}}>
                 <div className="side-menu">
@@ -437,40 +461,32 @@ class Houses extends React.Component {
                   {
                     this.state.roomList && this.state.roomList.map((room,index)=>{
                         return (
-                          <RoomCard room={room} key={index}/>
+                          <RoomCard room={room} key={index} filterLabel={this.state.currentLabel}/>
                         );
                     })
                   }
-                </div>
-                <div className="grid-block" style={{ padding: '24px' }}>
-                  <div className="grid-block">
-                    {/*<div className="grid-block vertical small-5 medium-3">*/}
-                    {/*<div className="grid-content">*/}
-                    {/*<Link to={`/account/${AccountStore.getState().currentAccount}/create-house/`}><button className="button"><Translate content="transaction.trxTypes.asset_create" /></button></Link>*/}
-
-                    {/*<br/>*/}
-
-                    {/*<div className="view-switcher">*/}
-                    {/*<span className="button outline" onClick={this._toggleView.bind(this)}>{!this.state.cardView ? <Translate content="explorer.witnesses.card"/> : <Translate content="explorer.witnesses.table"/>}</span>*/}
-                    {/*</div>*/}
-                    {/*</div>*/}
-                    {/*</div>*/}
-                    <div className="grid-block">
-                      <div className="grid-content ">
-                        <HouseList
-                          current_aslot={dynGlobalObject.current_aslot}
-                          current={current ? current.get("id") : null}
-                          witnesses={Immutable.List(globalObject.active_witnesses)}
-                          witnessList={globalObject.active_witnesses}
-                          filter={this.state.filterWitness}
-                          cardView={this.state.cardView}
-                        />
-                      </div>
-                    </div>
-                  </div>
+                  <HouseList
+                    current_aslot={dynGlobalObject.current_aslot}
+                    current={current ? current.get("id") : null}
+                    witnesses={Immutable.List(globalObject.active_witnesses)}
+                    witnessList={globalObject.active_witnesses}
+                    filter={this.state.filterWitness}
+                    cardView={this.state.cardView}
+                    filterLabel={this.state.currentLabel}
+                  />
                 </div>
               </div>
-              <div style={{background: "blue",width:297,marginRight:20}}>&nbsp;</div>
+              <div style={{width:297,marginRight:20,marginTop:20}}>
+                  <TitlePanel title="seer.house.my_oracle">
+                    <div style={{height:900}}>&nbsp;</div>
+                  </TitlePanel>
+                  <TitlePanel title="seer.house.creator_rank">
+                    <RankList isVolume={false}/>
+                  </TitlePanel>
+                  <TitlePanel title="seer.house.creator_rank">
+                    <RankList isVolume={true}/>
+                  </TitlePanel>
+              </div>
             </div>
           </div>
         );
