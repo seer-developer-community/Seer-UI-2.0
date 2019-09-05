@@ -143,30 +143,17 @@ class HouseList extends React.Component {
 
     static propTypes = {
         witnesses: ChainTypes.ChainObjectsList.isRequired,
-        filterLabel:React.PropTypes.string
+        filterLabel:React.PropTypes.string,
+        houses:React.PropTypes.array
     }
 
     constructor () {
         super();
         this.state = {
           sortBy: 'rank',
-          inverseSort: true,
-            houses: []
+          inverseSort: true
         };
 
-    }
-
-    componentWillMount() {
-        Apis.instance().db_api().exec("lookup_house_accounts", [0, 1000]).then((results) => {
-            let ids = [];
-            results.forEach(r => {
-                ids.push(r[1]);
-            });
-
-            Apis.instance().db_api().exec("get_houses", [ids]).then(houses => {
-                this.setState({houses: houses});
-            });
-        });
     }
 
     _setSort(field) {
@@ -178,8 +165,8 @@ class HouseList extends React.Component {
 
     render() {
 
-        let {witnesses, current, cardView, witnessList} = this.props;
-        let {sortBy, inverseSort, houses} = this.state;
+        let {witnesses, current, cardView, witnessList,houses} = this.props;
+        let {sortBy, inverseSort} = this.state;
         let most_recent_aslot = 0;
         let ranks = {};
 
@@ -280,8 +267,21 @@ class Houses extends React.Component {
           houseLabels: [],
           currentLabel:null,
           images:[],
-          roomList:[]
+          roomList:[],
+          houses:[]
         }
+    }
+
+    componentWillMount() {
+      Apis.instance().db_api().exec("lookup_house_accounts", [0, 1000]).then((results) => {
+        let ids = results.map(r => r[1]);
+
+        console.log(ids);
+
+        Apis.instance().db_api().exec("get_houses", [ids]).then(houses => {
+          this.setState({houses: houses});
+        });
+      });
     }
 
     _getHouseLabels(){
@@ -392,7 +392,7 @@ class Houses extends React.Component {
         };
 
         return (
-          <div className="container" style={{width:"100%",height:"100%"}}>
+          <div className="container">
             <div className="main" style={{width:"100%",height:"100%"}}>
               <div className="menu-content" style={{width:221,height:"100%"}}>
                 <div className="side-menu">
@@ -473,6 +473,7 @@ class Houses extends React.Component {
                     filter={this.state.filterWitness}
                     cardView={this.state.cardView}
                     filterLabel={this.state.currentLabel}
+                    houses={this.state.houses}
                   />
                 </div>
               </div>
@@ -483,7 +484,7 @@ class Houses extends React.Component {
                   <TitlePanel title="seer.house.creator_rank">
                     <RankList isVolume={false}/>
                   </TitlePanel>
-                  <TitlePanel title="seer.house.creator_rank">
+                  <TitlePanel title="seer.house.oracle_rank">
                     <RankList isVolume={true}/>
                   </TitlePanel>
               </div>

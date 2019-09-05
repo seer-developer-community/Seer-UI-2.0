@@ -252,30 +252,25 @@ class AccountRoomCreate extends React.Component {
                 }
             }
         });
-/*
+
       fetch(websiteAPIs.BASE + websiteAPIs.HOUSES_LABEL_LIST, {
         method:"post",
         mode:"cors"
       }).then((response) => response.json())
         .then( json => {
-            console.log(json);
-          // let labels = [];
-          // if(json && json.result && json.result.length > 0){
-          //   if(IntlStore.getState().currentLocale === "zh"){
-          //     labels = json.result.roomlabels.split(",");
-          //   }else{
-          //     labels = json.result.roomlabelsen.split(",");
-          //   }
-          // }
-          //
-          // this.setState({
-          //   labelList:labels
-          // });
+          let labels = [];
+          if(json && json.result && json.result.length > 0){
+            if(IntlStore.getState().currentLocale === "zh"){
+              labels = json.result[0].roomlabels.split(",");
+            }else{
+              labels = json.result[0].roomlabelsen.split(",");
+            }
+          }
+
+          this.setState({
+            labelList:labels
+          });
         });
-*/
-      this.setState({
-        labelList:"社会,大选,票房,电影,音乐榜,足球,德甲,篮球,NBA,CBA,UFC,格斗,英超,BTC,价格预测,EOS,ETH,亚冠,股市,指数".split(",")
-      });
 
 /*
         this.setState({assets: AssetStore.getState().assets});

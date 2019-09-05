@@ -88,7 +88,7 @@ class RoomCard extends React.Component {
     render() {
         let {room} = this.state;
 
-        if( !this.props.showClosed && this.state.room.status == "closed" ){
+        if( !this.props.showClosed && (this.state.room.status == "closed" || this.state.room.status == "finished")){
           return null;
         }
 
