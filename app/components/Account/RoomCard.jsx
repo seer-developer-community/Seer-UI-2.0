@@ -208,7 +208,7 @@ class RoomCard extends React.Component {
                     </div>
                     <div className="right">
                         <Translate content="seer.room.end_time"/>：&nbsp;{moment(room.option.stop).format('YYYY/MM/DD HH:mm:ss')}
-                        <Link to={"/houses/rooms/" + room.id }><Translate content="seer.room.open_detail"/></Link>
+                        <Link to={"/prediction/rooms/" + room.id }><Translate content="seer.room.open_detail"/></Link>
                     </div>
                 </div>
             </div>

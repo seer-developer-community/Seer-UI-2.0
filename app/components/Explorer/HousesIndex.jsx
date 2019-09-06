@@ -35,7 +35,7 @@ class HouseCard extends React.Component {
 
     _onCardClick(e) {
         e.preventDefault();
-        this.context.router.push(`/houses/${this.props.house.id}`);
+        this.context.router.push(`/prediction/${this.props.house.id}`);
     }
 
     render() {
@@ -450,7 +450,7 @@ class Houses extends React.Component {
                       this.state.images.map((item,index)=>{
                         return (
                           <div key={index}>
-                            <Link to={"explorer/rooms/" + item[1]} style={{background:"url(" + item[0] + ")"}}/>
+                            <Link to={"/prediction/rooms/" + item[1]} style={{background:"url(" + item[0] + ")"}}/>
                           </div>
                         );
                       })

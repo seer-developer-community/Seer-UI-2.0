@@ -445,7 +445,7 @@ class HeaderNav extends React.Component {
 
 
                             <li>
-                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("houses") !== -1 ? null : "column-hide-xs", {active: active.indexOf("houses") !== -1})} onClick={this._onNavigate.bind(this, "/houses")}>
+                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("prediction") !== -1 ? null : "column-hide-xs", {active: active.indexOf("prediction") !== -1})} onClick={this._onNavigate.bind(this, "/prediction")}>
                                     <Translate className="column-hide-small" component="span" content="header.prediction" />
                                 </a>
                             </li>

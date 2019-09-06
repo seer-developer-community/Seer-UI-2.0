@@ -30,7 +30,7 @@ class HouseCard extends React.Component {
 
     _onCardClick(e) {
         e.preventDefault();
-        this.context.router.push(`/houses/${this.props.house.id}`);
+        this.context.router.push(`/prediction/${this.props.house.id}`);
     }
 
     render() {

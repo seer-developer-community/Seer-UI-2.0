@@ -97,10 +97,10 @@ const routes = (
           <Route path="tx/:tx_id" component={Transaction} />
         </Route>
 
-        <Route path="/houses" components={HousesIndex}/>
-        <Route path="/houses/:house_id" component={HouseDetail}/>
-        <Route path="/houses/rooms/:room_id" component={RoomParticipate}/>
-        <Route path="/houses/rooms/:room_id/update" component={AccountRoomUpdateWrapper}/>
+        <Route path="/prediction" components={HousesIndex}/>
+        <Route path="/prediction/:house_id" component={HouseDetail}/>
+        <Route path="/prediction/rooms/:room_id" component={RoomParticipate}/>
+        <Route path="/prediction/rooms/:room_id/update" component={AccountRoomUpdateWrapper}/>
 
         <Route path="wallet" component={WalletManager} >
             {/* wallet management console */}
