@@ -28,22 +28,20 @@ let roomType =
 class RoomCard extends React.Component {
 
     static propTypes = {
-        room: ChainTypes.ChainObject.isRequired,
-        showClosed:React.PropTypes.bool,
-        filterLabel:React.PropTypes.string
+        room: ChainTypes.ChainObject,
+        roomObject:React.PropTypes.object,
+        recommend:React.PropTypes.bool,
+        checkMode:React.PropTypes.bool,
+        onOptionCheck:React.PropTypes.func,
+        checkedItem:React.PropTypes.number
     };
-
-    static defaultProps = {
-        room: "props.params.room_id",
-        showClosed:false
-    }
 
     constructor(props) {
         super(props);
         this.state = {
-            checked_item: 0,
+            checked_item: typeof this.props.checkedItem === "undefined" ? -1 : this.props.checkedItem,
             amount: null,
-            room: props.room.toJS(),
+            room: ((this.props.room && this.props.room.toJS()) || this.props.roomObject),
             account: null,
             asset:null,
             precision:null
@@ -51,26 +49,19 @@ class RoomCard extends React.Component {
         };
     }
 
-    componentWillReceiveProps(next) {
-
-    }
-
     componentWillMount() {
-        let roomId = this.props.room.get("id");
-        Apis.instance().db_api().exec("get_seer_room", [roomId, 0, 500]).then(r => {
-            this.setState({room: r});
-        });
-
-        Apis.instance().db_api().exec("get_assets",[[this.state.room.option.accept_asset]]).then(objs => {
+        if(this.state.room) {
+          Apis.instance().db_api().exec("get_assets", [[this.state.room.option.accept_asset]]).then(objs => {
             var ret = [];
-            objs.forEach(function(item,index){
-                ret.push(item);
+            objs.forEach(function(item, index) {
+              ret.push(item);
             });
-            let symbol = ret.length>0 ? ret[0].symbol: "";
+            let symbol = ret.length > 0 ? ret[0].symbol : "";
 
-            let precision = ret.length>0 ? Math.pow(10,parseInt(ret[0].precision)): 1;
-            this.setState({asset:symbol,precision:precision});
-        });
+            let precision = ret.length > 0 ? Math.pow(10, parseInt(ret[0].precision)) : 1;
+            this.setState({ asset: symbol, precision: precision });
+          });
+        }
 /*
         if(this.state.room.option.allowed_oracles.length>0)
         {
@@ -85,46 +76,34 @@ class RoomCard extends React.Component {
         */
     }
 
+    _onOptionClick(idx){
+        this.setState({
+          checked_item:idx
+        });
+        if(this.props.onOptionCheck){
+            this.props.onOptionCheck(idx);
+        }
+    }
+
     render() {
         let {room} = this.state;
 
-        if( !this.props.showClosed && (this.state.room.status == "closed" || this.state.room.status == "finished")){
-          return null;
-        }
-
-        if(this.props.filterLabel) {
-          let match = false;
-
-          for (let i = 0; i < room.label.length; i++) {
-            if (this.props.filterLabel.indexOf(room.label[i]) > -1) {
-              match = true;
-              break;
-            }
-          }
-
-          if(!match){
-            return null;
-          }
-        }
+        if(!room) return null;
 
         let options;
+
         if (!this.state.room.status){
             options = null;
-        }
-        else if( this.state.room.status == "closed" ){
+        }else if( this.state.room.status == "closed" ){
             options = null;
-        }
-
-        else   if (this.state.room.room_type == 0) {
-            let idx = 0;
+        }else if (this.state.room.room_type == 0) {
             options = this.state.room.running_option.selection_description.map((c,index) => {
-                let dom = (
-                    <li key={idx}>
+                let className = this.props.checkMode && (index === this.state.checked_item) ? "checked" :"";
+                return (
+                    <li key={index} className={className} onClick={e=>{this._onOptionClick.bind(this)(index)}}>
                         <div>{c}</div>
                     </li>
                 );
-                idx++;
-                return dom;
             });
         }
         else if (this.state.room.room_type == 1) {
@@ -141,29 +120,26 @@ class RoomCard extends React.Component {
                     rate.push("--");
                 }
             }
-            let idx = 0;
-            options = this.state.room.running_option.selection_description.map(c => {
-                let dom = (
-                    <li key={idx}>
+
+            options = this.state.room.running_option.selection_description.map((c,index) => {
+                let className = this.props.checkMode && (index === this.state.checked_item) ? "checked" :"";
+                return (
+                    <li key={index} className={className} onClick={e=>{this._onOptionClick.bind(this)(index)}}>
                         <div>{c}</div>
-                        <div className="rate"><Translate content="seer.room.current_rate"/>  1:{rate[idx]} </div>
+                        <div className="rate"><Translate content="seer.room.current_rate"/>  1:{rate[index]} </div>
                     </li>
                 );
-                idx++;
-                return dom;
             });
         }
         else if (this.state.room.room_type == 2) {
-            let idx = 0;
-            options = this.state.room.running_option.selection_description.map(c => {
-                let dom = (
-                    <li key={idx}>
+            options = this.state.room.running_option.selection_description.map((c,index) => {
+                let className = this.props.checkMode && (index === this.state.checked_item) ? "checked" :"";
+                return (
+                    <li key={index} className={className} onClick={e=>{this._onOptionClick.bind(this)(index)}}>
                         <div>{c}</div>
-                        <div className="rate"><Translate content="seer.room.current_rate"/> 1:{this.state.room.running_option.advanced.awards[idx]/10000} </div>
+                        <div className="rate"><Translate content="seer.room.current_rate"/> 1:{this.state.room.running_option.advanced.awards[index]/10000} </div>
                   </li>
                 );
-                idx++;
-                return dom;
             });
         }
 
@@ -171,17 +147,19 @@ class RoomCard extends React.Component {
         let optionClass = "";
         let patchLI = [];
 
-        if(options.length === 2){
+        if(options != null) {
+          if (options.length === 2) {
             optionClass = "two-options";
-        }else if(options.length % 3 === 0){
+          } else if (options.length % 3 === 0) {
             optionClass = "three-options";
-        }else if(options.length % 3 > 0){
+          } else if (options.length % 3 > 0) {
             optionClass = "three-options last-options";
 
             let count = (3 - options.length % 3);
-            for(let i = 0;i < count;i++){
-                patchLI.push(<li key={i} className="empty"></li>);
+            for (let i = 0; i < count; i++) {
+              patchLI.push(<li key={i} className="empty"></li>);
             }
+          }
         }
 
         let playerCount = 0;
@@ -193,14 +171,23 @@ class RoomCard extends React.Component {
         return (
             <div className="room-card">
                 <div className="room-title">
-                    <Translate className="label-recommend" component="i" content="seer.room.recommend"/>&nbsp;  {room.description}
+                  {
+                    this.props.recommend ? <Translate className="label-recommend" component="i" content="seer.room.recommend"/> : null
+                  }
+                    {room.description}
                     <span className={"room-type " + roomType[room.room_type]}>{roomType[room.room_type]}</span>
                 </div>
                 <ul className={"room-options " + optionClass}>
                     {options}{patchLI}
                 </ul>
+
+              {
+                this.props.children ?
+                  <div className="room-detail">
+                    {this.props.children}
+                  </div>:
                 <div className="room-info">
-                    <div className="flex-align-middle">
+                    <div className="flex-align-middle icon-info">
                         <i className="iconfont icon-icon" style={{color:"#7460ED",fontSize:23}}></i>
                         <FormattedAsset amount={room.running_option.total_shares} asset={room.option.accept_asset}/>
                         <i className="iconfont icon-zhanbitu" style={{color:"#FF972B",fontSize:23}}></i>{room.option.result_owner_percent/100}%
@@ -211,6 +198,7 @@ class RoomCard extends React.Component {
                         <Link to={"/prediction/rooms/" + room.id }><Translate content="seer.room.open_detail"/></Link>
                     </div>
                 </div>
+              }
             </div>
         );
     }

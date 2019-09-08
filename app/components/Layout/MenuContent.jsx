@@ -69,7 +69,7 @@ class MenuContent extends React.Component {
         let activeEntry = menuEntries[activeSetting] || menuEntries[0];
 
         return (
-        <div className="grid-block menu-content">
+        <div className="grid-block menu-content" style={{background:"#fff"}}>
             <div className="side-menu">
                 <div className="user-info">
                     <AccountImage

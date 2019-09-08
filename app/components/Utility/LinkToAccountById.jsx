@@ -12,7 +12,8 @@ class LinkToAccountById extends React.Component {
 
     static defaultProps = {
         subpage: "overview",
-        autosubscribe: false
+        autosubscribe: false,
+        account:"1.2.50"
     };
 
     shouldComponentUpdate(nextProps) {

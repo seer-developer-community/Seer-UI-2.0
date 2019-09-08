@@ -1119,7 +1119,7 @@ class Exchange extends React.Component {
             />
         );
 
-        return (<div className="grid-block vertical" style={{padding:18}}>
+        return (<div className="grid-block vertical" style={{padding:18,background:"#fff"}}>
             {!this.props.marketReady ? <LoadingIndicator /> : null}
                     <ExchangeHeader
                         account={this.props.currentAccount}

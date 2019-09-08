@@ -9,6 +9,7 @@ import AccountSelector from "../Account/AccountSelector";
 import AmountSelector from "../Utility/AmountSelector";
 import SeerActions from "../../actions/SeerActions";
 import {ChainStore} from "seerjs/es";
+import ReactEcharts from 'echarts-for-react';
 var Apis =  require("seerjs-ws").Apis;
 import LinkToAccountById from "../Utility/LinkToAccountById";
 import LinkToAssetById from "../Utility/LinkToAssetById";
@@ -17,12 +18,16 @@ import {Tabs, Tab} from "../Utility/Tabs";
 
 import AccountStore from "../../stores/AccountStore";
 import { Asset } from "../../lib/common/MarketClasses";
+import RoomCard from "./RoomCard";
+import { websiteAPIs } from "../../api/apiConfig";
 let roomType =
 {
     0:"PVD",
     1:"PVP",
     2:"Advanced"
 };
+let chartColor = ['#FA9361', '#FBD876','#ff715e','#ff715e','#b5c334','#9bca63','#60c0dd','#e87c25','#fad860'];
+
 class RoomParticipate extends React.Component {
 
     static propTypes = {
@@ -77,6 +82,18 @@ class RoomParticipate extends React.Component {
             });
         }
         */
+        this._getHistory.bind(this)();
+    }
+
+    _getHistory(){
+      // return fetch(websiteAPIs.HISTORY_LOG(10,"43-52"), {
+      //   method:"post",
+      //   mode:"cors"
+      // }).then((response) => response.json()
+      //   .then( json => {
+      //     console.log(json);
+      //   })
+      // );
     }
 
     onSubmit() {
@@ -319,8 +336,336 @@ class RoomParticipate extends React.Component {
         );
     }
 
+    _getTotal() {
+      let { room } = this.state;
+
+      if (room.room_type == 0 && room.running_option.lmsr_running) {
+        let orgin0 = 0;
+        for (var i = 0; i < room.running_option.lmsr_running.items.length; i++) {
+          orgin0 = orgin0 + Math.exp(room.running_option.lmsr_running.items[i] / room.running_option.lmsr.L);
+        }
+
+        let orgin1 = 0;
+        for (var j = 0; j < room.running_option.lmsr_running.items.length; j++) {
+          if (j == this.state.checked_item) {
+            orgin1 = orgin1 + Math.exp((room.running_option.lmsr_running.items[j] / room.running_option.lmsr.L) + (parseInt(this.state.amount * this.state.precision) / room.running_option.lmsr.L));
+          }
+          else {
+            orgin1 = orgin1 + Math.exp(room.running_option.lmsr_running.items[j] / room.running_option.lmsr.L);
+          }
+        }
+
+        return parseInt(room.running_option.lmsr.L * (Math.log(orgin1) - Math.log(orgin0)));
+      }else{
+        return this.state.amount;
+      }
+    }
+
+    renderRoomInfo(){
+        let { room } = this.state;
+
+      let details = null;
+      let L = null;
+      let total_shares = null;
+
+      if (this.state.room.status && (this.state.room.status !="closed")) {
+        total_shares = (
+          <td width="33.33333%">
+              <Translate content="seer.room.total_shares"/>：<FormattedAsset amount={this.state.room.running_option.total_shares} asset={room.option.accept_asset}/>
+          </td>
+        );
+
+        let idx = 0;
+        if (this.state.room.room_type == 0) {
+          L = (
+            <td width="33.33333%">
+              <Translate content="seer.room.L"/>：{room.running_option.lmsr.L/this.state.precision}
+            </td>
+          );
+        }
+        else if (this.state.room.room_type == 1) {
+          L = (
+            <td width="33.33333%">
+              <Translate content="seer.room.pvp_owner_percent"/>：{room.running_option.pvp_owner_percent/100}%
+            </td>
+          );
+        }
+        else if (this.state.room.room_type == 2) {
+          L = (
+            <td width="33.33333%">
+              <Translate content="seer.room.pool"/>：<FormattedAsset amount={this.state.room.running_option.advanced.pool} asset={room.option.accept_asset}/>
+            </td>
+          );
+        }
+      };
+
+        return (
+          <div className="group-panel">
+            <div className="group-title"><Translate content="seer.room.room_detail"/></div>
+            <div className="group-content">
+              <table className="room-detail-table" width="100%">
+                <tr>
+                  <td width="33.33333%">
+                    <Translate content="seer.room.room_id"/>：{room.id}
+                  </td>
+                  <td width="33.33333%">
+                    <Translate content="seer.room.type"/>：{roomType[room.room_type]}
+                  </td>
+                  <td width="33.33333%">
+                    <Translate content="seer.room.room_creator"/>：<LinkToAccountById account={room.owner}/>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="33.33333%">
+                    <Translate content="seer.room.label"/>：{room.label.join(",")}
+                  </td>
+                  <td width="33.33333%">
+                    <Translate content="seer.room.accept_asset"/>：<LinkToAssetById asset={room.option.accept_asset}/>
+                  </td>
+                  <td width="33.33333%">
+                    <Translate content="seer.room.room_status"/>：<Translate content={"seer.room.room_status_" + room.status }/>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="33.33333%">
+                    <Translate content="seer.room.max"/>：{room.option.maximum/this.state.precision}
+                  </td>
+                  <td width="33.33333%">
+                    <Translate content="seer.room.min"/>：{room.option.minimum/this.state.precision}
+                  </td>
+                  {total_shares ? total_shares :
+                    <td width="33.33333%">
+                      <Translate content="seer.room.total_shares"/>：--
+                    </td>
+                  }
+                </tr>
+                <tr>
+                  <td width="33.33333%">
+                    <Translate content="account.votes.start"/>：{room.option.start}
+                  </td>
+                  <td width="33.33333%">
+                    <Translate content="account.votes.end"/>：{room.option.stop}
+                  </td>
+                  <td width="33.33333%">
+                    <Translate content="account.votes.end"/>：{room.option.input_duration_secs/60}
+                  </td>
+                </tr>
+                <tr>
+                  {L}
+                  <td width="33.33333%">
+                    <Translate content="seer.room.result_owner_percent"/>：{room.option.result_owner_percent/100}%
+                  </td>
+                  <td width="33.33333%">
+                    <Translate content="seer.room.reward_per_oracle"/>：{room.option.reward_per_oracle / 100000} SEER
+                  </td>
+                </tr>
+                <tr>
+                  <td width="33.33333%">
+                    <Translate content="seer.room.owner_pay_fee_percent"/>：{room.owner_pay_fee_percent/100}%
+                  </td>
+                  <td width="33.33333%">
+                    <Translate content="seer.oracle.script"/>：{room.script}
+                  </td>
+                  <td width="33.33333%">
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        );
+    }
+
+    renderJoinFilter(){
+      let {room} = this.state;
+      return(
+        <div className="group-panel">
+          <div className="group-title"><Translate content="seer.room.filter"/></div>
+          <div className="group-content">
+            <table className="room-detail-table" width="100%">
+              <tr>
+                <td width="33.33333%">
+                  <Translate content="seer.room.reputation"/>：{room.option.filter.reputation}
+                </td>
+                <td width="33.33333%">
+                  <Translate content="seer.room.guaranty"/>：<FormattedAsset amount={room.option.filter.guaranty} asset={"1.3.0"}/>
+                </td>
+                <td width="33.33333%">
+                  <Translate content="seer.room.volume"/>：{room.option.filter.volume}
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      );
+    }
+
+    renderJoinNumber(){
+      let {room} = this.state;
+
+      let legendData = [];
+      let seriesData = [];
+
+      this.state.room.running_option.selection_description.map((d,i)=>{
+        legendData.push(d);
+        seriesData.push({name: d, value: room.running_option.player_count[i]});
+      });
+
+      let option = {
+        title : {
+          text: counterpart.translate("seer.room.join_number"),
+          x:'center',
+          y:'bottom',
+          textStyle:{
+            fontSize:14,
+            color:"#333"
+          }
+        },
+        color:chartColor,
+        tooltip : {
+          show: true
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'right',
+          top: 'middle',
+          data: legendData
+        },
+        series : [
+          {
+            type: 'pie',
+            radius : '55%',
+            center: [legendData.length > 12 ? '20%' : '50%', '50%'],
+            data: seriesData,
+            itemStyle: {
+              normal : {
+                label : {
+                  show : false
+                },
+                labelLine : {
+                  show : false
+                }
+              },
+              emphasis: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      };
+
+      return (
+        <ReactEcharts option={option}/>
+      );
+    }
+
+    renderJoinVolume(){
+      let {room} = this.state;
+
+      let legendData = [];
+      let seriesData = [];
+
+      this.state.room.running_option.selection_description.map((d,i)=>{
+        legendData.push(d);
+
+        if (room.room_type == 0) {
+          seriesData.push({name: d, value: room.running_option.lmsr_running.items[i]/this.state.precision});
+        } else if (room.room_type == 1) {
+          seriesData.push({name: d, value: room.running_option.pvp_running.total_participate[i]/this.state.precision});
+        } else if (room.room_type == 2) {
+          seriesData.push({name: d, value: room.running_option.advanced_running.total_participate[i][0]/this.state.precision});
+        }
+      });
+
+      let option = {
+        title : {
+          text: counterpart.translate("seer.room.join_volume"),
+          x:'center',
+          y:'bottom',
+          textStyle:{
+            fontSize:14,
+            color:"#333"
+          }
+        },
+        color:chartColor,
+        tooltip : {
+          show: true
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'right',
+          top: 'middle',
+          data: legendData
+        },
+        series : [
+          {
+            type: 'pie',
+            radius: ['40%', '55%'],
+            center: [legendData.length > 12 ? '20%' : '50%', '50%'],
+            data: seriesData,
+            itemStyle: {
+              normal : {
+                label : {
+                  show : false
+                },
+                labelLine : {
+                  show : false
+                }
+              },
+              emphasis: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      };
+
+      return (
+        <ReactEcharts option={option}/>
+      );
+    }
+
+    renderJoinDetail(){
+      return (
+        <div className="group-panel">
+          <div className="group-title"><Translate content="seer.room.join_detail"/></div>
+          <div className="group-content flex-align-middle">
+            <div style={{flex:1}}>
+              {this.renderJoinNumber.bind(this)()}
+            </div>
+            <div style={{flex:0.1}}>&nbsp;</div>
+            <div style={{flex:1}}>
+              {this.renderJoinVolume.bind(this)()}
+            </div>
+            <div style={{flex:0.1}}>&nbsp;</div>
+          </div>
+        </div>
+      );
+    }
+
+    renderBroadcast(){
+      return (
+        <div className="group-panel">
+          <div className="group-title"><Translate content="seer.room.room_broadcast"/></div>
+          <div className="group-content">
+            <table>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      );
+    }
+
     render() {
-        let tabIndex = 1;
+        let { room } = this.state;
 
         let options;
         if (!this.state.room.status){
@@ -380,37 +725,19 @@ class RoomParticipate extends React.Component {
         }
 
         let showMoney=null;
-
         if (this.state.room.room_type == 0 && this.state.room.running_option.lmsr_running){
-            let orgin0 = 0;
-            for(var i = 0;i<this.state.room.running_option.lmsr_running.items.length;i++){
-                orgin0 = orgin0 + Math.exp(this.state.room.running_option.lmsr_running.items[i]  /  this.state.room.running_option.lmsr.L);
-            }
-
-            let orgin1 = 0;
-            for(var j = 0;j<this.state.room.running_option.lmsr_running.items.length;j++) {
-                if (j == this.state.checked_item) {
-                    orgin1 = orgin1 + Math.exp( (this.state.room.running_option.lmsr_running.items[j] /this.state.room.running_option.lmsr.L)  + (parseInt(this.state.amount * this.state.precision)/ this.state.room.running_option.lmsr.L));
-                }
-                else{
-                    orgin1 = orgin1 +  Math.exp(this.state.room.running_option.lmsr_running.items[j]   / this.state.room.running_option.lmsr.L);
-                }
-            }
-
-            let money = parseInt(this.state.room.running_option.lmsr.L * (Math.log(orgin1) - Math.log(orgin0)));
-            showMoney = (
-                <td>
-                    <Translate
-                        content="seer.room.show_money"
-                        _count={this.state.amount}
-                        amount={
-                            <FormattedAsset
-                                amount={money || 0}
-                                asset={this.state.room.option.accept_asset}
-                            />}
-                    />
-                    </td>
-            )
+            let money =  this._getTotal.bind(this)();
+            // showMoney = (
+            //   <Translate
+            //     content="seer.room.show_money"
+            //     _count={this.state.amount}
+            //     amount={
+            //       <FormattedAsset
+            //         amount={money || 0}
+            //         asset={this.state.room.option.accept_asset}
+            //       />}
+            //   />
+            // )
         }
 
 
@@ -438,29 +765,60 @@ class RoomParticipate extends React.Component {
             </div>
         );
 
+      let playerCount = 0;
+
+      room.running_option.player_count.map(c=>{
+        playerCount += c;
+      });
+
         return (
             <div className="grid-content app-tables no-padding" ref="appTables">
                 <div className="content-block small-12">
-                    <div className="tabs-container generic-bordered-box">
-
-                        <Tabs segmented={false} setting="issuedAssetsTab" className="account-tabs" tabsClass="account-overview bordered-header content-block"  contentClass="padding">
-
-                            <Tab title="seer.room.participate">
-                                <div className="grid-block vertical full-width-content">
-                                    <div className="grid-container " style={{paddingTop: "2rem"}}>
-                                        <div className="content-block" style={{display: "inline-block", width: "60%"}}>
-                                            <h3><Translate content="seer.room.info"/></h3>
-                                            {this.renderDescription()}
-                                        </div>
-                                        {participate}
-                                    </div>
-                                </div>
-                            </Tab>
-                        </Tabs>
+                    <div>
+                      <RoomCard roomObject={this.state.room} checkMode={true} showDetail={true} checkedItem={this.state.checked_item}
+                                onOptionCheck={i=>this.setState({checked_item:i})}>
+                        <div>
+                          <div className="group-title">
+                            <Translate content="transfer.amount" />
+                            ({this.state.room.room_type === 0 ? <Translate content="seer.room.part"/> : this.state.asset})
+                          </div>
+                        </div>
+                        <div className="group-content" style={{paddingTop:0}}>
+                          <input type="text" value={this.state.amount || ""} placeholder={counterpart.translate("seer.room.placeholder_amount")} onChange={this.changeAmount.bind(this)}/>
+                          {showMoney}
+                          <div className="flex-align-middle room-info" style={{color:"#999",fontSize:12,marginTop:"1rem",height:"auto"}}>
+                            <div>
+                              <Translate content="seer.room.min"/>：{room.option.minimum/this.state.precision} {this.state.room.room_type === 0 ? <Translate content="seer.room.part"/> : this.state.asset}
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                              <Translate content="seer.room.max"/>：{room.option.maximum/this.state.precision} {this.state.room.room_type === 0 ? <Translate content="seer.room.part"/> : this.state.asset}
+                            </div>
+                            <div className="flex-align-middle icon-info">
+                              <i className="iconfont icon-icon" style={{color:"#7460ED",fontSize:23}}></i>
+                              <FormattedAsset amount={room.running_option.total_shares} asset={room.option.accept_asset}/>
+                              <i className="iconfont icon-zhanbitu" style={{color:"#FF972B",fontSize:23}}></i>{room.option.result_owner_percent/100}%
+                              <i className="iconfont icon-renshu" style={{color:"#FC4C6C",fontSize:28}}></i>{playerCount}
+                            </div>
+                          </div>
+                          <div className="room-info" style={{marginTop:40}}>
+                            <div></div>
+                            <div>
+                              <span style={{color:"#666"}}><Translate content="seer.room.total_bets"/>：</span>
+                              {<FormattedAsset amount={this._getTotal.bind(this)() || 0} asset={this.state.room.option.accept_asset}/>}
+                              <button className="button large" onClick={this.onSubmit.bind(this)} style={{marginLeft:35,width:220,height:54}}>
+                                <Translate content="seer.room.participate"/>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </RoomCard>
+                      {this.renderJoinDetail.bind(this)()}
+                      {this.renderRoomInfo.bind(this)()}
+                      {this.renderJoinFilter.bind(this)()}
+                      {this.renderBroadcast.bind(this)()}
                     </div>
                 </div>
             </div>
-             );
+         );
     }
 }
 

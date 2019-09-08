@@ -566,7 +566,7 @@ class AccountRoomCreate extends React.Component {
 
         return (this.props.room &&  (this.props.room.toJS().status != "closed") && (this.props.room.toJS().status != "finished")  && (this.props.room.toJS().room_type == 2))?
         (
-            <div className="grid-content app-tables no-padding" ref="appTables">
+            <div className="grid-content app-tables no-padding account_room_create" ref="appTables">
                 <div className="content-block small-12">
                     <div className="tabs-container generic-bordered-box">
                         <div className="tabs-header">
@@ -601,7 +601,7 @@ class AccountRoomCreate extends React.Component {
                 </div>
             </div>
         ): (/*here is create room*/
-            <div className="grid-content app-tables no-padding" ref="appTables">
+            <div className="grid-content app-tables no-padding account_room_create" ref="appTables">
                 <div className="content-block small-12">
                     <div className="tabs-container generic-bordered-box">
                         <div className="tabs-header">

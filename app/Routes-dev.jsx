@@ -97,9 +97,10 @@ const routes = (
           <Route path="tx/:tx_id" component={Transaction} />
         </Route>
 
-        <Route path="/prediction" components={HousesIndex}/>
+        <Route path="/prediction" components={HousesIndex}>
+          <Route path="rooms/:room_id" component={RoomParticipate}/>
+        </Route>
         <Route path="/prediction/:house_id" component={HouseDetail}/>
-        <Route path="/prediction/rooms/:room_id" component={RoomParticipate}/>
         <Route path="/prediction/rooms/:room_id/update" component={AccountRoomUpdateWrapper}/>
 
         <Route path="wallet" component={WalletManager} >

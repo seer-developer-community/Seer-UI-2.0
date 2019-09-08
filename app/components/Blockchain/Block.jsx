@@ -131,9 +131,6 @@ class Block extends React.Component {
         let height = parseInt(this.props.height, 10);
         let block = blocks.get(height);
 
-      console.log("-----------");
-        console.log(this.props);
-
         let blockHeight = showInput ?
             <span className="inline-label">
                 <input ref="blockInput" type="number" onKeyDown={this._onKeyDown.bind(this)}/>

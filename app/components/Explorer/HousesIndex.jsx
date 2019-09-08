@@ -1,6 +1,5 @@
 import React from "react";
 import Immutable from "immutable";
-import AccountImage from "../Account/AccountImage";
 import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
 import {ChainStore} from "seerjs/es";
@@ -14,11 +13,11 @@ import classNames from "classnames";
 import {Apis} from "seerjs-ws";
 import {websiteAPIs} from "api/apiConfig";
 import {Link} from "react-router/es";
-import AccountStore from "../../stores/AccountStore";
 import Icon from "../Icon/Icon";
 import IntlStore from "../../stores/IntlStore";
 import Slider from "react-slick";
 import RoomCard from "../Account/RoomCard";
+import _ from "lodash";
 
 require("./housesIndex.scss");
 
@@ -144,16 +143,81 @@ class HouseList extends React.Component {
     static propTypes = {
         witnesses: ChainTypes.ChainObjectsList.isRequired,
         filterLabel:React.PropTypes.string,
-        houses:React.PropTypes.array
+        filterRoomType:React.PropTypes.number,
+        houses:React.PropTypes.array,
+        sortBy:React.PropTypes.number,
+        sortType:React.PropTypes.string
     }
 
     constructor () {
         super();
         this.state = {
           sortBy: 'rank',
-          inverseSort: true
+          inverseSort: true,
+          rooms:[]
         };
+    }
 
+    componentWillMount() {
+      if(this.props.houses && this.props.houses.length > 0){
+        this._loadRooms.bind(this)(this.props.houses);
+      }
+    }
+
+    componentWillReceiveProps(nextProps) {
+      if(!_.isEmpty(_.differenceWith(nextProps.houses, this.props.houses, _.isEqual))) {
+        this._loadRooms.bind(this)(nextProps.houses);
+      }
+    }
+
+    shouldComponentUpdate(newProps, newState) {
+      if(!_.isEmpty(_.differenceWith(newState.rooms, this.state.rooms, _.isEqual))) {
+        return true;
+      }
+      if(newProps.filterLabel !== this.props.filterLabel){
+        return true;
+      }
+      if(newProps.filterRoomType !== this.props.filterRoomType){
+        return true;
+      }
+      if(newProps.sortBy !== this.props.sortBy){
+        return true;
+      }
+      if(newProps.sortType !== this.props.sortType){
+        return true;
+      }
+
+      return false;
+    }
+
+    _loadRooms(houses){
+      let getSeerReqs = [];
+      houses.map((h, i) => {
+        h.rooms.map((r, j) => {
+          getSeerReqs.push(this._getSeerRoom.bind(this)(r));
+        });
+      });
+
+      Promise.all(getSeerReqs)
+        .then((result) => {
+          result = _.without(result, undefined);
+          this.setState({
+            rooms: result
+          });
+        });
+    }
+
+    async _getSeerRoom(roomId){
+      return await new Promise((resolve) =>
+      {
+        Apis.instance().db_api().exec("get_seer_room", [roomId, 0, 0]).then(room => {
+          if(room.status !== "finished" && room.status !== "closed"){
+            resolve(room);
+          }else{
+            resolve();
+          }
+        });
+      });
     }
 
     _setSort(field) {
@@ -164,30 +228,55 @@ class HouseList extends React.Component {
     }
 
     render() {
-
         let {witnesses, current, cardView, witnessList,houses} = this.props;
-        let {sortBy, inverseSort} = this.state;
-        let most_recent_aslot = 0;
-        let ranks = {};
 
-        let itemRows = [];
+        let roomCards = [];
+
         if (witnesses.length > 0 && witnesses[1]) {
-            itemRows = houses
-                .map((a) => {
-                  return a.rooms.map(rm=>{
-                      return <RoomCard room={rm} key={rm} filterLabel={this.props.filterLabel}/>
-                  });
-                });
-        }
+          let rooms = _.clone(this.state.rooms);
+          if(this.props.filterRoomType !== null && this.props.filterRoomType >= 0) {
+            rooms = _.filter(rooms, { 'room_type': this.props.filterRoomType });
+          }
 
-        let rows = [];
-        for(let i = 0;i < itemRows.length; i++){
-            rows.push(...itemRows[i])
+          //sort
+          if(this.props.sortBy !== null){
+            let props = this.props;
+            rooms = _.sortBy(rooms, [function(o) {
+              if(props.sortBy === 1) {
+                return o.running_option.total_shares;
+              }else if(props.sortBy === 2) {
+                return o.running_option.total_player_count;
+              } else if(props.sortBy === 3) {
+                return o.option.stop;
+              } else if(props.sortBy === 4) {
+                return o.option.result_owner_percent;
+              }
+            }]);
+            if(this.props.sortType === "desc"){
+              rooms = rooms.reverse();
+            }
+          }
+
+          roomCards = rooms.map((r, index) => {
+            let match = false;
+            if (this.props.filterLabel) {
+              for (let i = 0; i < r.label.length; i++) {
+                if (this.props.filterLabel.indexOf(r.label[i]) > -1) {
+                  match = true;
+                  break;
+                }
+              }
+
+              return match ? <RoomCard roomObject={r} key={r.id}/> : null;
+            } else {
+              return <RoomCard roomObject={r} key={r.id}/>;
+            }
+          });
         }
 
         return (
           <div>
-            {rows}
+            {roomCards}
           </div>
         );
     }
@@ -210,36 +299,83 @@ class TitlePanel extends React.Component {
   }
 }
 
-class RankList extends React.Component {
+class RankRow extends React.Component {
 
   static propTypes = {
-    isVolume:React.PropTypes.bool
+    rank:React.PropTypes.number,
+    account:ChainTypes.ChainAccount.isRequired,
+    data:React.PropTypes.object,
+    isHouse:React.PropTypes.bool
   }
 
   render(){
+    return (
+      <tr>
+        <td><div>{this.props.rank}</div></td>
+        <td><div>{this.props.account.get("name")}</div></td>
+        <td><div>{this.props.data.reputation}</div></td>
+        <td>
+          <div>
+          {
+            this.props.isHouse ?
+            this.props.data.collected_fees
+              :
+              this.props.data.volume
+          }
+          </div>
+        </td>
+      </tr>
+    );
+  }
+}
+
+RankRow = BindToChainState(RankRow);
+
+class RankList extends React.Component {
+
+  static propTypes = {
+    houses:React.PropTypes.array,
+    oracles:React.PropTypes.array
+  }
+
+  render(){
+    let {houses,oracles} = this.props;
+    let isHouse = !!houses;
+    let sortedData = null;
+    if(isHouse){
+      sortedData =_.sortBy(houses,"collected_fees").reverse();
+    }else{
+      sortedData =_.sortBy(oracles,"volume").reverse();
+    }
+
+    if(sortedData.length > 10){
+      sortedData = sortedData.slice(0,10);
+    }
+
     return (
       <table className="rank-table">
         <thead>
         <tr>
           <th><Translate content="seer.house.rank"/></th>
-          <th><Translate content="seer.house.account"/></th>
+          <th width="100px"><Translate content="seer.house.account"/></th>
           <th><Translate content="seer.house.reputation"/></th>
           <th>
           {
-            this.props.isVolume ? <Translate content="seer.house.volume"/>
+            isHouse ? <Translate content="seer.house.reward"/>
               :
-              <Translate content="seer.house.reward"/>
+              <Translate content="seer.house.volume"/>
           }
           </th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
+        {
+          sortedData.map((h,i)=> {
+              return (
+                <RankRow rank={i+1} account={h.owner} data={h} isHouse={isHouse} key={i}/>
+              )
+            })
+        }
         </tbody>
       </table>
     );
@@ -265,10 +401,14 @@ class Houses extends React.Component {
           filterWitness: props.filterWitness || "",
           cardView: true, //props.cardView
           houseLabels: [],
-          currentLabel:null,
-          images:[],
-          roomList:[],
-          houses:[]
+          currentLabel: null,
+          images: [],
+          roomList: [],
+          houses: [],
+          oracles: [],
+          filterRoomType:null,
+          sortBy:null,
+          sortType:"asc",
         }
     }
 
@@ -276,10 +416,16 @@ class Houses extends React.Component {
       Apis.instance().db_api().exec("lookup_house_accounts", [0, 1000]).then((results) => {
         let ids = results.map(r => r[1]);
 
-        console.log(ids);
-
         Apis.instance().db_api().exec("get_houses", [ids]).then(houses => {
           this.setState({houses: houses});
+        });
+      });
+
+      Apis.instance().db_api().exec("lookup_oracle_accounts", [0, 1000]).then((results) => {
+        let ids = results.map(r => r[1]);
+
+        Apis.instance().db_api().exec("get_oracles", [ids]).then(oracles => {
+          this.setState({oracles: oracles});
         });
       });
     }
@@ -335,7 +481,7 @@ class Houses extends React.Component {
           this.setState({
             houseLabels:houseObj.labelArrays,
            // roomList:houseObj.roomList,
-            roomList:["1.15.10","1.15.1642","1.15.1628"],
+            //roomList:["1.15.10","1.15.1642","1.15.1628"],
 
             images
           });
@@ -366,6 +512,9 @@ class Houses extends React.Component {
     }
 
     _onHouseLabelClick(entry) {
+        if(this.props.children){
+          this.props.router.push("/prediction");
+        }
         this.setState({
           currentLabel:entry
         });
@@ -392,7 +541,7 @@ class Houses extends React.Component {
         };
 
         return (
-          <div className="container">
+          <div className="houses_index_container">
             <div className="main" style={{width:"100%",height:"100%"}}>
               <div className="menu-content" style={{width:221,height:"100%"}}>
                 <div className="side-menu">
@@ -412,82 +561,95 @@ class Houses extends React.Component {
                   </ul>
                 </div>
               </div>
-              <div className="middle-content" style={{flex:1}}>
-                <div className="notice flex-align-middle">
-                    <div className="icon-container">
-                      <i className="iconfont icon-gonggao1"></i>
-                    </div>
-                    <div>
-                      else 参与 预测市场1236 ，预测选项1“小于7000美元”
-                    </div>
+
+              {
+                this.props.children ? <div className="middle-content" style={{flex:1}}>
+                    {this.props.children}
                 </div>
-                <div className="houses-category">
-                  <ul>
-                    <li className="house-category">PVP</li>
-                    <li className="house-category">PVD</li>
-                    <li className="house-category">ADV</li>
-                    <li className="house-sort asc">
-                      参与总量&nbsp;
-                      <Icon size="14px" name="sort"/>
-                    </li>
-                    <li className="house-sort">
-                      参与人数&nbsp;
-                      <Icon size="14px" name="sort"/>
-                    </li>
-                    <li className="house-sort">
-                      结束时间&nbsp;
-                      <Icon size="14px" name="sort"/>
-                    </li>
-                    <li className="house-sort">
-                      创建者权重&nbsp;
-                      <Icon size="14px" name="sort"/>
-                    </li>
-                  </ul>
-                </div>
-                <div className="image-slider">
-                  <Slider {...settings}>
+                  :
+                <div className="middle-content" style={{flex:1}}>
+                  <div className="notice flex-align-middle">
+                      <div className="icon-container">
+                        <i className="iconfont icon-gonggao1"></i>
+                      </div>
+                      <div>
+                        else 参与 预测市场1236 ，预测选项1“小于7000美元”
+                      </div>
+                  </div>
+                  <div className="houses-category">
+                    <ul>
+                      <li className={"house-category" + (this.state.filterRoomType === 1 ? " checked" :"")} onClick={e => this.setState({filterRoomType:1})}>PVP</li>
+                      <li className={"house-category" + (this.state.filterRoomType === 0 ? " checked" :"")} onClick={e => this.setState({filterRoomType:0})}>PVD</li>
+                      <li className={"house-category" + (this.state.filterRoomType === 2 ? " checked" :"")} onClick={e => this.setState({filterRoomType:2})}>ADV</li>
+                      <li className={"house-sort" + (this.state.sortBy === 1 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:1,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
+                        参与总量&nbsp;
+                        <Icon size="14px" name="sort"/>
+                      </li>
+                      <li className={"house-sort" + (this.state.sortBy === 2 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:2,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
+                        参与人数&nbsp;
+                        <Icon size="14px" name="sort"/>
+                      </li>
+                      <li className={"house-sort" + (this.state.sortBy === 3 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:3,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
+                        结束时间&nbsp;
+                        <Icon size="14px" name="sort"/>
+                      </li>
+                      <li className={"house-sort" + (this.state.sortBy === 4 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:4,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
+                        创建者权重&nbsp;
+                        <Icon size="14px" name="sort"/>
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="image-slider">
+                    <Slider {...settings}>
+                      {
+                        this.state.images.map((item,index)=>{
+                          return (
+                            <div key={index}>
+                              <Link to={"/prediction/rooms/" + item[1]} style={{background:"url(" + item[0] + ")"}}/>
+                            </div>
+                          );
+                        })
+                      }
+                    </Slider>
+                  </div>
+                  <div style={{marginTop:"26px"}}>
                     {
-                      this.state.images.map((item,index)=>{
-                        return (
-                          <div key={index}>
-                            <Link to={"/prediction/rooms/" + item[1]} style={{background:"url(" + item[0] + ")"}}/>
-                          </div>
-                        );
+                      this.state.roomList && this.state.roomList.map((room,index)=>{
+                          return (
+                            <RoomCard room={room} key={index} recommend={true}/>
+                          );
                       })
                     }
-                  </Slider>
+                    <HouseList
+                      current_aslot={dynGlobalObject.current_aslot}
+                      current={current ? current.get("id") : null}
+                      witnesses={Immutable.List(globalObject.active_witnesses)}
+                      witnessList={globalObject.active_witnesses}
+                      filter={this.state.filterWitness}
+                      cardView={this.state.cardView}
+                      filterLabel={this.state.currentLabel}
+                      filterRoomType={this.state.filterRoomType}
+                      sortBy={this.state.sortBy}
+                      sortType={this.state.sortType}
+                      houses={this.state.houses}
+                    />
+                  </div>
                 </div>
-                <div style={{marginTop:"26px"}}>
-                  {
-                    this.state.roomList && this.state.roomList.map((room,index)=>{
-                        return (
-                          <RoomCard room={room} key={index} filterLabel={this.state.currentLabel}/>
-                        );
-                    })
-                  }
-                  <HouseList
-                    current_aslot={dynGlobalObject.current_aslot}
-                    current={current ? current.get("id") : null}
-                    witnesses={Immutable.List(globalObject.active_witnesses)}
-                    witnessList={globalObject.active_witnesses}
-                    filter={this.state.filterWitness}
-                    cardView={this.state.cardView}
-                    filterLabel={this.state.currentLabel}
-                    houses={this.state.houses}
-                  />
-                </div>
-              </div>
-              <div style={{width:297,marginRight:20,marginTop:20}}>
-                  <TitlePanel title="seer.house.my_oracle">
-                    <div style={{height:900}}>&nbsp;</div>
-                  </TitlePanel>
-                  <TitlePanel title="seer.house.creator_rank">
-                    <RankList isVolume={false}/>
-                  </TitlePanel>
-                  <TitlePanel title="seer.house.oracle_rank">
-                    <RankList isVolume={true}/>
-                  </TitlePanel>
-              </div>
+              }
+              {
+                this.props.children ? null :
+                  <div style={{ width: 297, marginRight: 20, marginTop: 20 }}>
+                    <TitlePanel title="seer.house.my_oracle">
+                      <div style={{ height: 900 }}>&nbsp;</div>
+                    </TitlePanel>
+                    <TitlePanel title="seer.house.creator_rank">
+                      <RankList houses={this.state.houses}/>
+                    </TitlePanel>
+                    <TitlePanel title="seer.house.oracle_rank">
+                      <RankList oracles={this.state.oracles}/>
+                    </TitlePanel>
+                  </div>
+              }
             </div>
           </div>
         );

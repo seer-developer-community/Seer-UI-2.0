@@ -1,91 +1,93 @@
-.room-table{
-  >tbody>tr{
-      >td:first-child{
+.account_room_create {
+  .room-table {
+    > tbody > tr {
+      > td:first-child {
         padding-right: 2em;
       }
-      >td:last-child{
+      > td:last-child {
         padding-left: 2em;
       }
+    }
   }
-}
-.label-text{
-  display: inline-block;
-  font-weight: bold;
-  margin-bottom: 15px;
-  margin-top: 21px;
+  .label-text {
+    display: inline-block;
+    font-weight: bold;
+    margin-bottom: 15px;
+    margin-top: 21px;
 
-  i{
-    font-style: normal;
-    color: #FF972B;
-    margin-left: 6px;
+    i {
+      font-style: normal;
+      color: #FF972B;
+      margin-left: 6px;
+    }
   }
-}
 
-button.btn-room-type{
-  color: #666 !important;
-  font-size: 14px!important;
-  width: 200px;
-  height: 50px;
-  outline: none;
+  button.btn-room-type {
+    color: #666 !important;
+    font-size: 14px !important;
+    width: 200px;
+    height: 50px;
+    outline: none;
 
-  &:not(.outline){
-    color: #fff!important;
+    &:not(.outline) {
+      color: #fff !important;
+    }
   }
-}
 
-input[type="text"],select{
-  font-size: 14px;
-  color:#666;
-  height: 50px!important;
-  line-height: 50px!important;
-  margin: 0!important;
-}
+  input[type="text"], select {
+    font-size: 14px;
+    color: #666;
+    height: 50px !important;
+    line-height: 50px !important;
+    margin: 0 !important;
+  }
 
-.unit-input input{
-  height: 48px!important;
-  line-height: 48px!important;
-}
+  .unit-input input {
+    height: 48px !important;
+    line-height: 48px !important;
+  }
 
-select{
-  background-color: #fff;
-  padding: 0 0.5em;
-
-  &:hover{
+  select {
     background-color: #fff;
+    padding: 0 0.5em;
+
+    &:hover {
+      background-color: #fff;
+    }
   }
-}
 
-textarea{
-  height: 120px!important;
-  width: 100%!important;
-  font-size: 14px;
-  color:#666;
-  resize: none;
-}
+  textarea {
+    height: 120px !important;
+    width: 100% !important;
+    font-size: 14px;
+    color: #666;
+    resize: none;
+  }
 
-.label-panel{
-  height: 120px!important;
-  width: 100%!important;
-  border: 1px solid #DCDCDC;
-  padding: 6px;
-}
+  .label-panel {
+    height: 120px !important;
+    width: 100% !important;
+    border: 1px solid #DCDCDC;
+    padding: 6px;
+  }
 
-button.btn-add-label{
-  font-size: 16px!important;
-  padding: 0!important;
-  width: 22px!important;
-  height: 22px!important;
-  margin-left: 9px;
-  outline: none;
-}
+  button.btn-add-label {
+    font-size: 16px !important;
+    padding: 0 !important;
+    width: 22px !important;
+    height: 22px !important;
+    margin-left: 9px;
+    outline: none;
+  }
 
-.room-label{
-  display: inline-block;
-  border: 1px solid #DCDCDC;
-  padding: 5px 11px;
-  margin-right: 10px;
-  border-radius: 13px;
-  user-select: none;
-  font-size: 14px;
-  background: #efefef;
+  .room-label {
+    display: inline-block;
+    border: 1px solid #DCDCDC;
+    padding: 5px 11px;
+    margin-right: 10px;
+    border-radius: 13px;
+    user-select: none;
+    font-size: 14px;
+    background: #efefef;
+  }
 }

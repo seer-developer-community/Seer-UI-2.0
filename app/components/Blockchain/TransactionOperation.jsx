@@ -1073,12 +1073,10 @@ class TransactionOperation extends React.Component {
         //     </Row>
         // ) : null;
 
-        let account = ChainStore.getObject(op[1].from);
-
         return (
             <div className="flex-align-middle" style={{height:48,background:"#F8F8FA",padding:4,marginTop:25}}>
               <div style={{display:"inline-block",width: 40,height: 40}}>
-                <AccountImage account={account.get("name")} size={{height: 40, width: 40}}/>
+                <AccountImage accountObject={op[1].from || op[1].issuer} size={{height: 40, width: 40}}/>
               </div>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <span style={{color:"#0C0D26",fontSize:14}}>{column}</span>

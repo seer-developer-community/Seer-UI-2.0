@@ -1748,7 +1748,7 @@
             "volume": "参与量",
             "allowed_oracles": "允许的预言机",
             "info": "房间信息",
-            "filter": "门槛",
+            "filter": "参与门槛",
             "participators": "参与者",
             "amount": "数量",
             "selections": "选项",
@@ -1768,7 +1768,20 @@
             "end_time":"截止时间",
             "open_detail":"查看详情",
             "input_or_select_label":"请选择或输入标签",
-            "label_use_input_value":"---使用输入值---"
+            "label_use_input_value":"---使用输入值---",
+            "placeholder_amount":"请输入数量",
+            "total_bets":"总投注",
+            "room_detail":"房间详情",
+            "join_detail":"参与详情",
+            "room_id":"房间ID",
+            "room_creator":"房间设立者",
+            "room_status":"市场状态",
+            "room_status_opening":"进行中",
+            "room_status_closed":"已关闭",
+            "room_status_finished":"已结束",
+            "join_number":"参与人数",
+            "join_volume":"参与数量",
+            "room_broadcast":"最新广播"
         }
     },
   "erc20": {

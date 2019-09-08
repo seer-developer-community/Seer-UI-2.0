@@ -71,12 +71,13 @@ const routes = (
 
         <Route path="/prediction" getComponent={(location, cb) => {
             System.import("components/Explorer/HousesIndex").then(loadRoute(cb)).catch(errorLoading);
-        }}/>
+        }}>
+          <Route path="rooms/:room_id" getComponent={(location, cb) => {
+            System.import("components/Account/RoomParticipate").then(loadRoute(cb)).catch(errorLoading);
+          }}/>
+        </Route>
         <Route path="/prediction/:house_id" getComponent={(location, cb) => {
             System.import("components/Explorer/HouseDetail").then(loadRoute(cb)).catch(errorLoading);
-        }}/>
-        <Route path="/prediction/rooms/:room_id" getComponent={(location, cb) => {
-            System.import("components/Account/RoomParticipate").then(loadRoute(cb)).catch(errorLoading);
         }}/>
 
         <Route path="wallet" getComponent={(location, cb) => {

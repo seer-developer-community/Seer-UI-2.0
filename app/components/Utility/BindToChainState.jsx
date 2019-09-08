@@ -1,5 +1,5 @@
 import React from "react";
-import {curry, flow, reject, clone, pairs, omit, get, pick} from "lodash";
+import {curry, flow, reject, clone, toPairs, omit, get, pick} from "lodash";
 import {ChainStore} from "seerjs/es";
 import ChainTypes from "./ChainTypes";
 import utils from "common/utils";
@@ -58,7 +58,7 @@ function BindToChainState(Component, options = {}) {
 
         constructor(props) {
             super(props);
-            let prop_types_array = pairs(Component.propTypes);
+            let prop_types_array = toPairs(Component.propTypes);
             if(options && options.all_props) {
                 this.chain_objects = reject(Object.keys(this.props), (e) => e === "children" || e === "keep_updating" || e === "show_loader");
                 this.chain_accounts = [];

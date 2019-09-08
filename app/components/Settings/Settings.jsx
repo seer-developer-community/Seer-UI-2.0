@@ -279,7 +279,7 @@ class Settings extends React.Component {
         }
 
         return (
-            <div className={this.props.deprecated ? "" : "grid-block"}>
+            <div className={this.props.deprecated ? "" : "grid-block"} style={{background:"#fff"}}>
                 <div className="grid-block main-content menu-content margin-block wrap">
                     <div className="grid-content shrink side-menu">
                         <ul>

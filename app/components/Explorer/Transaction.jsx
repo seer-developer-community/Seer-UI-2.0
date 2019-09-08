@@ -2,6 +2,7 @@ import React from "react";
 import TransactionOperation from "../Blockchain/TransactionOperation";
 import Icon from "../Icon/Icon";
 var Apis =  require("seerjs-ws").Apis;
+import _ from "lodash"
 
 class Transaction extends React.Component {
 
@@ -69,6 +70,55 @@ class Transaction extends React.Component {
     console.log(opResult);
     console.log(transaction);
     console.log(JSON.stringify(transaction));
+    console.log(transaction.operations[0][1]);
+
+    let operations = []
+    let _format = this.format;
+    _.forIn(transaction.operations[0][1], function(value, key) {
+      if(key === "type"){
+        //empty
+      }
+      else if(key==="fee"){
+        operations.push(
+          <tr className="no-boder">
+            <td>operations</td>
+            <td width="188px">{key}</td>
+            <td>
+              <div>amount &nbsp;{_format(value.amount)}</div>
+              <div>asset_id &nbsp;"{_format(value.asset_id)}"</div>
+            </td>
+          </tr>
+        )
+      }else if(typeof  value === "string" && key === "amount"){
+        operations.push(
+          <tr>
+            <td></td>
+            <td>amount_to_sell</td>
+            <td>
+              <div>amount &nbsp;{_format(value.amount)}</div>
+              <div>asset_id &nbsp;"{_format(value.asset_id)}"</div>
+            </td>
+          </tr>
+        );
+      } else if(typeof  value === "string"){
+        operations.push(
+          <tr className="no-boder">
+            <td></td>
+            <td>{key}</td>
+            <td>"{value}"</td>
+          </tr>
+        )
+      }else if(typeof value === "number"){
+        operations.push(
+          <tr className="no-boder">
+            <td></td>
+            <td>{key}</td>
+            <td>{_format(value)}</td>
+          </tr>
+        )
+      }
+    });
+
     return (
       <div style={{padding:30}}>
         <table>
@@ -115,29 +165,7 @@ class Transaction extends React.Component {
               <td>expiration</td>
               <td colSpan={2}>"{transaction.expiration}"</td>
             </tr>
-            <tr className="no-boder">
-              <td>operations</td>
-              <td width="188px">fee</td>
-              <td>
-                <div>amount &nbsp;{this.format(transaction.operations[0][1].fee.amount)}</div>
-                <div>asset_id &nbsp;"{this.format(transaction.operations[0][1].fee.asset_id)}"</div>
-              </td>
-            </tr>
-            <tr className="no-boder">
-              <td></td>
-              <td>seller</td>
-              <td>
-                "{transaction.operations[0][1].from}"
-              </td>
-            </tr>
-            <tr>
-              <td></td>
-              <td>amount_to_sell</td>
-              <td>
-                <div>amount &nbsp;{this.format(transaction.operations[0][1].amount.amount)}</div>
-                <div>asset_id &nbsp;"{this.format(transaction.operations[0][1].amount.asset_id)}"</div>
-              </td>
-            </tr>
+            {operations}
             <tr>
               <td>extensions</td>
               <td colSpan={2}>{JSON.stringify(transaction.extensions)}</td>
