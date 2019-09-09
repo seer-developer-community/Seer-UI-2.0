@@ -27,6 +27,7 @@
     "start": "cross-env NODE_ENV=development node server.js",
     "start-electron": "electron build/electron/index.js",
     "build": "cross-env NODE_ENV=production webpack --env.prod --env.noUgly",
+    "build-ugly": "cross-env NODE_ENV=production webpack --env.prod",
     "build-hash": "cross-env NODE_ENV=production webpack --env.prod --env.hash --env.baseUrl=''",
     "build-hash-nougly": "cross-env NODE_ENV=production webpack --env.prod --env.hash --env.noUgly --env.baseUrl=''",
     "build-github": "cross-env NODE_ENV=production webpack --env.prod --env.hash --env.deprecated --env.baseUrl='/wallet/'",

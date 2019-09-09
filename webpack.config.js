@@ -99,6 +99,7 @@ module.exports = function(env) {
             debug: false
         }));
         plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
+
         if (!env.noUgly) {
 
             plugins.push(new webpack.optimize.UglifyJsPlugin({
