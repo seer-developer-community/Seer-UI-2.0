@@ -86,14 +86,14 @@ class RoomParticipate extends React.Component {
     }
 
     _getHistory(){
-      // return fetch(websiteAPIs.HISTORY_LOG(10,"43-52"), {
-      //   method:"post",
-      //   mode:"cors"
-      // }).then((response) => response.json()
-      //   .then( json => {
-      //     console.log(json);
-      //   })
-      // );
+      return fetch(websiteAPIs.HISTORY_LOG(10,"43-52"), {
+        method:"post",
+        mode:"cors"
+      }).then((response) => response.json()
+        .then( json => {
+          console.log(json);
+        })
+      );
     }
 
     onSubmit() {

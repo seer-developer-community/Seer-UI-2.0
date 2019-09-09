@@ -17,6 +17,7 @@ import Icon from "../Icon/Icon";
 import IntlStore from "../../stores/IntlStore";
 import Slider from "react-slick";
 import RoomCard from "../Account/RoomCard";
+import MyRoomList from "../Account/MyRoomList";
 import _ from "lodash";
 
 require("./housesIndex.scss");
@@ -146,7 +147,8 @@ class HouseList extends React.Component {
         filterRoomType:React.PropTypes.number,
         houses:React.PropTypes.array,
         sortBy:React.PropTypes.number,
-        sortType:React.PropTypes.string
+        sortType:React.PropTypes.string,
+        onRoomOptionCheck:React.PropTypes.func
     }
 
     constructor () {
@@ -227,6 +229,12 @@ class HouseList extends React.Component {
         });
     }
 
+    _onRoomOptionCheck(room,idx){
+        if(this.props.onRoomOptionCheck){
+            this.props.onRoomOptionCheck(room,idx);
+        }
+    }
+
     render() {
         let {witnesses, current, cardView, witnessList,houses} = this.props;
 
@@ -267,9 +275,9 @@ class HouseList extends React.Component {
                 }
               }
 
-              return match ? <RoomCard roomObject={r} key={r.id}/> : null;
+              return match ? <RoomCard roomObject={r} key={r.id} onOptionCheck={idx=>this._onRoomOptionCheck(r,idx)}/> : null;
             } else {
-              return <RoomCard roomObject={r} key={r.id}/>;
+              return <RoomCard roomObject={r} key={r.id} onOptionCheck={idx=>this._onRoomOptionCheck(r,idx)}/>;
             }
           });
         }
@@ -409,6 +417,7 @@ class Houses extends React.Component {
           filterRoomType:null,
           sortBy:null,
           sortType:"asc",
+          myRooms:[]
         }
     }
 
@@ -520,6 +529,29 @@ class Houses extends React.Component {
         });
     }
 
+    _onSelectRoom(room,optionIdx){
+        let myRooms = this.state.myRooms;
+
+        if(!_.find(myRooms, { 'id': room.id, 'selectOption': optionIdx })){
+            let roomCopy = _.clone(room);
+            roomCopy.selectOption = optionIdx;
+            myRooms.push(roomCopy);
+
+            this.setState({
+                myRooms
+            })
+        }
+    }
+
+    _onCloseRoom(room){
+        let myRooms = this.state.myRooms;
+        _.remove(myRooms, r => r.id === room.id && r.selectOption === room.selectOption);
+        this.setState({
+            myRooms
+        })
+
+    }
+
     render() {
         let { dynGlobalObject, globalObject } = this.props;
         dynGlobalObject = dynGlobalObject.toJS();
@@ -616,7 +648,7 @@ class Houses extends React.Component {
                     {
                       this.state.roomList && this.state.roomList.map((room,index)=>{
                           return (
-                            <RoomCard room={room} key={index} recommend={true}/>
+                            <RoomCard room={room} key={index} recommend={true} onOptionCheck={idx => this._onSelectRoom.bind(this)(room,idx)}/>
                           );
                       })
                     }
@@ -632,6 +664,9 @@ class Houses extends React.Component {
                       sortBy={this.state.sortBy}
                       sortType={this.state.sortType}
                       houses={this.state.houses}
+                      onRoomOptionCheck={(room,idx)=>{
+                          this._onSelectRoom.bind(this)(room,idx);
+                      }}
                     />
                   </div>
                 </div>
@@ -639,9 +674,14 @@ class Houses extends React.Component {
               {
                 this.props.children ? null :
                   <div style={{ width: 297, marginRight: 20, marginTop: 20 }}>
-                    <TitlePanel title="seer.house.my_oracle">
-                      <div style={{ height: 900 }}>&nbsp;</div>
-                    </TitlePanel>
+                      {
+                          this.state.myRooms.length > 0 ?
+                          <TitlePanel title="seer.house.my_oracle">
+                            <MyRoomList rooms={this.state.myRooms} onClose={this._onCloseRoom.bind(this)}/>
+                          </TitlePanel>
+                          : null
+                      }
+
                     <TitlePanel title="seer.house.creator_rank">
                       <RankList houses={this.state.houses}/>
                     </TitlePanel>
