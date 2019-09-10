@@ -9,7 +9,8 @@ class MyRoomItem extends React.Component {
 
     static propTypes = {
         room: React.PropTypes.object,
-        onClose: React.PropTypes.func
+        onClose: React.PropTypes.func,
+        onAmountChange: React.PropTypes.func
     }
 
     constructor(props) {
@@ -42,6 +43,34 @@ class MyRoomItem extends React.Component {
         }
         else {
             this.setState({amount: amount});
+        }
+        if(this.props.onAmountChange){
+            this.props.onAmountChange(this._getTotal.bind(this)());
+        }
+    }
+
+    _getTotal() {
+        let { room } = this.state;
+
+        if (room.room_type == 0 && room.running_option.lmsr_running) {
+            let orgin0 = 0;
+            for (var i = 0; i < room.running_option.lmsr_running.items.length; i++) {
+                orgin0 = orgin0 + Math.exp(room.running_option.lmsr_running.items[i] / room.running_option.lmsr.L);
+            }
+
+            let orgin1 = 0;
+            for (var j = 0; j < room.running_option.lmsr_running.items.length; j++) {
+                if (j == this.state.checked_item) {
+                    orgin1 = orgin1 + Math.exp((room.running_option.lmsr_running.items[j] / room.running_option.lmsr.L) + (parseInt(this.state.amount * this.state.precision) / room.running_option.lmsr.L));
+                }
+                else {
+                    orgin1 = orgin1 + Math.exp(room.running_option.lmsr_running.items[j] / room.running_option.lmsr.L);
+                }
+            }
+
+            return parseInt(room.running_option.lmsr.L * (Math.log(orgin1) - Math.log(orgin0)));
+        }else{
+            return this.state.amount;
         }
     }
 
