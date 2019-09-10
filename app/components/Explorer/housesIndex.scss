@@ -400,6 +400,40 @@
                     height:39px;
                 }
             }
+
+            .room-history-table{
+                tr{
+                    border-bottom: 1px solid #EFEFEF;
+                    height: 57px;
+
+                    th{
+                        font-weight: normal;
+                        font-size: 14px;
+                        color: #666;
+                        text-align: left;
+                    }
+
+                    td,th{
+                        padding-left: 30px!important;
+                    }
+                }
+
+                tbody{
+                    >tr>td{
+                        &:first-child{
+                            width: 120px;
+                        }
+
+                        &:nth-child(3){
+                            width: 300px;
+                        }
+
+                        &:last-child{
+                            width: 200px;
+                        }
+                    }
+                }
+            }
         }
     }
 }

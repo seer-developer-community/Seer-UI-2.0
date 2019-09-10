@@ -118,13 +118,27 @@ class Row extends React.Component {
                 <td style={{textAlign: "left"}} className="left-td column-hide-tiny">
                   <Link className="inline-block type-label" data-place="bottom" data-tip={counterpart.translate("tooltip.show_block", {block: utils.format_number(this.props.block, 0)})} to={`/block/${this.props.block}`} ><TransactionLabel color={color} type={type} /></Link>
                 </td>)}
-              <td style={{ padding: "8px 5px", textAlign: "left" }}>
-                <div className="log-detail">
-                  <span style={{color:"#666"}}>{this.props.info}</span>
-                  &nbsp;&nbsp;&nbsp;&nbsp;
-                  <span style={{fontSize:12,color:"#999"}}>{!this.props.hideDate ? <BlockTime block_number={block}/> : null}</span>
-                </div>
-              </td>
+              {
+                this.props.timeTd &&
+                <td style={{ padding: "8px 5px", textAlign: "left" }}>
+                  <div className="log-detail">
+                    <span style={{ color: "#666" }}>{this.props.info}</span>
+                  </div>
+                </td>
+              }
+              {
+                this.props.timeTd ?
+                  <td style={{ padding: "8px 5px", textAlign: "left" }}>
+                    <span style={{fontSize:12,color:"#999"}}>{!this.props.hideDate ? <BlockTime block_number={block}/> : null}</span>
+                  </td>
+                  :<td style={{ padding: "8px 5px", textAlign: "left" }}>
+                    <div className="log-detail">
+                      <span style={{color:"#666"}}>{this.props.info}</span>
+                      &nbsp;&nbsp;&nbsp;&nbsp;
+                      <span style={{fontSize:12,color:"#999"}}>{!this.props.hideDate ? <BlockTime block_number={block}/> : null}</span>
+                    </div>
+                  </td>
+              }
               <td width="80px">
                 <Link to={link} style={{fontSize:14,color:"#449E7B"}}>
                   {this.props.txId.substr(0,8)}
@@ -1077,7 +1091,9 @@ class Operation extends React.Component {
                             keys={[
                                 {type: "account", value: op[1].issuer, arg: "issuer"},
                                 {type: "string", value: op[1].room, arg: "room"},
-                                {type: "amount", value: {amount: balance, asset_id:this.props.result[1].asset_id}, arg: "balance"}
+                                {type: "amount", value: {amount: balance, asset_id:this.props.result[1].asset_id}, arg: "balance"},
+                                {type: "number", value: op[1].input[0], arg: "index"},
+                                {type: "string", value: op[1].input_desc[0], arg: "option"}
                             ]}
                         />
                     );
@@ -1087,7 +1103,9 @@ class Operation extends React.Component {
                             string="operation.seer_room_participate"
                             keys={[
                                 {type: "account", value: op[1].issuer, arg: "issuer"},
-                                {type: "string", value: op[1].room, arg: "room"}
+                                {type: "string", value: op[1].room, arg: "room"},
+                                {type: "number", value: op[1].input[0], arg: "index"},
+                                {type: "string", value: op[1].input_desc[0], arg: "option"}
                             ]}
                         />
                     );
@@ -1194,6 +1212,7 @@ class Operation extends React.Component {
                 info={column}
                 hideFee={this.props.hideFee}
                 withTxId={this.props.withTxId}
+                timeTd={this.props.timeTd}
                 txId={this.props.txId}
             >
             </Row>

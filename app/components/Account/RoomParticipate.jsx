@@ -20,6 +20,8 @@ import AccountStore from "../../stores/AccountStore";
 import { Asset } from "../../lib/common/MarketClasses";
 import RoomCard from "./RoomCard";
 import { websiteAPIs } from "../../api/apiConfig";
+import WalletApi from "../../api/WalletApi";
+import Operation from "../Blockchain/Operation";
 let roomType =
 {
     0:"PVD",
@@ -46,7 +48,8 @@ class RoomParticipate extends React.Component {
             room: props.room.toJS(),
             account: null,
             asset:null,
-            precision:null
+            precision:null,
+            historyList:[]
             //oracles:[]
         };
     }
@@ -83,15 +86,42 @@ class RoomParticipate extends React.Component {
         }
         */
         this._getHistory.bind(this)();
+        this.getHistoryTimer = setInterval(
+          () => this._getHistory.bind(this)(),
+          1000 * 60
+        );
     }
 
+    componentWillUnmount(){
+      clearInterval(this.getHistoryTimer)
+    }
     _getHistory(){
-      return fetch(websiteAPIs.HISTORY_LOG(10,"43-52"), {
+      return fetch(websiteAPIs.HISTORY_LOG(50,"43-52"), {
         method:"post",
         mode:"cors"
       }).then((response) => response.json()
         .then( json => {
-          console.log(json);
+            if(json){
+              let list = [];
+
+              if(json.result && json.result.length > 0){
+                json.result.map(e=>{
+                  e.operations = JSON.parse(e.operations);
+                  e.operationResults = JSON.parse(e.operationResults);
+                  e.operations[1].input_desc = [];
+                  e.operations[1].input_desc[0] = this.state.room.running_option.selection_description[e.operations[1].input[0]];
+                  if(e.operations[1].room === this.state.room.id){
+                    if(list.length < 10) {
+                      list.push(e);
+                    }
+                  }
+                })
+              }
+
+              this.setState({
+                historyList: list
+              });
+            }
         })
       );
     }
@@ -357,7 +387,7 @@ class RoomParticipate extends React.Component {
 
         return parseInt(room.running_option.lmsr.L * (Math.log(orgin1) - Math.log(orgin0)));
       }else{
-        return this.state.amount;
+        return parseInt(this.state.amount);
       }
     }
 
@@ -647,17 +677,43 @@ class RoomParticipate extends React.Component {
     }
 
     renderBroadcast(){
+      let {room} = this.state;
+
       return (
         <div className="group-panel">
           <div className="group-title"><Translate content="seer.room.room_broadcast"/></div>
-          <div className="group-content">
-            <table>
+          <div className="group-content" style={{padding:0}}>
+            <table className="room-history-table" width="100%">
+              <thead>
               <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <th><Translate content="account.transactions.type"/></th>
+                <th><Translate content="account.transactions.info"/></th>
+                <th><Translate content="account.transactions.time"/></th>
+                <th><Translate content="account.transactions.tx_link"/></th>
               </tr>
+              </thead>
+              <tbody>
+              {
+                this.state.historyList.map(h=>{
+                  return (
+                    <Operation
+                      key={h.id}
+                      op={h.operations}
+                      result={h.operationResults}
+                      block={h.refBlockNum}
+                      hideFee={true}
+                      withTxId={true}
+                      timeTd={true}
+                      txId={h.txId}
+                      hideOpLabel={false}
+                      current={"1.2.0"}/>
+                  );
+                })
+              }
+              {
+                this.state.historyList.length === 0 && <tr><td></td><td></td><td></td><td></td></tr>
+              }
+              </tbody>
             </table>
           </div>
         </div>
@@ -799,16 +855,18 @@ class RoomParticipate extends React.Component {
                               <i className="iconfont icon-renshu" style={{color:"#FC4C6C",fontSize:28}}></i>{playerCount}
                             </div>
                           </div>
-                          <div className="room-info" style={{marginTop:40}}>
-                            <div></div>
-                            <div>
-                              <span style={{color:"#666"}}><Translate content="seer.room.total_bets"/>：</span>
-                              {<FormattedAsset amount={this._getTotal.bind(this)() || 0} asset={this.state.room.option.accept_asset}/>}
-                              <button className="button large" onClick={this.onSubmit.bind(this)} style={{marginLeft:35,width:220,height:54}}>
-                                <Translate content="seer.room.participate"/>
-                              </button>
-                            </div>
-                          </div>
+                          { !!this.state.amount && parseInt(this.state.amount) >= (room.option.minimum/this.state.precision) && parseInt(this.state.amount) <= (room.option.maximum/this.state.precision) ?
+                            <div className="room-info" style={{marginTop:40}}>
+                              <div></div>
+                              <div>
+                                <span style={{color:"#666"}}><Translate content="seer.room.total_bets"/>：</span>
+                                {<FormattedAsset amount={this._getTotal.bind(this)() || 0} exact_amount={room.room_type !== 0} asset={this.state.room.option.accept_asset}/>}
+                                <button className="button large" onClick={this.onSubmit.bind(this)} style={{marginLeft:35,width:220,height:54}}>
+                                  <Translate content="seer.room.participate"/>
+                                </button>
+                              </div>
+                            </div> : null
+                          }
                         </div>
                       </RoomCard>
                       {this.renderJoinDetail.bind(this)()}

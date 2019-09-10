@@ -1,6 +1,10 @@
 import React from "react";
 import Translate from "react-translate-component";
 import counterpart from "counterpart";
+import FormattedAsset from "../Utility/FormattedAsset";
+import ChainStore from "seerjs/es/chain/src/ChainStore";
+import AccountStore from "../../stores/AccountStore";
+import SeerActions from "../../actions/SeerActions";
 var Apis =  require("seerjs-ws").Apis;
 
 require("./myRoomList.scss");
@@ -9,8 +13,7 @@ class MyRoomItem extends React.Component {
 
     static propTypes = {
         room: React.PropTypes.object,
-        onClose: React.PropTypes.func,
-        onAmountChange: React.PropTypes.func
+        onClose: React.PropTypes.func
     }
 
     constructor(props) {
@@ -44,13 +47,10 @@ class MyRoomItem extends React.Component {
         else {
             this.setState({amount: amount});
         }
-        if(this.props.onAmountChange){
-            this.props.onAmountChange(this._getTotal.bind(this)());
-        }
     }
 
     _getTotal() {
-        let { room } = this.state;
+        let { room } = this.props;
 
         if (room.room_type == 0 && room.running_option.lmsr_running) {
             let orgin0 = 0;
@@ -60,7 +60,7 @@ class MyRoomItem extends React.Component {
 
             let orgin1 = 0;
             for (var j = 0; j < room.running_option.lmsr_running.items.length; j++) {
-                if (j == this.state.checked_item) {
+                if (j == room.selectOption) {
                     orgin1 = orgin1 + Math.exp((room.running_option.lmsr_running.items[j] / room.running_option.lmsr.L) + (parseInt(this.state.amount * this.state.precision) / room.running_option.lmsr.L));
                 }
                 else {
@@ -70,7 +70,7 @@ class MyRoomItem extends React.Component {
 
             return parseInt(room.running_option.lmsr.L * (Math.log(orgin1) - Math.log(orgin0)));
         }else{
-            return this.state.amount;
+            return parseInt(this.state.amount);
         }
     }
 
@@ -80,9 +80,26 @@ class MyRoomItem extends React.Component {
         }
     }
 
-    render() {
+      onSubmit() {
         let {room} = this.props;
 
+        let obj = ChainStore.getAccount(AccountStore.getState().currentAccount);
+        if (!obj) return;
+        let id = obj.get("id");
+        let args = {
+          issuer: id,
+          room: room.id,
+          type: 0,
+          input: [room.selectOption],
+          input1: [],
+          input2: [],
+          amount: parseInt(this.state.amount * this.state.precision)
+        };
+        SeerActions.participate(args);
+      }
+
+    render() {
+        let {room} = this.props;
 
         let option = null;
 
@@ -134,6 +151,29 @@ class MyRoomItem extends React.Component {
                         <Translate content="seer.room.max"/>：{room.option.maximum/this.state.precision} {room.room_type === 0 ? <Translate content="seer.room.part"/> : this.state.asset}
                     </div>
                 </div>
+              { !!this.state.amount && parseInt(this.state.amount) >= (room.option.minimum/this.state.precision) && parseInt(this.state.amount) <= (room.option.maximum/this.state.precision) ?
+                <div className="join-info">
+                  <table className="total-table">
+                    <tbody>
+                    <tr>
+                      <td><Translate content="seer.room.total_bets"/>：</td>
+                      <td>
+                        <FormattedAsset amount={this._getTotal.bind(this)() || 0} exact_amount={room.room_type !== 0} asset={room.option.accept_asset}/>
+                      </td>
+                    </tr>
+                    {/*<tr>*/}
+                      {/*<td><Translate content="transfer.fee"/>：</td>*/}
+                      {/*<td>200121 SEER</td>*/}
+                    {/*</tr>*/}
+                    </tbody>
+                  </table>
+                  <button className="button large submit" onClick={this.onSubmit.bind(this)}>
+                    <Translate content="seer.room.participate"/>
+                  </button>
+                </div>
+
+                : null
+              }
             </div>
         );
     }
@@ -164,27 +204,12 @@ class MyRoomList extends React.Component {
         return(
             <div className="my-rooms-list">
                 {
-                    this.props.rooms.map(r=>{
+                    this.props.rooms.map((r,i)=>{
                         return (
                             <MyRoomItem key={r.id + "_" + r.selectOption} room={r} onClose={this.props.onClose}/>
                         );
                     })
                 }
-                <table className="total-table">
-                    <tbody>
-                        <tr>
-                            <td><Translate content="seer.room.total_bets"/>：</td>
-                            <td>200 SEER</td>
-                        </tr>
-                        <tr>
-                            <td><Translate content="transfer.fee"/>：</td>
-                            <td>200121 SEER</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <button className="button large submit">
-                    <Translate content="seer.room.participate"/>
-                </button>
             </div>
         );
     }

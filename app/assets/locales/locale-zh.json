@@ -202,7 +202,8 @@
         "transactions": {
             "type": "类型",
             "info": "详情",
-            "time": "时间"
+            "time": "时间",
+            "tx_link":"交易链接"
         },
         "vesting": {
             "title": "待解冻余额",
@@ -636,7 +637,7 @@
         "seer_room_stop_participating": "{issuer}停止房间{room}预测",
         "seer_room_final": "{issuer}对房间{room}结算,保证金变动:{balance}",
         "seer_room_settle": "{issuer}对房间{room}派发奖励,余额变动:{balance}",
-        "seer_room_participate": "{issuer}参与房间{room}预测,余额变动:{balance}",
+        "seer_room_participate": "{issuer} 参与房间 {room} 预测，预测选项 {index} “{option}”",
         "seer_room_close": "{issuer}关闭房间{room}",
         "seer_room_pool": "{issuer}给房间{room}资金池添加{amount}",
         "seer_house_create": "{issuer}以{guaranty}保证金创建平台",
