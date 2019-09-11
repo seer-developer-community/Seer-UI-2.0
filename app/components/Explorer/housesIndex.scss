@@ -41,6 +41,39 @@
                         font-size: 20px;
                     }
                 }
+
+                .notice-content{
+                    flex: 1;
+                    height:100%;
+                    overflow: hidden;
+
+                    .slick-list{
+                        height: 50px;
+
+                        .slick-slide {
+                            border: none !important;
+                            //
+                            tr {
+                                display: flex;
+                                height: 48px !important;
+
+                                td {
+                                    display: flex;
+                                    justify-content: flex-start;
+                                    align-items: center;
+
+                                    &:nth-child(2){
+                                        padding-right: 20px!important;
+                                    }
+
+                                    &:first-child, &:nth-child(3) {
+                                        display: none;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             .houses-category {

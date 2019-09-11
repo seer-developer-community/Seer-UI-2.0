@@ -8,7 +8,7 @@ class AccountImage extends Component {
     render() {
         let {account,accountObject, image, style} = this.props;
         let {height, width} = this.props.size;
-        account = account ||  accountObject.get("name");
+        account = (accountObject && accountObject.get("name")) || account;
         let custom_image = image ?
             <img src={image} height={height + "px"} width={width + "px"}/> :
             <Identicon id={account} account={account} size={this.props.size}/>;

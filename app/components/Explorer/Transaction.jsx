@@ -14,7 +14,7 @@ class Transaction extends React.Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     Apis.instance().db_api().exec("get_transaction_by_txid", [this.props.params.tx_id]).then((results) => {
       if (results && results.block_num) {
         Apis.instance().db_api().exec("get_block", [results.block_num]).then((rs) => {
@@ -56,7 +56,6 @@ class Transaction extends React.Component {
     let dateStr = date.getFullYear() + "-" + (('0' + (date.getMonth() + 1)).slice(-2)) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 
     let opResult = transaction.operation_results[0].map((val,index) => {
-      console.log(val);
       if(typeof val === "object" || typeof val === "array"){
         return (
           <div key={index}>{index}. &nbsp;{JSON.stringify(val)}</div>
@@ -67,20 +66,18 @@ class Transaction extends React.Component {
         )
       }
     });
-    console.log(opResult);
-    console.log(transaction);
-    console.log(JSON.stringify(transaction));
-    console.log(transaction.operations[0][1]);
 
     let operations = []
     let _format = this.format;
+    let idx = 0;
     _.forIn(transaction.operations[0][1], function(value, key) {
+
       if(key === "type"){
         //empty
       }
       else if(key==="fee"){
         operations.push(
-          <tr className="no-boder">
+          <tr className="no-boder" key={idx}>
             <td>operations</td>
             <td width="188px">{key}</td>
             <td>
@@ -91,7 +88,7 @@ class Transaction extends React.Component {
         )
       }else if(typeof  value === "string" && key === "amount"){
         operations.push(
-          <tr>
+          <tr key={idx}>
             <td></td>
             <td>amount_to_sell</td>
             <td>
@@ -102,7 +99,7 @@ class Transaction extends React.Component {
         );
       } else if(typeof  value === "string"){
         operations.push(
-          <tr className="no-boder">
+          <tr className="no-boder" key={idx}>
             <td></td>
             <td>{key}</td>
             <td>"{value}"</td>
@@ -110,32 +107,38 @@ class Transaction extends React.Component {
         )
       }else if(typeof value === "number"){
         operations.push(
-          <tr className="no-boder">
+          <tr className="no-boder" key={idx}>
             <td></td>
             <td>{key}</td>
             <td>{_format(value)}</td>
           </tr>
         )
       }
+
+        idx++;
     });
+
+    console.log(transaction);
 
     return (
       <div style={{padding:30}}>
         <table>
-          <tr>
-            <td width="54px">
-              <span style={{fontSize:28,fontWeight:"bold",color:"#0C0D26"}}>Tx</span>
-            </td>
-            <td>
-              <span style={{fontSize:24,color:"#666"}}>{txId}@{transaction.block_num}</span>
-            </td>
-          </tr>
-          <tr height={40}>
-            <td></td>
-            <td>
-              <span style={{fontSize:16,color:"#999"}}>Included in block  <span style={{color:"#000",fontWeight:"bold"}}>{fmBlockNum}</span>  at {dateStr} (UTC)</span>
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td width="54px">
+                <span style={{fontSize:28,fontWeight:"bold",color:"#0C0D26"}}>Tx</span>
+              </td>
+              <td>
+                <span style={{fontSize:24,color:"#666"}}>{txId}@{transaction.block_num}</span>
+              </td>
+            </tr>
+            <tr height={40}>
+              <td></td>
+              <td>
+                <span style={{fontSize:16,color:"#999"}}>Included in block  <span style={{color:"#000",fontWeight:"bold"}}>{fmBlockNum}</span>  at {dateStr} (UTC)</span>
+              </td>
+            </tr>
+          </tbody>
         </table>
 
         <TransactionOperation

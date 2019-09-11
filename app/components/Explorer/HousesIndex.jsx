@@ -18,9 +18,13 @@ import IntlStore from "../../stores/IntlStore";
 import Slider from "react-slick";
 import RoomCard from "../Account/RoomCard";
 import MyRoomList from "../Account/MyRoomList";
+import Operation from "../Blockchain/Operation";
 import _ from "lodash";
+import WebApi from "api/WebApi"
+
 
 require("./housesIndex.scss");
+
 
 class HouseCard extends React.Component {
 
@@ -193,33 +197,14 @@ class HouseList extends React.Component {
     }
 
     _loadRooms(houses){
-      let getSeerReqs = [];
-      houses.map((h, i) => {
-        h.rooms.map((r, j) => {
-          getSeerReqs.push(this._getSeerRoom.bind(this)(r));
-        });
-      });
+        let roomIds = [];
+        houses.map(h=>roomIds.push(...h.rooms));
 
-      Promise.all(getSeerReqs)
-        .then((result) => {
-          result = _.without(result, undefined);
-          this.setState({
-            rooms: result
-          });
+        WebApi.getSeerRooms(roomIds).then((rooms) => {
+            this.setState({
+                rooms: rooms
+            });
         });
-    }
-
-    async _getSeerRoom(roomId){
-      return await new Promise((resolve) =>
-      {
-        Apis.instance().db_api().exec("get_seer_room", [roomId, 0, 0]).then(room => {
-          if(room.status !== "finished" && room.status !== "closed"){
-            resolve(room);
-          }else{
-            resolve();
-          }
-        });
-      });
     }
 
     _setSort(field) {
@@ -417,7 +402,8 @@ class Houses extends React.Component {
           filterRoomType:null,
           sortBy:null,
           sortType:"asc",
-          myRooms:[]
+          myRooms:[],
+          noticeList:[]
         }
     }
 
@@ -497,8 +483,22 @@ class Houses extends React.Component {
         });
     }
 
+    _getNotice(){
+        WebApi.getBlockRecords(20,"40-54").then(records=>this.setState({noticeList: records}))
+    }
+
     componentDidMount(){
       this._initData.bind(this)();
+
+      this._getNotice.bind(this)();
+      this.getNoticeTimer = setInterval(
+           () => this._getNotice.bind(this)(),
+           1000 * 60
+      );
+    }
+
+    componentWillUnmount(){
+        clearInterval(this.getNoticeTimer)
     }
 
     _onFilter(e) {
@@ -572,6 +572,14 @@ class Houses extends React.Component {
           autoplaySpeed: 5000
         };
 
+        const noticeSettings = {
+            vertical: true,
+            arrows:false,
+            autoplay: true,
+            autoplaySpeed: 3000
+        };
+
+
         return (
           <div className="houses_index_container">
             <div className="main" style={{width:"100%",height:"100%"}}>
@@ -604,8 +612,26 @@ class Houses extends React.Component {
                       <div className="icon-container">
                         <i className="iconfont icon-gonggao1"></i>
                       </div>
-                      <div>
-                        else 参与 预测市场1236 ，预测选项1“小于7000美元”
+                      <div className="notice-content">
+                          <Slider {...noticeSettings}>
+                              {
+                                  this.state.noticeList.map(h=>{
+                                      return (
+                                          <Operation
+                                              key={h.id}
+                                              op={h.operations}
+                                              result={h.operationResults}
+                                              block={h.blockHeight}
+                                              hideFee={true}
+                                              withTxId={true}
+                                              timeTd={true}
+                                              txId={h.txId}
+                                              hideOpLabel={false}
+                                              current={"1.2.0"}/>
+                                      );
+                                  })
+                              }
+                          </Slider>
                       </div>
                   </div>
                   <div className="houses-category">

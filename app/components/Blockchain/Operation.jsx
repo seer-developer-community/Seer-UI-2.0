@@ -140,8 +140,8 @@ class Row extends React.Component {
                   </td>
               }
               <td width="80px">
-                <Link to={link} style={{fontSize:14,color:"#449E7B"}}>
-                  {this.props.txId.substr(0,8)}
+                <Link to={link} style={{fontSize:14,color:"#449E7B",width:80,overflow:"hidden",textOverflow: "ellipsis",display:"block"}}>
+                  {this.props.txId}
                 </Link>
               </td>
             </tr>
@@ -1092,7 +1092,7 @@ class Operation extends React.Component {
                                 {type: "account", value: op[1].issuer, arg: "issuer"},
                                 {type: "string", value: op[1].room, arg: "room"},
                                 {type: "amount", value: {amount: balance, asset_id:this.props.result[1].asset_id}, arg: "balance"},
-                                {type: "number", value: op[1].input[0], arg: "index"},
+                                {type: "number", value: op[1].input[0] + 1, arg: "index"},
                                 {type: "string", value: op[1].input_desc[0], arg: "option"}
                             ]}
                         />
@@ -1104,7 +1104,7 @@ class Operation extends React.Component {
                             keys={[
                                 {type: "account", value: op[1].issuer, arg: "issuer"},
                                 {type: "string", value: op[1].room, arg: "room"},
-                                {type: "number", value: op[1].input[0], arg: "index"},
+                                {type: "number", value: op[1].input[0] + 1, arg: "index"},
                                 {type: "string", value: op[1].input_desc[0], arg: "option"}
                             ]}
                         />

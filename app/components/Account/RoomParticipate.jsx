@@ -22,6 +22,8 @@ import RoomCard from "./RoomCard";
 import { websiteAPIs } from "../../api/apiConfig";
 import WalletApi from "../../api/WalletApi";
 import Operation from "../Blockchain/Operation";
+import WebApi from "api/WebApi"
+
 let roomType =
 {
     0:"PVD",
@@ -95,35 +97,14 @@ class RoomParticipate extends React.Component {
     componentWillUnmount(){
       clearInterval(this.getHistoryTimer)
     }
+
     _getHistory(){
-      return fetch(websiteAPIs.HISTORY_LOG(50,"43-52"), {
-        method:"post",
-        mode:"cors"
-      }).then((response) => response.json()
-        .then( json => {
-            if(json){
-              let list = [];
+        WebApi.getBlockRecords(50,"43-52").then(records=>{
+            let list = [];
+            records.map(r => r.operations[1].room === this.state.room.id && list.length < 10 && list.push(r));
 
-              if(json.result && json.result.length > 0){
-                json.result.map(e=>{
-                  e.operations = JSON.parse(e.operations);
-                  e.operationResults = JSON.parse(e.operationResults);
-                  e.operations[1].input_desc = [];
-                  e.operations[1].input_desc[0] = this.state.room.running_option.selection_description[e.operations[1].input[0]];
-                  if(e.operations[1].room === this.state.room.id){
-                    if(list.length < 10) {
-                      list.push(e);
-                    }
-                  }
-                })
-              }
-
-              this.setState({
-                historyList: list
-              });
-            }
-        })
-      );
+            this.setState({historyList: list})
+        });
     }
 
     onSubmit() {
@@ -700,7 +681,7 @@ class RoomParticipate extends React.Component {
                       key={h.id}
                       op={h.operations}
                       result={h.operationResults}
-                      block={h.refBlockNum}
+                      block={h.blockHeight}
                       hideFee={true}
                       withTxId={true}
                       timeTd={true}

@@ -17,6 +17,8 @@ import FormattedAsset from "../Utility/FormattedAsset";
 import Ps from "perfect-scrollbar";
 import TransitionWrapper from "../Utility/TransitionWrapper";
 import {ChainStore} from "seerjs/es";
+import {websiteAPIs} from "api/apiConfig";
+import WebApi from "api/WebApi"
 
 
 require("../Blockchain/json-inspector.scss");
@@ -72,7 +74,10 @@ class Blocks extends React.Component {
         this.state = {
             animateEnter: false,
             operationsHeight: null,
-            blocksHeight: null
+            blocksHeight: null,
+            blockRecords:[],
+            blockRecordsPageSize:20,
+            blockRecordsPage:1
         };
 
         this._updateHeight = this._updateHeight.bind(this);
@@ -91,6 +96,7 @@ class Blocks extends React.Component {
 
     componentWillUnmount() {
         window.removeEventListener("resize", this._updateHeight);
+        //clearInterval(this.getBlockRecordsTimer)
     }
 
     componentWillReceiveProps(nextProps) {
@@ -117,6 +123,9 @@ class Blocks extends React.Component {
         let blocks = this.refs.blocks;
         Ps.initialize(blocks);
         this._updateHeight();
+        //
+
+        this._startGetBlockRecordsTimer();
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -151,6 +160,33 @@ class Blocks extends React.Component {
         }
     }
 
+    _startGetBlockRecordsTimer(){
+        //不需要自动刷新了，新纪录追加到前面
+        // if(this.getBlockRecordsTimer){
+        //     clearInterval(this.getBlockRecordsTimer);
+        // }
+
+        this._getBlockRecords();
+        // this.getBlockRecordsTimer = setInterval(
+        //     () => {
+        //         this.state.blockRecordsPage = 1;
+        //         this._getBlockRecords.bind(this)();
+        //     },
+        //     1000 * 30
+        // );
+    }
+
+    _getBlockRecords(){
+        WebApi.getBlockRecords(this.state.blockRecordsPageSize * this.state.blockRecordsPage).then(records=>{
+            this.setState({blockRecords: records})
+        });
+    }
+
+    _getMoreBlockRecords(){
+        this.state.blockRecordsPage++;
+        this._startGetBlockRecordsTimer();
+    }
+
     _updateHeight() {
         let containerHeight = this.refs.outerWrapper.offsetHeight;
         let operationsTextHeight = this.refs.operationsText.offsetHeight;
@@ -174,10 +210,9 @@ class Blocks extends React.Component {
         let {latestBlocks, latestTransactions, globalObject, dynGlobalObject, coreAsset} = this.props;
         let {blocksHeight, operationsHeight} = this.state;
 
-        let blocks = null, transactions = null;
+        let blocks = null, transactions = null,blockTxs = null;
         let headBlock = null;
         let trxCount = 0, blockCount = latestBlocks.size, trxPerSec = 0, blockTimes = [], avgTime = 0;
-
         if (latestBlocks && latestBlocks.size >= 20) {
 
             let previousTime;
@@ -249,6 +284,24 @@ class Blocks extends React.Component {
                 });
 
             }).toArray();
+
+            blockTxs = this.state.blockRecords
+                .map((rd) => {
+                    return (
+                        <Operation
+                            key={trxIndex++}
+                            op={rd.operations}
+                            result={rd.operationResults}
+                            block={rd.blockHeight}
+                            hideFee={true}
+                            withTxId={true}
+                            txId={rd.txId}
+                            hideOpLabel={false}
+                            current={"1.2.0"}
+                        />
+                    );
+
+                });
 
             headBlock = latestBlocks.first().timestamp;
             avgTime = blockTimes.reduce((previous, current, idx, array) => {
@@ -399,6 +452,12 @@ class Blocks extends React.Component {
                         <table className="table">
                           <tbody>
                           {transactions}
+                          {blockTxs}
+                          <tr height="57px">
+                              <td colSpan="3" style={{textAlign:"center",fontSize:14,color:"#666"}}>
+                                  <Translate component="span" content="account.more" className="clickable" onClick={this._getMoreBlockRecords.bind(this)}/>
+                              </td>
+                          </tr>
                           </tbody>
                         </table>
                       </div>

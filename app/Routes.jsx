@@ -36,6 +36,10 @@ const routes = (
         <Route path="explorer" getComponent={(location, cb) => {
             System.import("components/Explorer/Explorer").then(loadRoute(cb)).catch(errorLoading);
         }}>
+            <IndexRoute getComponent={(location, cb) => {
+                System.import("components/Explorer/BlocksContainer").then(loadRoute(cb)).catch(errorLoading);
+            }}/>
+
             <Route path="/explorer/fees" getComponent={(location, cb) => {
                 System.import("components/Explorer/FeesContainer").then(loadRoute(cb)).catch(errorLoading);
             }}/>

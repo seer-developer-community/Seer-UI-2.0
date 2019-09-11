@@ -31,7 +31,7 @@ export const websiteAPIs = {
     HOUSES_INDEX_DATA:"?id=250",
     HOUSES_INDEX_IMAGE:"?catid=42",
     HOUSES_LABEL_LIST:"?id=251",
-    HISTORY_LOG: (limit, code) => {
+    HISTORY_LOG: (limit, code = "") => {
       return "https://scan.seerchain.org/apis/api/records?limit=" + limit + "&codeNum=" + code;
     }
 }
