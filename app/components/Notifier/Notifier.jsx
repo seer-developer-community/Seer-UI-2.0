@@ -24,7 +24,7 @@ class Notifier extends React.Component {
                 // Only trigger notifications for order fills
                 if ( ops[nh.op[0]] === "fill_order" && ((!ch && nh.id) || (nh.id !== ch.id))) {
                     ZfApi.publish("account-notify", "open");
-                    setTimeout(function() {ZfApi.publish("account-notify", "close"); }, 5000);
+                   // setTimeout(function() {ZfApi.publish("account-notify", "close"); }, 5000);
                 }
             }
         }

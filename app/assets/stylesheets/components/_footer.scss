@@ -2,6 +2,16 @@
     @include RobotoRegular;
     text-transform: lowercase;
     font-variant: small-caps;
+    align-items: center;
+
+    .grid-block{
+        overflow: hidden;
+    }
+
+    .txtlabel{
+        font-size: 0.85rem;
+    }
+
     div.footer-status {
         display: none;
         position: absolute;
@@ -12,21 +22,11 @@
         }
     }
     div.footer-block {
-        position: relative;
-        bottom: 0;
-        > span {
-            position: relative;
-            top: 7px;
-            font-size: 0.95rem;
-            color: #999;
-            > .footer-block-title {
-                font-size: 0.85rem;
-            }
-        }
+        font-size: 0.85rem;
+        color: #999;
     }
     background-color: #777;
     height: 59px;
-    line-height: 36px;
     vertical-align: middle;
     color: #fff;
     padding-left: 1.75rem;
@@ -47,9 +47,6 @@
 
     > div > div:last-of-type {
         margin-right: 46px;
-        .footer-block{
-            top:5px;
-        }
     }
 
     .introjs-launcher{

@@ -138,22 +138,21 @@ class Footer extends React.Component {
                         {synced ? null : <div className="grid-block shrink txtlabel cancel"><Translate content="footer.nosync" />&nbsp; &nbsp;</div>}
                         {!connected ? <div className="grid-block shrink txtlabel error"><Translate content="footer.connection" />&nbsp; &nbsp;</div> : null}
                         {this.props.backup_recommended ?
-                        <span>
-                            <div className="grid-block">
-                                <a className="shrink txtlabel facolor-alert"
-                                    data-tip="Please understand that you are responsible for making your own backup&hellip;"
-                                    data-type="warning"
-                                    onClick={this.onBackup.bind(this)}><Translate content="footer.backup" />
-                                </a>
-                                &nbsp;&nbsp;
-                            </div>
-                        </span> : null}
-                        {this.props.backup_brainkey_recommended ? <span>
-                            <div className="grid-block">
-                                <a className="grid-block shrink txtlabel facolor-alert" onClick={this.onBackupBrainkey.bind(this)}><Translate content="footer.brainkey" /></a>
-                                &nbsp;&nbsp;
-                            </div>
-                        </span>:null}
+                        <div className="grid-block shrink">
+                            <a className="shrink txtlabel facolor-alert"
+                                data-tip="Please understand that you are responsible for making your own backup&hellip;"
+                                data-type="warning"
+                                onClick={this.onBackup.bind(this)}><Translate content="footer.backup" />
+                            </a>
+                            &nbsp;&nbsp;
+                        </div>
+                        : null}
+                        {this.props.backup_brainkey_recommended ?
+                        <div className="grid-block shrink">
+                            <a className="grid-block shrink txtlabel facolor-alert" onClick={this.onBackupBrainkey.bind(this)}><Translate content="footer.brainkey" /></a>
+                            &nbsp;&nbsp;
+                        </div>
+                          :null}
                         {block_height ?
                         (<div className="grid-block shrink">
                             <div className="tooltip" style={{position:"relative"}} onClick={this.onAccess.bind(this)} data-tip={counterpart.translate(`tooltip.${!connected ? "disconnected" : synced ? "sync_yes" : "sync_no"}`) + " " + currentNode} data-place="top">

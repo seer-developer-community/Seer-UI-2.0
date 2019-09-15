@@ -3,6 +3,7 @@ import TransactionOperation from "../Blockchain/TransactionOperation";
 import Icon from "../Icon/Icon";
 var Apis =  require("seerjs-ws").Apis;
 import _ from "lodash"
+import WebApi from "api/WebApi"
 
 class Transaction extends React.Component {
 
@@ -16,6 +17,7 @@ class Transaction extends React.Component {
 
   componentDidMount() {
     Apis.instance().db_api().exec("get_transaction_by_txid", [this.props.params.tx_id]).then((results) => {
+      console.log(results);
       if (results && results.block_num) {
         Apis.instance().db_api().exec("get_block", [results.block_num]).then((rs) => {
           if (rs.transaction_ids && rs.transaction_ids.length > 0) {
@@ -25,9 +27,24 @@ class Transaction extends React.Component {
             tx.block_num = results.block_num;
             tx.transaction_id = this.props.params.tx_id;
 
+
             this.setState({
               transaction: tx
             });
+            /*
+            if(tx.operations[0][0] === 50){
+                WebApi.getSeerRoom(tx.operations[0][1].room).then(room=>{
+                  tx.operations[0][1].input_desc = [room.running_option.selection_description[tx.operations[0][1].input[0]]];
+                  this.setState({
+                    transaction: tx
+                  });
+                })
+            }else{
+              this.setState({
+                transaction: tx
+              });
+            }
+            */
           }
         });
       }

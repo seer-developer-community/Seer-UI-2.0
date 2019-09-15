@@ -308,14 +308,14 @@ class RankRow extends React.Component {
         <td><div>{this.props.account.get("name")}</div></td>
         <td><div>{this.props.data.reputation}</div></td>
         <td>
-          <div>
           {
             this.props.isHouse ?
-            this.props.data.collected_fees
+              <FormattedAsset amount={this.props.data.collected_fees} asset={"1.3.0"} hide_asset={true}/>
               :
-              this.props.data.volume
+              <div>
+                {this.props.data.volume}
+              </div>
           }
-          </div>
         </td>
       </tr>
     );

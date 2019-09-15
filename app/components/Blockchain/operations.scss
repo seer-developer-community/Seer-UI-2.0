@@ -7,3 +7,18 @@
 .right-td {
     text-align: left;
 }
+
+.tx_operation{
+
+    table{
+        margin-left: 12px;
+
+        td{
+            font-size: 14px;
+
+            &:first-child, &:last-child{
+                display: none;
+            }
+        }
+    }
+}

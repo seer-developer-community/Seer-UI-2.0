@@ -501,7 +501,7 @@ export default class SendModal extends React.Component {
                                 <div className="content-block transfer-input">
                                     {memo && memo.length ? <label className="right-label">{memo.length}</label> : null}
                                     <Translate className="left-label tooltip" component="label" content="transfer.memo" data-place="top" data-tip={counterpart.translate("tooltip.memo_tip")}/>
-                                    <textarea style={{marginBottom: 0}} rows="3" value={memo} tabIndex={tabIndex++} onChange={this.onMemoChanged.bind(this)} />
+                                    <textarea style={{marginBottom: 0,fontSize:14,height:100}} rows="3" value={memo} tabIndex={tabIndex++} onChange={this.onMemoChanged.bind(this)} />
                                     {/* warning */}
                                     { this.state.propose ?
                                         <div className="error-area" style={{position: "absolute"}}>

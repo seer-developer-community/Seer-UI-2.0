@@ -704,6 +704,9 @@ class RoomParticipate extends React.Component {
     render() {
         let { room } = this.state;
 
+        console.log("----------")
+        console.log(room)
+
         let options;
         if (!this.state.room.status){
             options = null;

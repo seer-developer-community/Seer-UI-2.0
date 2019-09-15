@@ -18,6 +18,7 @@ import ProposedOperation from "./ProposedOperation";
 import marketUtils from "common/market_utils";
 import {connect} from "alt-react";
 import SettingsStore from "stores/SettingsStore";
+import WebApi from "../../api/WebApi";
 
 const {operations} = grapheneChainTypes;
 require("./operations.scss");
@@ -1226,8 +1227,41 @@ class Operation extends React.Component {
     }
 }
 
+class OperationWrapper extends React.Component {
 
-Operation = connect(Operation, {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      op:[]
+    }
+  }
+
+  componentWillMount() {
+    let { op } = this.props;
+    if(op[0] === 50 && !op[1].input_desc) {
+      WebApi.getSeerRoom(op[1].room).then(room => {
+        op[1].input_desc = [room.running_option.selection_description[op[1].input[0]]];
+        this.setState({
+          op
+        });
+      });
+    }else{
+      this.state.op = op;
+    }
+  }
+
+  render(){
+    if(this.state.op && this.state.op.length > 0) {
+      return <Operation {...this.props} op={this.state.op}/>
+    }else{
+      return <div style={{height:55}}>&nbsp;</div>;
+    }
+  }
+}
+
+
+OperationWrapper = connect(OperationWrapper, {
     listenTo() {
         return [SettingsStore];
     },
@@ -1238,4 +1272,4 @@ Operation = connect(Operation, {
     }
 });
 
-export default Operation;
+export default OperationWrapper;

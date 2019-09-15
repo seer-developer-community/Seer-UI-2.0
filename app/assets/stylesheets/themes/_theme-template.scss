@@ -251,6 +251,10 @@ $input-border
             }
         }
 
+        &#transaction_confirm_modal{
+          line-height: normal;
+        }
+
         span.send-name {
             color: $link-text-color;
         }
@@ -298,13 +302,16 @@ $input-border
         }
 
       .button-group{
-        width: 100%;
-        margin-top: 40px;
         margin-bottom: 46px;
         display: flex;
+        flex:1;
         flex-direction: row;
         justify-content: center;
         align-content: center;
+
+        .grid-block{
+          justify-content: center;
+        }
 
         .button{
           font-size: 16px;
@@ -2165,11 +2172,11 @@ $input-border
 
   .type-label{
       >span.label {
-          width: 90px !important;
+          min-width: 90px !important;
           height: 26px !important;
           text-align: center;
           font-size: 14px;
-          padding: 0 !important;
+          padding: 0 8px !important;
           display: flex;
           flex-direction: column;
           justify-content: center;
