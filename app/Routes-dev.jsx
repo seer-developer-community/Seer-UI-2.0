@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Router, Route, IndexRoute, browserHistory, hashHistory, Redirect } from "react-router/es";
+import { Router, Route, IndexRoute,IndexRedirect, browserHistory, hashHistory, Redirect } from "react-router/es";
 import willTransitionTo from "./routerTransition";
 import App from "./App";
 
@@ -69,6 +69,9 @@ import ERC20Gateway from "./components/Balances/ERC20Gateway";
 import AccountWitness from "./components/Account/AccountWitness";
 import AccountDashboard from "./components/Account/AccountDashboard";
 import Transaction from "./components/Explorer/Transaction";
+import AccountStore from "./stores/AccountStore";
+import WalletDb from "./stores/WalletDb";
+
 
 
 const history = __HASH_HISTORY__ ? hashHistory : browserHistory;
@@ -77,9 +80,27 @@ class Auth extends React.Component {
     render() {return null; }
 }
 
+const onAccountManagerEnter = function(nextState, replaceState, callback){
+    console.log("----------------------")
+    let account =  AccountStore.getState().currentAccount || AccountStore.getState().passwordAccount;
+    console.log("accccc  " + account);
+    console.log(AccountStore.getState().linkedAccounts);
+
+    console.log(WalletDb.getWallet())
+
+
+    console.log(nextState)
+    console.log(replaceState)
+    console.log(callback)
+    callback();
+
+}
+
+
 const routes = (
     <Route path="/" component={App} onEnter={willTransitionTo}>
-        <IndexRoute component={DashboardContainer}/>
+        <IndexRoute component={HousesIndex}/>
+
         <Route path="/auth/:data" component={Auth}/>
         <Route path="/dashboard" component={DashboardContainer}/>
         <Route path="explorer" component={Explorer}>
@@ -142,38 +163,42 @@ const routes = (
         </Route>
 
         <Route path="accounts" component={DashboardAccountsOnly} />
-        <Route path="/account/:account_name" component={Account} >
-            {/*<IndexRoute component={AccountOverview} />*/}
-            <IndexRoute component={AccountDashboard} />
-            {/*<Route path="dashboard" component={AccountOverview} />*/}
-            {/* <Route path="deposit-withdraw" component={AccountDepositWithdraw} /> */}
-            {/* <Route path="orders" component={AccountOrders} /> */}
-            <Route path="accounts" component={DashboardAccountsOnly} />
-            <Route path="assets" component={AccountAssets} />
-            <Route path="create-asset" component={AccountAssetCreate} />
-            <Route path="update-asset/:asset" component={AccountAssetUpdate} />
-            <Route path="member-stats" component={AccountMembership} />
-            <Route path="vesting" component={AccountVesting} />
-            <Route path="permissions" component={AccountPermissions} />
-            <Route path="voting" component={AccountVoting} />
-            <Route path="whitelist" component={AccountWhitelist} />
-            <Route path="signedmessages" component={AccountSignedMessages} />
-            <Redirect from="overview" to="/account/:account_name" />
-            <Redirect from="orders" to="/account/:account_name" />
-            <Route path="dashboard" component={AccountDashboard} />
-            <Route path="create-oracle" component={AccountOracleCreate}/>
-            <Route path="oracle" component={AccountOracle}/>
-            <Route path="create-house" component={AccountHouseCreate}/>
-            <Route path="houses" component={AccountHouse}/>
-            <Route path="guaranty" component={AccountGuaranty}/>
-            <Route path="create-room/single=:ok" component={AccountRoomCreate}/>
-            <Route path="rooms/:room_id/input" component={RoomInput}/>
-            <Route path="rooms/:room_id/oracle-input" component={OracleInput}/>
-            <Route path="rooms/:room_id/update" component={AccountRoomUpdateWrapper}/>
-            <Route path="update-house/:house_id" component={AccountHouseUpdate}/>
-            <Route path="update-oracle/:oracle_id" component={AccountOracleUpdate}/>
-            <Route path="witness" component={AccountWitness}/>
-            <Route path="erc20-gateway" component={ERC20Gateway}/>
+        <Route path="/account">
+            <IndexRedirect to="/create-account/wallet" />
+
+            <Route path=":account_name" component={Account} onEnter={onAccountManagerEnter}>
+                {/*<IndexRoute component={AccountOverview} />*/}
+                <IndexRoute component={AccountDashboard} />
+                {/*<Route path="dashboard" component={AccountOverview} />*/}
+                {/* <Route path="deposit-withdraw" component={AccountDepositWithdraw} /> */}
+                {/* <Route path="orders" component={AccountOrders} /> */}
+                <Route path="accounts" component={DashboardAccountsOnly} />
+                <Route path="assets" component={AccountAssets} />
+                <Route path="create-asset" component={AccountAssetCreate} />
+                <Route path="update-asset/:asset" component={AccountAssetUpdate} />
+                <Route path="member-stats" component={AccountMembership} />
+                <Route path="vesting" component={AccountVesting} />
+                <Route path="permissions" component={AccountPermissions} />
+                <Route path="voting" component={AccountVoting} />
+                <Route path="whitelist" component={AccountWhitelist} />
+                <Route path="signedmessages" component={AccountSignedMessages} />
+                <Redirect from="overview" to="/account/:account_name" />
+                <Redirect from="orders" to="/account/:account_name" />
+                <Route path="dashboard" component={AccountDashboard} />
+                <Route path="create-oracle" component={AccountOracleCreate}/>
+                <Route path="oracle" component={AccountOracle}/>
+                <Route path="create-house" component={AccountHouseCreate}/>
+                <Route path="houses" component={AccountHouse}/>
+                <Route path="guaranty" component={AccountGuaranty}/>
+                <Route path="create-room/single=:ok" component={AccountRoomCreate}/>
+                <Route path="rooms/:room_id/input" component={RoomInput}/>
+                <Route path="rooms/:room_id/oracle-input" component={OracleInput}/>
+                <Route path="rooms/:room_id/update" component={AccountRoomUpdateWrapper}/>
+                <Route path="update-house/:house_id" component={AccountHouseUpdate}/>
+                <Route path="update-oracle/:oracle_id" component={AccountOracleUpdate}/>
+                <Route path="witness" component={AccountWitness}/>
+                <Route path="erc20-gateway" component={ERC20Gateway}/>
+            </Route>
         </Route>
 
         <Route path="deposit-withdraw" component={AccountDepositWithdraw} />

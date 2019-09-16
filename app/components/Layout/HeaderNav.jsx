@@ -278,6 +278,7 @@ class HeaderNav extends React.Component {
     }
 
     render() {
+        console.log(this.props);
         let {active} = this.state;
         let {currentAccount, starredAccounts, passwordLogin, passwordAccount, height} = this.props;
 
@@ -319,7 +320,7 @@ class HeaderNav extends React.Component {
         let dashboard = (
             <a
                 className={cnames("logo", {active: active === "/" || (active.indexOf("dashboard") !== -1 && active.indexOf("account") === -1)})}
-                onClick={this._onNavigate.bind(this, "/dashboard")}
+                onClick={this._onNavigate.bind(this, "/")}
             >
                 <img style={{margin: 0, height: 40}} src={logo} />
             </a>
@@ -445,7 +446,7 @@ class HeaderNav extends React.Component {
 
 
                             <li>
-                                <a style={{flexFlow: "row"}} className={cnames(active.indexOf("prediction") !== -1 ? null : "column-hide-xs", {active: active.indexOf("prediction") !== -1})} onClick={this._onNavigate.bind(this, "/prediction")}>
+                                <a style={{flexFlow: "row"}} className={cnames((active === "/" || active.indexOf("prediction") !== -1) ? null : "column-hide-xs", {active: (active.indexOf("prediction") !== -1 || active === "/")})} onClick={this._onNavigate.bind(this, "/prediction")}>
                                     <Translate className="column-hide-small" component="span" content="header.prediction" />
                                 </a>
                             </li>
