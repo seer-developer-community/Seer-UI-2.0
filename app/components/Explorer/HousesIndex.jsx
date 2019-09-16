@@ -408,7 +408,7 @@ class Houses extends React.Component {
     }
 
     componentWillMount() {
-      Apis.instance().db_api().exec("lookup_house_accounts", [0, 1000]).then((results) => {
+      Apis.instance().db_api().exec("lookup_house_accounts", ["", 1000]).then((results) => {
         let ids = results.map(r => r[1]);
 
         Apis.instance().db_api().exec("get_houses", [ids]).then(houses => {

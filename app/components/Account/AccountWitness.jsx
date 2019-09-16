@@ -336,7 +336,7 @@ class AccountWitness extends React.Component {
               <div className="content-block small-12" style={{paddingTop:"34px"}}>
                 <Translate content="account.witness.title" component="h5" style={{fontWeight:"bold"}}/>
                 <Translate content="account.witness.explain" component="p" style={{fontSize:"14px",color:"#999",marginBottom:"0.5em"}}/>
-                <Link to={""} style={{fontSize:"14px"}}> <Translate content="account.witness.tips"/></Link>
+                <Link to={"https://docs.seerchain.org/#/zh-Hans/witness?id=%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E6%93%8D%E4%BD%9C"} target="_blank" style={{fontSize:"14px"}}> <Translate content="account.witness.tips"/></Link>
                 <div style={{marginTop:"48px"}}>
                   {children}
                 </div>

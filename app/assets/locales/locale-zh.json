@@ -159,6 +159,7 @@
         "name": "账户名",
         "id": "账户 ID",
         "mine": "我的账户",
+        "ta": "TA 的账户",
         "more": "查看更多",
         "deposit_withdraw": "充值/提现",
         "as_collateral": "抵押物",
@@ -185,6 +186,7 @@
         "collateral_and_deposit":"抵押和保证金",
         "collateral_types":"类型",
         "release_collateral_qty":"待解押数量",
+        "observer_model":"观察模式",
         "whitelist": {
             "title": "白名单",
             "black": "黑名单",
@@ -282,6 +284,7 @@
             "need_asset": "两个资产中至少有一个必须为 %(name)s",
             "perm_warning": "警告：权限的禁用操作不可逆，一旦禁用后将无法重新启用！",
             "issued_assets": "我发行的资产",
+            "ta_issued_assets": "TA 发行的资产",
             "short": "短名 (最多32个字符)",
             "condition": "条件 (最多60个字符)",
             "expiry": "市场裁决日期",
@@ -473,6 +476,7 @@
         "percent": "总量占比",
         "please_create_account": "请先创建账户",
         "create_account": "创建账户",
+        "create_wallet": "创建钱包",
         "create_wallet_and_account": "创建钱包和账户",
         "create_new": "创建新账户",
         "agree_text":"我了解SEER并不存储我的账号密码，也不提供找回功能，我会牢记我的密码。",
@@ -527,6 +531,11 @@
             "account_all":"帐户总览",
             "asset_mangage":"资产管理",
             "my_oracle":"我的预测",
+            "ta_oracle":"TA 的预测",
+            "my_guaranty":"我的保证金",
+            "ta_guaranty":"TA 的保证金",
+            "my_witness":"我的见证人",
+            "ta_witness":"TA 的见证人",
             "perm_mangage":"权限管理",
             "black_white_list":"黑白名单"
         },
@@ -844,6 +853,7 @@
         "csv_tip": "将历史数据导出至 csv 格式文件"
     },
     "explorer": {
+        "search":"搜索账户 区块 资产 交易",
         "accounts": {
             "title": "账户",
             "filter": "搜索账户",
@@ -1696,6 +1706,7 @@
         "oracle": {
             "create": "创建预言机",
             "my": "我的预言机",
+            "ta": "TA 的预言机",
             "explain":"关于预言机关于预言机关于预言机关于预言机关于预言机关于预言机关于预言机",
             "title": "预言机",
             "description": "描述",

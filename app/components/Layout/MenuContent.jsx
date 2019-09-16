@@ -20,8 +20,7 @@ class MenuContent extends React.Component {
         let activeSetting = -1;
 
         this.state = {
-            activeSetting,
-            menuEntries
+            activeSetting
         };
     }
 
@@ -41,14 +40,14 @@ class MenuContent extends React.Component {
 
     _onChangeMenu(entry) {
         let index = 0;
-        for (let i = 0; i < this.state.menuEntries.length; i++) {
-            if (entry.indexOf(this.state.menuEntries[i].name) !== -1) {
+        for (let i = 0; i < this.props.menus.length; i++) {
+            if (entry.indexOf(this.props.menus[i].name) !== -1) {
                 index = i;
                 break;
             }
-            if(this.state.menuEntries[i].subURL && this.state.menuEntries[i].subURL.length > 0) {
-              for (let j = 0; j < this.state.menuEntries[i].subURL.length; j++) {
-                if (entry.indexOf(this.state.menuEntries[i].subURL[j]) !== -1) {
+            if(this.props.menus[i].subURL && this.props.menus[i].subURL.length > 0) {
+              for (let j = 0; j < this.props.menus[i].subURL.length; j++) {
+                if (entry.indexOf(this.props.menus[i].subURL[j]) !== -1) {
                   index = i;
                   break;
                 }
@@ -62,11 +61,11 @@ class MenuContent extends React.Component {
     }
 
     render() {
-        let {linkedAccounts, account_name, searchAccounts, settings, wallet_locked, account, hiddenAssets} = this.props;
+        let {linkedAccounts, account_name, searchAccounts, settings, wallet_locked, account, hiddenAssets,menus} = this.props;
         let isMyAccount = AccountStore.isMyAccount(account);
 
-        const {menuEntries, activeSetting} = this.state;
-        let activeEntry = menuEntries[activeSetting] || menuEntries[0];
+        const { activeSetting} = this.state;
+        let activeEntry = menus[activeSetting] || menus[0];
 
         return (
         <div className="grid-block menu-content" style={{background:"#fff"}}>
@@ -81,11 +80,11 @@ class MenuContent extends React.Component {
                     <div className="user-uid">UID：{account.get("id")}</div>
                 </div>
                  <ul>
-                     {menuEntries.map((entry, index) => {
+                     {menus.map((entry, index) => {
                          if(entry === "separator"){
-                             return <li key={index} className="menu-separator"></li>
+                             return <li key={account_name + "_" + index} className="menu-separator"></li>
                          }else{
-                             return <li className={index === activeSetting ? "active" : ""} onClick={this._redirectToEntry.bind(this, entry)} key={entry.name}>
+                             return <li className={index === activeSetting ? "active" : ""} onClick={this._redirectToEntry.bind(this, entry)} key={account_name + "_" + index}>
                                  <svg className="icon" aria-hidden="true">
                                      <use xlinkHref={entry.icon}></use>
                                  </svg>
@@ -127,7 +126,7 @@ class MenuContent extends React.Component {
         // <div className="grid-block main-content">
         //     <div id="sidebar" className="medium-4 grid-block settings-menu">
         //         <ul>
-        //             {menuEntries.map((entry, index) => {
+        //             {menus.map((entry, index) => {
         //                 return <li className={index === activeSetting ? "active" : ""} onClick={this._redirectToEntry.bind(this, entry.name)} key={entry.name}><Translate content={entry.text} /></li>;
         //             })}
         //         </ul>
@@ -144,7 +143,7 @@ class MenuContent extends React.Component {
             //             <Translate style={{paddingBottom: 10, paddingLeft: 10}} component="h3" content="header.settings" className={"panel-bg-color"}/>
             //
             //             <ul>
-            //                 {menuEntries.map((entry, index) => {
+            //                 {menus.map((entry, index) => {
             //                     return <li className={index === activeSetting ? "active" : ""} onClick={this._redirectToEntry.bind(this, entry.name)} key={entry.name}><Translate content={entry.text} /></li>;
             //                 })}
             //             </ul>

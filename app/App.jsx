@@ -1,9 +1,7 @@
 import {ChainStore} from "seerjs/es";
 import React from "react";
-import IntlStore from "stores/IntlStore";
 import AccountStore from "stores/AccountStore";
 import SettingsStore from "stores/SettingsStore";
-import IntlActions from "actions/IntlActions";
 import NotificationStore from "stores/NotificationStore";
 import intlData from "./components/Utility/intlData";
 import alt from "alt-instance";
@@ -22,7 +20,10 @@ import WalletUnlockModal from "./components/Wallet/WalletUnlockModal";
 import BrowserSupportModal from "./components/Modal/BrowserSupportModal";
 import Footer from "./components/Layout/Footer";
 import Deprecate from "./Deprecate";
-import  _ from "lodash"
+import  _ from "lodash";
+import IntlActions from "actions/IntlActions";
+import IntlStore from "stores/IntlStore";
+
 // import Incognito from "./components/Layout/Incognito";
 // import { isIncognito } from "feature_detect";
 
@@ -265,6 +266,12 @@ class Root extends React.Component {
     static childContextTypes = {
         router: React.PropTypes.object,
         location: React.PropTypes.object
+    }
+
+    componentWillMount(){
+        if(!IntlStore.getState().settingLocale){
+          IntlActions.switchLocale("zh")
+        }
     }
 
     componentDidMount(){

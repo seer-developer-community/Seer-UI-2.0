@@ -72,8 +72,6 @@ import Transaction from "./components/Explorer/Transaction";
 import AccountStore from "./stores/AccountStore";
 import WalletDb from "./stores/WalletDb";
 
-
-
 const history = __HASH_HISTORY__ ? hashHistory : browserHistory;
 
 class Auth extends React.Component {
@@ -81,21 +79,13 @@ class Auth extends React.Component {
 }
 
 const onAccountManagerEnter = function(nextState, replaceState, callback){
-    console.log("----------------------")
     let account =  AccountStore.getState().currentAccount || AccountStore.getState().passwordAccount;
-    console.log("accccc  " + account);
-    console.log(AccountStore.getState().linkedAccounts);
 
-    console.log(WalletDb.getWallet())
-
-
-    console.log(nextState)
-    console.log(replaceState)
-    console.log(callback)
+    if(!account && !nextState.params.account_name){
+      replaceState("/create-account/wallet");
+    }
     callback();
-
-}
-
+};
 
 const routes = (
     <Route path="/" component={App} onEnter={willTransitionTo}>
@@ -116,6 +106,7 @@ const routes = (
           <Route path="asset/:symbol" component={Asset} />
           <Route path="markets" component={MarketsContainer} />
           <Route path="tx/:tx_id" component={Transaction} />
+          <Route path="block/:height" component={BlockContainer} />
         </Route>
 
         <Route path="/prediction" components={HousesIndex}>
@@ -148,7 +139,7 @@ const routes = (
         <Route path="market/:marketID" component={ExchangeContainer} />
         <Route path="settings" component={SettingsContainer} />
         <Route path="settings/:tab" component={SettingsContainer} />
-        <Route path="block/:height" component={BlockContainer} />
+        <Redirect from="block/:height" to="/explorer/block/:height" />
         <Route path="create-account" component={LoginSelector}>
             <Route path="wallet" component={CreateAccount} />
             <Route path="password" component={CreateAccountPassword} />
@@ -163,16 +154,18 @@ const routes = (
         </Route>
 
         <Route path="accounts" component={DashboardAccountsOnly} />
-        <Route path="/account">
-            <IndexRedirect to="/create-account/wallet" />
+        <Route path="/account" onEnter={onAccountManagerEnter}>
+            {/*<IndexRedirect to="/create-account/wallet" />*/}
 
-            <Route path=":account_name" component={Account} onEnter={onAccountManagerEnter}>
+            <Route path=":account_name" component={Account}>
                 {/*<IndexRoute component={AccountOverview} />*/}
                 <IndexRoute component={AccountDashboard} />
                 {/*<Route path="dashboard" component={AccountOverview} />*/}
                 {/* <Route path="deposit-withdraw" component={AccountDepositWithdraw} /> */}
                 {/* <Route path="orders" component={AccountOrders} /> */}
                 <Route path="accounts" component={DashboardAccountsOnly} />
+                <Route path="history" component={DashboardAccountsOnly} />
+                <Route path="contacts" component={DashboardAccountsOnly} />
                 <Route path="assets" component={AccountAssets} />
                 <Route path="create-asset" component={AccountAssetCreate} />
                 <Route path="update-asset/:asset" component={AccountAssetUpdate} />

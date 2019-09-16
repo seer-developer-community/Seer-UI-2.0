@@ -19,6 +19,7 @@ for (let localeCode of localeCodes) {
 class IntlStore {
     constructor() {
         this.currentLocale = ss.has("settings_v3") ? ss.get("settings_v3").locale : "en";
+        this.settingLocale = ss.has("settings_v3") ? ss.get("settings_v3").locale : null;
 
         this.locales = ["en"];
         this.localesObject = {en: locale_en};
@@ -51,6 +52,7 @@ class IntlStore {
 
         counterpart.setLocale(locale);
         this.currentLocale = locale;
+        this.settingLocale = locale;
     }
 
     onGetLocale(locale) {

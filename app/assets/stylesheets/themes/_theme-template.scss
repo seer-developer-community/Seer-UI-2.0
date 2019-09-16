@@ -2503,6 +2503,96 @@ $input-border
         font-size: 80%;
         line-height: normal;
     }
+
+    .action-sheet-container#intl-sheet{
+      margin-right: 28px;
+      margin-left: 3px;
+
+      .action-sheet.is-active{
+        position: fixed;
+        left: auto;
+        right: -90px;
+        bottom: auto;
+        top:-30px;
+
+        &::before, &::after{
+          margin-left: 48px;
+        }
+      }
+    }
+
+    .search {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+      padding-right: 28px;
+
+      .input-search {
+        height: 40px;
+        width: 436px;
+        background: #fff;
+        border-radius: 20px;
+        border-bottom: none !important;
+
+        input {
+          height: 40px;
+          padding: 0 20px;
+          margin: 0;
+        }
+
+        .icon {
+          width: 60px;
+          height: 40px;
+          padding: 6px;
+        }
+      }
+
+      .search-result{
+        width: 436px;
+        border: 1px solid #EFEFEF;
+        position: fixed;
+        z-index: 1000;
+        top: 50px;
+        background: #fff;
+
+        ul{
+          padding: 0;
+          margin: 0;
+          li{
+            list-style: none;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #F8F8F8;
+            height: 38px;
+            padding: 0 20px;
+
+            a{
+              display: flex;
+              font-size: 14px;
+              align-items: center;
+              user-select: none;
+              flex: 1;
+
+              div:first-child{
+                flex: 1;
+                color: #666;
+              }
+              div:last-child{
+                font-size: 12px;
+                padding: 0 6px;
+                color: #8E8E8E;
+                border: 1px solid #DCDCDC;
+                border-radius: 6px;
+              }
+            }
+
+            &:hover{
+              background: #FAFAFA;
+            }
+          }
+        }
+      }
+    }
 }
 
 .local-wallet-menu {

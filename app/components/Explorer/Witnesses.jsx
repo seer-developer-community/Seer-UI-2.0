@@ -30,7 +30,7 @@ class WitnessCard extends React.Component {
 
     _onCardClick(e) {
         e.preventDefault();
-        this.context.router.push(`/account/${this.props.witness.get("name")}`);
+        this.context.router.push(`/account/${this.props.witness.get("name")}/history`);
     }
 
     render() {

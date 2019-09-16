@@ -54,6 +54,17 @@ class Accounts extends React.Component {
         this._setDimensions = this._setDimensions.bind(this);
     }
 
+    componentWillMount() {
+      let rpath = this.props.routes[this.props.routes.length - 1].path;
+      if(rpath === "history"){
+        SettingsActions.changeViewSetting({ accountTab:1 });
+      }else if(rpath === "contacts"){
+        SettingsActions.changeViewSetting({ accountTab:2 });
+      }else{
+        SettingsActions.changeViewSetting({ accountTab:0 });
+      }
+    }
+
     componentDidMount() {
         this._setDimensions();
 
@@ -117,7 +128,7 @@ class Accounts extends React.Component {
         }
 
         if (!accountCount) {
-            return <LoginSelector />;
+            // return <LoginSelector />;
         }
 
         return (
@@ -126,7 +137,7 @@ class Accounts extends React.Component {
                     <Tabs
                         setting="accountTab"
                         className="account-tabs"
-                        defaultActiveTab={1}
+                        defaultActiveTab={0}
                         segmented={false}
                         tabsClass="account-overview no-padding bordered-header content-block"
                     >

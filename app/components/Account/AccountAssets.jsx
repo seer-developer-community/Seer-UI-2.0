@@ -21,6 +21,7 @@ import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
 import {Tabs, Tab} from "../Utility/Tabs";
 import {ChainStore} from "seerjs/es";
+import AccountStore from "../../stores/AccountStore";
 
 class AccountAssets extends React.Component {
 
@@ -181,6 +182,7 @@ class AccountAssets extends React.Component {
 
     render() {
         let {account, account_name, assets, assetsList} = this.props;
+        let isMyAccount = AccountStore.isMyAccount(account);
 
         let accountExists = true;
         if (!account) {
@@ -242,7 +244,7 @@ class AccountAssets extends React.Component {
         return (
             <div className="grid-content app-tables no-padding" ref="appTables">
                   <div className="content-block small-12" style={{paddingTop:"34px"}}>
-                    <Translate content="account.user_issued_assets.issued_assets" component="h5" style={{fontWeight:"bold"}}/>
+                    <Translate content={ isMyAccount ? "account.user_issued_assets.issued_assets" : "account.user_issued_assets.ta_issued_assets"} component="h5" style={{fontWeight:"bold"}}/>
 
                     <table className="table dashboard-table table-hover" style={{marginTop:"1em"}}>
                       <thead>
@@ -258,8 +260,6 @@ class AccountAssets extends React.Component {
                       {myAssets}
                       </tbody>
                     </table>
-
-
 
                     <BaseModal id="issue_asset" overlay={true}>
                         <br/>

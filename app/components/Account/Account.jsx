@@ -49,89 +49,91 @@ class Account extends React.Component {
 
         let isMyAccount = AccountStore.isMyAccount(account);
 
-        let accountName = this.props.account.get("name");
-
         return (
             <MenuContent
                 menus={[
                     {
-                        name: "/account/" + accountName + "/" + "dashboard",
-                        text:"account.menus.account_all",
+                        name: "/account/" + account_name + "/" + "dashboard",
+                        text: "account.menus.account_all",
                         icon:"#icon-zhanghuzonglan"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "accounts",
-                        text:"account.mine",
+                        name:"/account/" + account_name + "/" + "accounts",
+                        subURL:[
+                          "account/" + account_name + "/history",
+                          "account/" + account_name + "/contacts"
+                        ],
+                        text: isMyAccount ? "account.mine" : "account.ta",
                         icon:"#icon-wodezhanghu"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "vesting",
+                        name:"/account/" + account_name + "/" + "vesting",
                         text:"account.vesting.title",
                         icon:"#icon-daijiedongyue"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "assets",
+                        name:"/account/" + account_name + "/" + "assets",
                         text:"account.menus.asset_mangage",
                         icon:"#icon-zichanguanli"
                     },
                         "separator",
                     {
-                        name:"/account/" + accountName + "/" + "assets1",
-                        text:"account.menus.my_oracle",
+                        name:"/account/" + account_name + "/" + "assets1",
+                        text: isMyAccount ? "account.menus.my_oracle" : "account.menus.ta_oracle",
                         icon:"#icon-wodeyuce"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "guaranty",
+                        name:"/account/" + account_name + "/" + "guaranty",
                         subURL:[
-                          "account/" + accountName + "/create-oracle",
-                          "account/" + accountName + "/update-house"
+                          "account/" + account_name + "/create-oracle",
+                          "account/" + account_name + "/update-house"
                         ],
-                        text:"account.guaranty.title",
+                        text: isMyAccount ? "account.menus.my_guaranty" : "account.menus.ta_guaranty",
                         icon:"#icon-wodebaozhengjin"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "oracle",
+                        name:"/account/" + account_name + "/" + "oracle",
                         subURL:[
-                          "account/" + accountName + "/create-oracle",
-                          "account/" + accountName + "/update-oracle"
+                          "account/" + account_name + "/create-oracle",
+                          "account/" + account_name + "/update-oracle"
                         ],
-                        text:"seer.oracle.my",
+                        text: isMyAccount ? "seer.oracle.my" : "seer.oracle.ta",
                         icon:"#icon-wodeyuyanji"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "witness",
-                        text:"account.witness.title",
+                        name:"/account/" + account_name + "/" + "witness",
+                        text: isMyAccount ? "account.menus.my_witness" : "account.menus.ta_witness",
                         icon:"#icon-wodejianzhengren"
                     },
                     "separator",
                     {
-                        name:"/account/" + accountName + "/" + "erc20-gateway",
+                        name:"/account/" + account_name + "/" + "erc20-gateway",
                         text:"gateway.gateway",
                         icon:"#icon-wangguan"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "member-stats",
+                        name:"/account/" + account_name + "/" + "member-stats",
                         text:"account.member.stats",
                         icon:"#icon-huiyuan"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "voting",
+                        name:"/account/" + account_name + "/" + "voting",
                         text:"account.voting",
                         icon:"#icon-toupiao"
                     },
                     "separator",
                     {
-                        name:"/account/" + accountName + "/" + "permissions",
+                        name:"/account/" + account_name + "/" + "permissions",
                         text:"account.menus.perm_mangage",
                         icon:"#icon-quanxianguanli"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "signedmessages",
+                        name:"/account/" + account_name + "/" + "signedmessages",
                         text:"account.signedmessages.menuitem",
                         icon:"#icon-xiaoxiqianming"
                     },
                     {
-                        name:"/account/" + accountName + "/" + "whitelist",
+                        name:"/account/" + account_name + "/" + "whitelist",
                         text:"account.menus.black_white_list",
                         icon:"#icon-heibaimingdan"
                     }

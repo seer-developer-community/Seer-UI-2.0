@@ -169,7 +169,6 @@ class Dashboard extends React.Component {
         }).filter(a => !!a);
 
         if (!accountCount) {
-            IntlActions.switchLocale("zh")
             return <LoginSelector children={(<CreateAccount />)}/>;
         }
 /*
