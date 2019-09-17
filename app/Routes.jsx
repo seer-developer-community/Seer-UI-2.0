@@ -221,6 +221,9 @@ const routes = (
               <Route path="contacts" getComponent={(location, cb) => {
                 System.import("components/Dashboard/DashboardAccountsOnly").then(loadRoute(cb)).catch(errorLoading);
               }}/>
+              <Route path="prediction" getComponent={(location, cb) => {
+                System.import("components/Account/AccountPrediction").then(loadRoute(cb)).catch(errorLoading);
+              }}/>
               <Route path="assets" getComponent={(location, cb) => {
                   System.import("components/Account/AccountAssets").then(loadRoute(cb)).catch(errorLoading);
               }}/>
