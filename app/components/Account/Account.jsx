@@ -78,7 +78,7 @@ class Account extends React.Component {
                     },
                         "separator",
                     {
-                        name:"/account/" + account_name + "/" + "assets1",
+                        name:"/account/" + account_name + "/" + "prediction",
                         text: isMyAccount ? "account.menus.my_oracle" : "account.menus.ta_oracle",
                         icon:"#icon-wodeyuce"
                     },

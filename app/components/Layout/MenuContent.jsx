@@ -16,7 +16,6 @@ class MenuContent extends React.Component {
     constructor(props) {
         super();
 
-        let menuEntries = props.menus;//this._getMenuEntries(props);
         let activeSetting = -1;
 
         this.state = {
@@ -26,6 +25,10 @@ class MenuContent extends React.Component {
 
     triggerModal(e, ...args) {
         this.refs.ws_modal.show(e, ...args);
+    }
+
+    componentWillMount() {
+      this._onChangeMenu(this.props.location.pathname);
     }
 
     componentWillReceiveProps(nextProps) {

@@ -1697,6 +1697,8 @@
             "creator_rank":"设立者排行榜",
             "oracle_rank":"预言机排行榜",
             "my_oracle":"我的预测单",
+            "my_joined":"我参与的预测",
+            "my_created":"我创建的预测",
             "rank":"排名",
             "account":"账户名",
             "reputation":"声誉",
@@ -1785,7 +1787,6 @@
             "total_bets":"总投注",
             "room_detail":"房间详情",
             "join_detail":"参与详情",
-            "room_id":"房间ID",
             "room_creator":"房间设立者",
             "room_status":"市场状态",
             "room_status_opening":"进行中",
@@ -1793,6 +1794,8 @@
             "room_status_finished":"已结束",
             "join_number":"参与人数",
             "join_volume":"参与数量",
+            "join_amount":"参与金额",
+            "join_result":"参与结果",
             "room_broadcast":"最新广播"
         }
     },

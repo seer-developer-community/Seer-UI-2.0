@@ -5,12 +5,16 @@ import {Apis} from "seerjs-ws";
 import {websiteAPIs} from "api/apiConfig";
 import _ from "lodash";
 
-const getSeerRoom = async function(roomId){
+const getSeerRoom = async function(roomId,onlyOpen=true){
     return await new Promise((resolve) =>
     {
         Apis.instance().db_api().exec("get_seer_room", [roomId, 0, 0]).then(room => {
-            if(room && room.status !== "finished" && room.status !== "closed"){
-                resolve(room);
+            if(room){
+                if(onlyOpen && (room.status === "finished" || room.status === "closed")){
+                    resolve()
+                }else{
+                  resolve(room);
+                }
             }else{
                 resolve();
             }
@@ -18,9 +22,9 @@ const getSeerRoom = async function(roomId){
     });
 }
 
-const getSeerRooms = async function(roomIds = []) {
+const getSeerRooms = async function(roomIds = [],onlyOpen) {
     let getSeerReqs = [];
-    roomIds.map(id => getSeerReqs.push(getSeerRoom(id)));
+    roomIds.map(id => getSeerReqs.push(getSeerRoom(id,onlyOpen)));
 
     return Promise.all(getSeerReqs).then(result=>{
         return _.without(result || [], undefined);
