@@ -1751,8 +1751,10 @@
             "reward_per_oracle": "每个预言机奖励",
             "remove": "删除",
             "input": "输入结果",
+            "submit_result": "提交结果",
             "input_duration_secs": "开奖时长(分钟)",
             "update": "更新房间",
+            "open_room":"开启房间",
             "room_id":"房间号",
             "recommend":"推荐",
             "view": "查看",
@@ -1796,7 +1798,16 @@
             "join_volume":"参与数量",
             "join_amount":"参与金额",
             "join_result":"参与结果",
-            "room_broadcast":"最新广播"
+            "room_broadcast":"最新广播",
+            "general_option":"快速创建竞猜项目",
+            "super_option":"高级创建竞猜项目",
+            "room_option_desc":"竞猜选项描述",
+            "add_option_group":"添加竞猜项目",
+            "remove_option_group":"删除项目",
+            "input_option_group_title":"请输入竞猜项目标题",
+            "msg_group_title_empty":"高级竞猜项目的标题 %(index)s 不能为空，请检查！",
+            "msg_group_title_repeat":"高级竞猜项目的标题 “%(title)s” 多次重复，请检查！",
+            "msg_group_all_created":"共 %(count)s 个竞猜项目，已全部创建！"
         }
     },
   "erc20": {

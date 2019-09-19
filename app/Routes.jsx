@@ -276,13 +276,7 @@ const routes = (
               <Route path="rooms/:room_id" getComponent={(location, cb) => {
                   System.import("components/Account/RoomParticipate").then(loadRoute(cb)).catch(errorLoading);
               }}/>
-              <Route path="rooms/:room_id/input" getComponent={(location, cb) => {
-                  System.import("components/Account/RoomInput").then(loadRoute(cb)).catch(errorLoading);
-              }}/>
-              <Route path="rooms/:room_id/oracle-input" getComponent={(location, cb) => {
-                  System.import("components/Account/OracleInput").then(loadRoute(cb)).catch(errorLoading);
-              }}/>
-              <Route path="rooms/:room_id/update" getComponent={(location, cb) => {
+              <Route path="update-room/:room_id" getComponent={(location, cb) => {
                   System.import("components/Account/AccountRoomUpdateWrapper").then(loadRoute(cb)).catch(errorLoading);
               }}/>
               <Route path="update-house/:house_id" getComponent={(location, cb) => {

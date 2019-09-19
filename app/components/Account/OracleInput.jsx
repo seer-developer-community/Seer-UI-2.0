@@ -2,43 +2,31 @@ import React from "react";
 import Translate from "react-translate-component";
 import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
-import utils from "common/utils";
-import counterpart from "counterpart";
-import AssetActions from "actions/AssetActions";
-import AccountSelector from "../Account/AccountSelector";
-import AmountSelector from "../Utility/AmountSelector";
 import SeerActions from "../../actions/SeerActions";
 import ZfApi from "react-foundation-apps/src/utils/foundation-api";
 import Modal from '../Modal/BaseModal';
+import RoomCard from "./RoomCard";
+import FormattedAsset from "../Utility/FormattedAsset";
 var Apis =  require("seerjs-ws").Apis;
 
 class OracleInput extends React.Component {
 
     static propTypes = {
-        account: ChainTypes.ChainAccount
+        account: ChainTypes.ChainAccount,
+        room: React.PropTypes.object,
+        onBack:React.PropTypes.func
     };
-
-    static defaultProps = {
-        // room: "props.params.room_id"
-    }
 
     constructor(props) {
         super(props);
         this.state = {
-            room: {},
-            input: 0,
-            oracle: null,
+          room: props.room,
+          input: 0,
+          oracle: null,
         };
     }
 
-    componentWillReceiveProps(next) {
-
-    }
-
     componentWillMount() {
-        Apis.instance().db_api().exec("get_seer_room", [this.props.params.room_id, 0, 100]).then(r => {
-            this.setState({room: r});
-        });
         Apis.instance().db_api().exec("get_oracle_by_account", [this.props.account.get("id")]).then(r => {
             this.setState({oracle: r});
         });
@@ -54,6 +42,7 @@ class OracleInput extends React.Component {
         };
         SeerActions.inputOracle(args);
     }
+
     onModalShow() {
         ZfApi.publish('oracleInputModal', "open");
     }
@@ -61,31 +50,14 @@ class OracleInput extends React.Component {
         ZfApi.publish('oracleInputModal', "close");
         ZfApi.unsubscribe("transaction_confirm_actions");
     }
-    handleInputChange(idx) {
-        this.setState({input: idx});
+
+    onBack(){
+        if(this.props.onBack){
+            this.props.onBack();
+        }
     }
 
     render() {
-        let tabIndex = 1;
-        let options = [];
-        if (this.state.room.running_option) {
-            let idx = 0;
-            options = this.state.room.running_option.selection_description.map(c => {
-                let dom = (
-                    <label key={idx}>
-                        <input type="radio" name="radio" value={idx} checked={this.state.input == idx} onChange={this.handleInputChange.bind(this, idx)}/> {c}
-                    </label>
-                );
-
-                idx++;
-                return dom;
-            });
-        }
-        options.push(
-            <label key={255}>
-                <input type="radio" name="radio" value={255} checked={this.state.input == 255} onChange={this.handleInputChange.bind(this, 255)}/> <Translate content="seer.room.abandon"/>
-            </label>
-        );
         return ( <div className="grid-block vertical full-width-content">
             <Modal
                 id='oracleInputModal'
@@ -117,23 +89,39 @@ class OracleInput extends React.Component {
                     </button>
                 </div>
             </Modal>
-            <div className="grid-container " style={{paddingTop: "2rem"}}>
-                <h3><Translate content="seer.oracle.input"/></h3>
-                <div className="content-block">
-                    {options}
-                </div>
+          <div className="grid-container " style={{paddingTop: "2rem",marginLeft:0}}>
+            <Translate component="h5" content="seer.room.info"/>
 
-                <div className="content-block button-group">
-                    <div style={this.state.oracle ? {} : { width: '100%', height: '100%', position: 'absolute'}}></div>
-                    <button
-                        className="button"
-                        style={this.state.oracle ? {} : { background: '#e5e6e4', color: '#333' }}
-                        onClick={this.onModalShow}
-                    >
-                        <Translate content="seer.oracle.input"/>
-                    </button>
-                </div>
-            </div>
+              <table style={{color:"#666",fontSize:14,marginTop:35}}>
+                  <tbody>
+                      <tr height="30px">
+                            <td><Translate content="seer.room.result_owner_percent" />：{this.state.room.option.result_owner_percent/100}%</td>
+                            <td width="50px">&nbsp;</td>
+                            <td><Translate content="seer.room.input_duration_secs" />：{this.state.room.option.input_duration_secs / 60}</td>
+                      </tr>
+                      <tr height="30px">
+                        <td><Translate content="seer.room.reward_per_oracle" />：<FormattedAsset amount={this.state.room.option.reward_per_oracle} asset={this.state.room.option.accept_asset}/></td>
+                        <td width="50px">&nbsp;</td>
+                        <td><Translate content="seer.room.end_time" />：{this.state.room.option.stop}</td>
+                      </tr>
+                  </tbody>
+              </table>
+
+            <Translate component="div" content="seer.oracle.input" style={{color:"#666",fontSize:18,fontWeight:"bold",margin:"55px 0 28px 0"}}/>
+
+            <RoomCard roomObject={this.state.room} checkMode={true} showDetail={true} showGiveUpOption={true} checkedItem={this.state.input}
+                      onOptionCheck={i=>this.setState({input:i})}>
+              <div style={{display:"flex",justifyContent:"flex-end",padding:"86px 31px 40px 0"}}>
+                    <button className="button large outline" style={{width:220,height:54}} onClick={this.onBack.bind(this)}><Translate content="transfer.back"/></button>
+                {
+                  this.state.oracle ?
+                    <button className="button large" style={{width:220,height:54}} onClick={this.onModalShow}><Translate content="seer.oracle.input"/></button>
+                    :
+                    <button className="button large" style={{width:220,height:54,background: '#e5e6e4', color: '#333'}} disabled={true}><Translate content="seer.oracle.input"/></button>
+                }
+              </div>
+            </RoomCard>
+          </div>
         </div> );
     }
 }

@@ -46,34 +46,22 @@ class StopParticipateModal extends React.Component {
     render() {
         let tabIndex = 1;
 
-
         return ( <form className="grid-block vertical full-width-content">
             <div className="grid-container " style={{paddingTop: "2rem"}}>
-
+                  <Translate component="h4" content="seer.room.stop_participate" style={{textAlign:"center",fontWeight:"bold"}}/>
+                  <br/><br/>
                 <label>
                     <label>
                         <Translate content="seer.room.input_duration_secs" />
                         <input value={this.state.input_duration_secs} onChange={(e) => {this.setState({input_duration_secs: e.target.value});}} type="text"/>
                     </label>
                 </label>
+                <br/><br/>
                 <div className="content-block button-group">
-                    <input
-                        type="submit"
-                        className="button success"
-                        onClick={this.onSubmit.bind(this, this.state.checks)}
-                        value={counterpart.translate("seer.room.stop_participate")}
-                        tabIndex={tabIndex++}
-                    />
-
-                    <div
-                        className="button"
-                        onClick={this.props.onClose}
-                        tabIndex={tabIndex++}
-                    >
-                        {counterpart.translate("cancel")}
-                    </div>
-
-
+                  <button className="button outline" onClick={this.props.onClose} tabIndex={tabIndex++}><Translate content="cancel" /></button>
+                  <button className="button success" onClick={this.onSubmit.bind(this, this.state.checks)} tabIndex={tabIndex++}>
+                      <Translate content="seer.room.stop_participate" />
+                  </button>
                 </div>
             </div>
         </form> );

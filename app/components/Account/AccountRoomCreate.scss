@@ -90,4 +90,147 @@
     font-size: 14px;
     background: #efefef;
   }
+
+  .option-types{
+    text-align: center;
+    margin: 50px 0;
+
+    .button{
+      width: 450px;
+      height: 40px;
+      padding: 0!important;
+      background: #F3F3F3;
+      color: #666;
+      font-weight: bold;
+      margin: 0;
+
+      &:hover, &:focus, &:active {
+        background-color: darken(#F3F3F3, 4%) !important;
+      }
+
+      &.checked{
+        background: #449E7B;
+        color: #fff;
+        &:hover, &:focus, &:active {
+          background-color: lighten(#449E7B, 4%) !important;
+        }
+      }
+    }
+  }
+
+  .room-option-group-item {
+
+    .add-option{
+      margin: 20px 0;
+      >span{
+        font-size: 14px;
+        color: #666;
+        font-weight: bold;
+      }
+
+      button{
+        width: 30px;
+        height: 30px;
+        font-size: 18px;
+        padding: 0!important;
+        margin: 0 0 0 14px;
+      }
+    }
+
+    .room-options {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+
+      .option-item {
+        width: calc(50% - 35px);
+        height: 52px;
+        border: 1px solid #DCDCDC;
+        display: flex;
+        margin-bottom: 28px;
+
+        input {
+          flex: 1;
+          border: none;
+          height: 100%;
+
+          &:nth-child(2) {
+            border-left: 1px solid #dcdcdc;
+          }
+        }
+
+        button {
+          width: 57px;
+          font-size: 14px;
+          color: #449E7B;
+          border-left: 1px solid #dcdcdc;
+          background: #fff;
+          outline: none;
+
+          &:hover {
+            background: #f8f8f8;
+          }
+        }
+
+        //前两项不显示删除按钮
+        &:first-child,&:nth-child(2){
+          button{
+            //display: none;
+          }
+        }
+      }
+    }
+  }
+
+  .super-options{
+    .super-options-group{
+      background: #F3F3F3;
+      padding: 30px 20px 20px 20px;
+      margin-bottom: 34px;
+    }
+
+    .option-group-action-btn{
+      height: 40px;
+      padding: 0 7px!important;
+      display: flex;
+      align-items: center;
+      margin: 0;
+
+      span{
+        font-size: 14px;
+
+        &:first-child {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 18px;
+          color: #449E7B;
+          width: 26px;
+          height:26px;
+          background: #fff;
+          margin-right: 9px;
+        }
+      }
+    }
+  }
+
+  .room-option-title{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 40px 0 0 0;
+    hr{
+      flex:1;
+      background: #afafaf!important;
+      border:none;
+      height: 3px;
+    }
+    span{
+      display: inline-block;
+      padding: 0 12px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+  }
 }

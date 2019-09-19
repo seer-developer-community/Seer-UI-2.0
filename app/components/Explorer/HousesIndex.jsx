@@ -202,9 +202,34 @@ class HouseList extends React.Component {
 
         WebApi.getSeerRooms(roomIds).then((rooms) => {
             this.setState({
-                rooms: rooms
+                rooms: this._groupRooms(rooms)
             });
         });
+    }
+
+    _groupRooms(rooms){
+      let newRooms = [];
+      let groupIdsIndex = {};
+      rooms.map((r,i)=>{
+          let prefix = "(@#-",suffix = "-#@)";
+          let start = r.description.indexOf(prefix);
+          let end = r.description.indexOf(suffix);
+          if(start !== -1 && end !== -1){
+              let head = r.description.match(/(?<=\(@#-)\S+(?=-#@\))/g)[0];
+              let groupId = head.match(/[^\(\)]+(?=\))/g)[0];
+              let title = head.replace("("+groupId+")","").trim();
+              if(_.has(groupIdsIndex,"g-" + groupId)){
+                rooms[groupIdsIndex["g-" + groupId]].subRooms.push(r);
+              }else{
+                groupIdsIndex["g-" + groupId] = i;
+                r.subRooms = [];
+                newRooms.push(r);
+              }
+          }else{
+            newRooms.push(r);
+          }
+      });
+      return newRooms;
     }
 
     _setSort(field) {
@@ -260,9 +285,9 @@ class HouseList extends React.Component {
                 }
               }
 
-              return match ? <RoomCard roomObject={r} key={r.id} onOptionCheck={idx=>this._onRoomOptionCheck(r,idx)}/> : null;
+              return match ? <RoomCard roomObject={r} key={r.id} onOptionCheck={(idx,currRoom)=>this._onRoomOptionCheck(currRoom,idx)}/> : null;
             } else {
-              return <RoomCard roomObject={r} key={r.id} onOptionCheck={idx=>this._onRoomOptionCheck(r,idx)}/>;
+              return <RoomCard roomObject={r} key={r.id} onOptionCheck={(idx,currRoom)=>this._onRoomOptionCheck(currRoom,idx)}/>;
             }
           });
         }

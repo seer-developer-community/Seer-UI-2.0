@@ -186,9 +186,7 @@ const routes = (
                 <Route path="houses" component={AccountHouse}/>
                 <Route path="guaranty" component={AccountGuaranty}/>
                 <Route path="create-room/single=:ok" component={AccountRoomCreate}/>
-                <Route path="rooms/:room_id/input" component={RoomInput}/>
-                <Route path="rooms/:room_id/oracle-input" component={OracleInput}/>
-                <Route path="rooms/:room_id/update" component={AccountRoomUpdateWrapper}/>
+                <Route path="update-room/:room_id" component={AccountRoomUpdateWrapper}/>
                 <Route path="update-house/:house_id" component={AccountHouseUpdate}/>
                 <Route path="update-oracle/:oracle_id" component={AccountOracleUpdate}/>
                 <Route path="witness" component={AccountWitness}/>

@@ -2,42 +2,26 @@ import React from "react";
 import Translate from "react-translate-component";
 import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
-import utils from "common/utils";
-import counterpart from "counterpart";
-import AssetActions from "actions/AssetActions";
-import AccountSelector from "../Account/AccountSelector";
-import AmountSelector from "../Utility/AmountSelector";
 import SeerActions from "../../actions/SeerActions";
 import ZfApi from "react-foundation-apps/src/utils/foundation-api";
 import Modal from '../Modal/BaseModal';
-var Apis =  require("seerjs-ws").Apis;
+import RoomCard from "./RoomCard";
 
 class RoomInput extends React.Component {
 
     static propTypes = {
-        account: ChainTypes.ChainAccount
+        account: ChainTypes.ChainAccount,
+        room: React.PropTypes.object,
+        onBack:React.PropTypes.func
     };
-
-    static defaultProps = {
-        // room: "props.params.room_id"
-    }
 
     constructor(props) {
         super(props);
+
         this.state = {
-            room: {},
+            room: props.room,
             input: 0
         };
-    }
-
-    componentWillReceiveProps(next) {
-
-    }
-
-    componentWillMount() {
-        Apis.instance().db_api().exec("get_seer_room", [this.props.params.room_id, 0, 100]).then(r => {
-            this.setState({room: r});
-        });
     }
 
     onSubmit = () => {
@@ -49,6 +33,7 @@ class RoomInput extends React.Component {
         };
         SeerActions.inputRoom(args);
     }
+
     onModalShow() {
         ZfApi.publish('roomInputModal', "open");
     }
@@ -56,40 +41,21 @@ class RoomInput extends React.Component {
         ZfApi.publish('roomInputModal', "close");
         ZfApi.unsubscribe("transaction_confirm_actions");
     }
-    handleInputChange(idx) {
-        this.setState({input: idx});
-    }
+
+      onBack(){
+        if(this.props.onBack){
+          this.props.onBack();
+        }
+      }
 
     render() {
-        let tabIndex = 1;
-
-        let options = [];
-        if (this.state.room.running_option) {
-            let idx = 0;
-            options = this.state.room.running_option.selection_description.map(c => {
-                let dom = (
-                    <label key={idx}>
-                        <input type="radio" name="radio" value={idx} checked={this.state.input == idx} onChange={this.handleInputChange.bind(this, idx)}/> {c}
-                    </label>
-                );
-
-                idx++;
-                return dom;
-            });
-        }
-        options.push(
-            <label key={255}>
-                <input type="radio" name="radio" value={255} checked={this.state.input == 255} onChange={this.handleInputChange.bind(this, 255)}/> <Translate content="seer.room.abandon"/>
-            </label>
-        );
-
-        return ( <div className="grid-block vertical full-width-content">
+        return (
+          <div className="grid-block vertical full-width-content">
             <Modal
                 id='roomInputModal'
                 overlay={true}
                 onClose={this.onModalCancel}
-                noCloseBtn
-            >
+                noCloseBtn>
                 <div style={{ margin: '12px' }}>
                     <Translate content="seer.room.confirm"/>
                     <span style={{textTransform: 'uppercase'}}>
@@ -114,22 +80,16 @@ class RoomInput extends React.Component {
                     </button>
                 </div>
             </Modal>
-            <div className="grid-container " style={{paddingTop: "2rem"}}>
-                <h3><Translate content="seer.room.input"/></h3>
-                <div className="content-block">
-                    {options}
-                </div>
+            <div className="grid-container " style={{paddingTop: "2rem",marginLeft:0}}>
+              <Translate component="div" content="seer.room.input" style={{color:"#666",fontSize:14,fontWeight:"bold",margin:"0 0 28px 0"}}/>
 
-                <div className="content-block button-group">
-                    <input
-                        type='button'
-                        className="button success"
-                        onClick={this.onModalShow}
-                        value={counterpart.translate("seer.room.input")}
-                        tabIndex={tabIndex++}
-                    />
-                    
+              <RoomCard roomObject={this.state.room} checkMode={true} showDetail={true} showGiveUpOption={true} checkedItem={this.state.input}
+                        onOptionCheck={i=>this.setState({input:i})}>
+                <div style={{display:"flex",justifyContent:"flex-end",padding:"86px 31px 40px 0"}}>
+                    <button className="button large outline" style={{width:220,height:54}} onClick={this.onBack.bind(this)}><Translate content="transfer.back"/></button>
+                    <button className="button large" style={{width:220,height:54}} onClick={this.onModalShow}><Translate content="seer.room.submit_result"/></button>
                 </div>
+              </RoomCard>
             </div>
         </div> );
     }

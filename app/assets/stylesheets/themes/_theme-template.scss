@@ -409,15 +409,26 @@ $input-border
 
     .button {
         background: $button-bg-color;
+        outline: none;
+
         &:hover, &:focus, &:active {
+
+          &:not(:disabled) {
             background-color: lighten($button-bg-color, 4%) !important;
+          }
         }
         &.outline {
             color: $button-bg-color;
             border-color: $button-bg-color;
-            &:hover {
-                color: darken($button-bg-color, 4%);
-                border-color: darken($button-bg-color, 4%);
+
+            span{
+              color: $button-bg-color;
+            }
+
+           &:hover, &:focus, &:active {
+             &:not(:disabled) {
+               background-color: darken(#fff, 5%) !important;
+             }
             }
         }
 
@@ -760,7 +771,7 @@ $input-border
         border-color: $error-text-color;
     }
 
-    input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="search"], textarea, input[role="combobox"], select[role="combobox"] {
+    input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="search"], textarea, input[role="combobox"],input[type="datetime-local"], select[role="combobox"] {
         background-color: $input-background;
         border: 1px solid $input-border;
         color: $primary-text-color;
@@ -2387,6 +2398,10 @@ $input-border
 
 .wrap{
   word-break:break-all;
+}
+
+.nowrap{
+  white-space:nowrap;
 }
 
 .desc-text{

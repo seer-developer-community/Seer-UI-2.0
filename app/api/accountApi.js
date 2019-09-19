@@ -11,6 +11,15 @@ class Api {
         ]);
     }
 
+    getRoomsByAccount = async function(oid){
+      return await new Promise((resolve) => {
+        Apis.instance().db_api().exec("get_rooms_by_account", [oid])
+          .then((result) => {
+            resolve(result);
+          });
+      });
+    };
+
     getPlayerInfo = async function(oid){
         return await new Promise((resolve) => {
           Apis.instance().db_api().exec("get_player_info", [oid])

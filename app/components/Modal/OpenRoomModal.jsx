@@ -13,6 +13,7 @@ var Apis =  require("seerjs-ws").Apis;
 class OpenRoomModal extends React.Component {
 
     static propTypes = {
+        room:React.PropTypes.object.isRequired
     };
 
     constructor(props) {
@@ -79,14 +80,15 @@ class OpenRoomModal extends React.Component {
 
         return ( <form className="grid-block vertical full-width-content">
             <div className="grid-container " style={{paddingTop: "2rem"}}>
-
-                <label style={{width: "50%", paddingRight: "2.5%", display: "inline-block"}}>
+                <Translate component="h4" content="seer.room.open_room" style={{textAlign:"center",fontWeight:"bold"}}/>
+                <br/><br/>
+                <label>
                     <label>
                         <Translate content="account.votes.start" />
                         <input value={this.state.start.toDateInputValue()} step={1}  onChange={(e) => {this.setState({start: new Date(e.target.value)});}} type="datetime-local"></input>
                     </label>
                 </label>
-                <label style={{width: "50%", paddingLeft: "2.5%", display: "inline-block"}}>
+                <label>
                     <label>
                         <Translate content="account.votes.end" />
                         <input value={this.state.stop.toDateInputValue()} step={1}  onChange={(e) => {this.setState({stop: new Date(e.target.value)});}} type="datetime-local"></input>
@@ -99,24 +101,14 @@ class OpenRoomModal extends React.Component {
                         <input value={this.state.input_duration_secs} onChange={(e) => {this.setState({input_duration_secs: e.target.value});}} type="text"/>
                     </label>
                 </label>
+                <br/><br/>
                 <div className="content-block button-group">
-                    <input
-                        type="submit"
-                        className="button success"
-                        onClick={this.onSubmit.bind(this, this.state.checks)}
-                        value={counterpart.translate("seer.room.open")}
-                        tabIndex={tabIndex++}
-                    />
-
-                    <div
-                        className="button"
-                        onClick={this.props.onClose}
-                        tabIndex={tabIndex++}
-                    >
-                        {counterpart.translate("cancel")}
-                    </div>
-
-
+                    <button className="button outline" onClick={this.props.onClose} tabIndex={tabIndex++}>
+                        <Translate content="cancel" />
+                    </button>
+                    <button className="button" onClick={this.onSubmit.bind(this, this.state.checks)} tabIndex={tabIndex++}>
+                      <Translate content="seer.room.open" />
+                    </button>
                 </div>
             </div>
         </form> );

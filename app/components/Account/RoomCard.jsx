@@ -19,6 +19,7 @@ import {Tabs, Tab} from "../Utility/Tabs";
 
 import AccountStore from "../../stores/AccountStore";
 import { Asset } from "../../lib/common/MarketClasses";
+import _ from "lodash";
 let roomType =
 {
     0:"PVD",
@@ -33,18 +34,24 @@ class RoomCard extends React.Component {
         recommend:React.PropTypes.bool,
         checkMode:React.PropTypes.bool,
         onOptionCheck:React.PropTypes.func,
-        checkedItem:React.PropTypes.number
+        checkedItem:React.PropTypes.number,
+        showGiveUpOption:React.PropTypes.bool
     };
 
     constructor(props) {
         super(props);
+
+        let room = ((this.props.room && this.props.room.toJS()) || this.props.roomObject);
         this.state = {
             checked_item: typeof this.props.checkedItem === "undefined" ? -1 : this.props.checkedItem,
             amount: null,
-            room: ((this.props.room && this.props.room.toJS()) || this.props.roomObject),
+            room: room,
+            currentRoom:room,
+            currentRoomIndex:0,
             account: null,
             asset:null,
-            precision:null
+            precision:null,
+            mutiRoomSubTitles:[]
             //oracles:[]
         };
     }
@@ -62,6 +69,22 @@ class RoomCard extends React.Component {
             this.setState({ asset: symbol, precision: precision });
           });
         }
+
+      if(this.state.room.description.indexOf("(@#-") !== -1 && this.state.room.description.indexOf("-#@)") !== -1) {
+        let titles = [];
+        titles.push(this._getRoomSubTitle(this.state.room.description));
+        this.state.room.description = this._fixRoomdesc(this.state.room.description);
+
+        if(this._isMutiRooms()) {
+          this.state.room.subRooms.map(r => {
+            titles.push(this._getRoomSubTitle(r.description));
+            r.description = this._fixRoomdesc(r.description);
+          });
+        }else{
+          this.state.room.description = "[ " + titles[0] + " ] " + this.state.room.description;
+        }
+        this.state.mutiRoomSubTitles = titles;
+      }
 /*
         if(this.state.room.option.allowed_oracles.length>0)
         {
@@ -76,28 +99,74 @@ class RoomCard extends React.Component {
         */
     }
 
+    _fixRoomdesc(desc){
+      return desc.substring(desc.indexOf("-#@)")+4);
+    }
+    _getRoomSubTitle(desc){
+      let head = desc.match(/(?<=\(@#-)\S+(?=-#@\))/g)[0];
+      let title = head.substring(head.indexOf(")")+1).trim();
+      return title;
+    }
+
     _onOptionClick(idx){
         this.setState({
           checked_item:idx
         });
         if(this.props.onOptionCheck){
-            this.props.onOptionCheck(idx);
+            let room = _.cloneDeep(this.state.currentRoom);
+            if(this._isMutiRooms()) {
+              room.description = "[ " + this.state.mutiRoomSubTitles[this.state.currentRoomIndex] + " ] " + room.description;
+            }
+            this.props.onOptionCheck(idx,room);
         }
     }
 
-    render() {
-        let {room} = this.state;
+    _isMutiRooms(){
+      return this.state.room.subRooms && this.state.room.subRooms.length > 0;
+    }
 
-        if(!room) return null;
+    _onRoomSelecterClick(index){
+      let room = null;
+      if(index===0){
+        room = this.state.room;
+      }else{
+        room = this.state.room.subRooms[index-1];
+      }
+      this.setState({
+        currentRoom: room,
+        currentRoomIndex:index
+      })
+    }
+
+    renderRoomSelecter(){
+      if(this._isMutiRooms()) {
+        return (
+          <ul className={"room-selector"}>
+            {
+              this.state.mutiRoomSubTitles.map((t,i)=>{
+                return (
+                  <li className={this.state.currentRoomIndex === i ? "checked":""} key={t} onClick={this._onRoomSelecterClick.bind(this,i)}>{t}</li>
+                );
+              })
+            }
+          </ul>
+        );
+      }
+    }
+
+    render() {
+        let { currentRoom } = this.state;
+
+        if(!currentRoom) return null;
 
         let options;
 
-        if (!this.state.room.status){
+        if (!currentRoom.status){
             options = null;
-        }else if( this.state.room.status == "closed" ){
+        }else if(currentRoom.status == "closed" ){
             options = null;
-        }else if (this.state.room.room_type == 0) {
-            options = this.state.room.running_option.selection_description.map((c,index) => {
+        }else if (currentRoom.room_type == 0) {
+            options = currentRoom.running_option.selection_description.map((c,index) => {
                 let className = this.props.checkMode && (index === this.state.checked_item) ? "checked" :"";
                 return (
                     <li key={index} className={className} onClick={e=>{this._onOptionClick.bind(this)(index)}}>
@@ -106,22 +175,22 @@ class RoomCard extends React.Component {
                 );
             });
         }
-        else if (this.state.room.room_type == 1) {
+        else if (currentRoom.room_type == 1) {
             let total = 0;
-            for(var i = 0;i<this.state.room.running_option.pvp_running.total_participate.length;i++) {
-                total = total+this.state.room.running_option.pvp_running.total_participate[i];
+            for(var i = 0;i<currentRoom.running_option.pvp_running.total_participate.length;i++) {
+                total = total+currentRoom.running_option.pvp_running.total_participate[i];
             }
             let rate=[];
-            for(var i = 0;i<this.state.room.running_option.pvp_running.total_participate.length;i++) {
-                if(this.state.room.running_option.pvp_running.total_participate[i]>0){
-                    rate.push(total/this.state.room.running_option.pvp_running.total_participate[i])
+            for(var i = 0;i<currentRoom.running_option.pvp_running.total_participate.length;i++) {
+                if(currentRoom.running_option.pvp_running.total_participate[i]>0){
+                    rate.push(total/currentRoom.running_option.pvp_running.total_participate[i])
                 }
                 else {
                     rate.push("--");
                 }
             }
 
-            options = this.state.room.running_option.selection_description.map((c,index) => {
+            options = currentRoom.running_option.selection_description.map((c,index) => {
                 let className = this.props.checkMode && (index === this.state.checked_item) ? "checked" :"";
                 return (
                     <li key={index} className={className} onClick={e=>{this._onOptionClick.bind(this)(index)}}>
@@ -131,16 +200,23 @@ class RoomCard extends React.Component {
                 );
             });
         }
-        else if (this.state.room.room_type == 2) {
-            options = this.state.room.running_option.selection_description.map((c,index) => {
+        else if (currentRoom.room_type == 2) {
+            options = currentRoom.running_option.selection_description.map((c,index) => {
                 let className = this.props.checkMode && (index === this.state.checked_item) ? "checked" :"";
                 return (
                     <li key={index} className={className} onClick={e=>{this._onOptionClick.bind(this)(index)}}>
                         <div>{c}</div>
-                        <div className="rate"><Translate content="seer.room.current_rate"/> 1:{this.state.room.running_option.advanced.awards[index]/10000} </div>
+                        <div className="rate"><Translate content="seer.room.current_rate"/> 1:{currentRoom.running_option.advanced.awards[index]/10000} </div>
                   </li>
                 );
             });
+        }
+
+        if(this.props.showGiveUpOption){
+          let className = this.props.checkMode && (255 === this.state.checked_item) ? "checked" :"";
+          options.push(<li key={"giveUp"} className={className} onClick={e=>{this._onOptionClick.bind(this)(255)}}>
+            <div><Translate content="seer.room.abandon"/></div>
+          </li>);
         }
 
 
@@ -164,7 +240,7 @@ class RoomCard extends React.Component {
 
         let playerCount = 0;
 
-        room.running_option.player_count.map(c=>{
+        currentRoom.running_option.player_count.map(c=>{
             playerCount += c;
         });
 
@@ -174,9 +250,10 @@ class RoomCard extends React.Component {
                   {
                     this.props.recommend ? <Translate className="label-recommend" component="i" content="seer.room.recommend"/> : null
                   }
-                    {room.description}
-                    <span className={"room-type " + roomType[room.room_type]}>{roomType[room.room_type]}</span>
+                    {currentRoom.description}
+                    <span className={"room-type " + roomType[currentRoom.room_type]}>{roomType[currentRoom.room_type]}</span>
                 </div>
+                {this.renderRoomSelecter.bind(this)()}
                 <ul className={"room-options " + optionClass}>
                     {options}{patchLI}
                 </ul>
@@ -189,13 +266,13 @@ class RoomCard extends React.Component {
                 <div className="room-info">
                     <div className="flex-align-middle icon-info">
                         <i className="iconfont icon-icon" style={{color:"#7460ED",fontSize:23}}></i>
-                        <FormattedAsset amount={room.running_option.total_shares} asset={room.option.accept_asset}/>
-                        <i className="iconfont icon-zhanbitu" style={{color:"#FF972B",fontSize:23}}></i>{room.option.result_owner_percent/100}%
+                        <FormattedAsset amount={currentRoom.running_option.total_shares} asset={currentRoom.option.accept_asset}/>
+                        <i className="iconfont icon-zhanbitu" style={{color:"#FF972B",fontSize:23}}></i>{currentRoom.option.result_owner_percent/100}%
                         <i className="iconfont icon-renshu" style={{color:"#FC4C6C",fontSize:28}}></i>{playerCount}
                     </div>
                     <div className="right">
-                        <Translate content="seer.room.end_time"/>：&nbsp;{moment(room.option.stop).format('YYYY/MM/DD HH:mm:ss')}
-                        <Link to={"/prediction/rooms/" + room.id }><Translate content="seer.room.open_detail"/></Link>
+                        <Translate content="seer.room.end_time"/>：&nbsp;{moment(currentRoom.option.stop).format('YYYY/MM/DD HH:mm:ss')}
+                        <Link to={"/prediction/rooms/" + currentRoom.id }><Translate content="seer.room.open_detail"/></Link>
                     </div>
                 </div>
               }

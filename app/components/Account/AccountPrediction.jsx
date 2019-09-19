@@ -13,8 +13,17 @@ import AltContainer from "alt-container"
 import AccountApi from "api/accountApi"
 import Translate from "react-translate-component";
 import FormattedAsset from "../Utility/FormattedAsset";
+import WebApi from "../../api/WebApi";
+import {Link} from "react-router/es";
+import ZfApi from "react-foundation-apps/src/utils/foundation-api";
+import BaseModal from "../Modal/BaseModal";
+import OpenRoomModal from "../Modal/OpenRoomModal";
+import SeerActions from "../../actions/SeerActions";
+import StopParticipateModal from "../Modal/StopParticipateModal";
+import RoomInput from "./RoomInput";
+import OracleInput from "./OracleInput";
 
-class AccountsContainer extends React.Component {
+class AccountPredictionContainer extends React.Component {
     render() {
         return (
             <AltContainer
@@ -37,13 +46,13 @@ class AccountsContainer extends React.Component {
                     },
                     currentEntry: SettingsStore.getState().viewSettings.get("dashboardEntry", "accounts")
                 }}>
-                <Accounts {...this.props} />
+                <AccountPrediction {...this.props} />
             </AltContainer>
         );
     }
 }
 
-class Accounts extends React.Component {
+class AccountPrediction extends React.Component {
 
     constructor(props) {
         super();
@@ -52,29 +61,25 @@ class Accounts extends React.Component {
             width: null,
             showIgnored: false,
             currentEntry: props.currentEntry,
-            myJoinedPredictions:[]
+            myJoinedPredictions:[],
+            myCreatedPredictions:[],
+            current_room:null,
+            inputType:null, //input ,oracleInput
         };
-
-        this._setDimensions = this._setDimensions.bind(this);
-    }
-
-    componentWillMount() {
-      let rpath = this.props.routes[this.props.routes.length - 1].path;
-      if(rpath === "history"){
-        SettingsActions.changeViewSetting({ accountTab:1 });
-      }else if(rpath === "contacts"){
-        SettingsActions.changeViewSetting({ accountTab:2 });
-      }else{
-        SettingsActions.changeViewSetting({ accountTab:0 });
-      }
-
-      this._loadData(this.props.account.get("id"));
     }
 
     componentDidMount() {
-        this._setDimensions();
 
-        window.addEventListener("resize", this._setDimensions, {capture: false, passive: true});
+        let rpath = this.props.routes[this.props.routes.length - 1].path;
+        if(rpath === "history"){
+          SettingsActions.changeViewSetting.defer({ accountTab:1 });
+        }else if(rpath === "contacts"){
+          SettingsActions.changeViewSetting.defer({ accountTab:2 });
+        }else{
+          SettingsActions.changeViewSetting.defer({ accountTab:0 });
+        }
+
+        this._loadData(this.props.account.get("id"));
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -86,12 +91,11 @@ class Accounts extends React.Component {
             nextProps.accountsReady !== this.props.accountsReady ||
             nextState.showIgnored !== this.state.showIgnored ||
             nextState.currentEntry !== this.state.currentEntry||
-            nextState.myJoinedPredictions !== this.state.myJoinedPredictions
+            nextState.myJoinedPredictions !== this.state.myJoinedPredictions||
+            nextState.myCreatedPredictions !== this.state.myCreatedPredictions||
+            nextState.inputType !== this.state.inputType||
+            nextState.current_room !== this.state.current_room
         );
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener("resize", this._setDimensions);
     }
 
     componentWillReceiveProps(nextProps){
@@ -106,34 +110,68 @@ class Accounts extends React.Component {
           myJoinedPredictions:res
         });
       });
+
+      AccountApi.getRoomsByAccount(oid).then(res=>{
+        let roomIds = [];
+        console.log(res);
+        roomIds.push(...res[0][1]);
+        let histories = res[1][1].length > 10 ? _.slice(res[1][1],0,10) : res[1][1];
+        roomIds.push(...histories);
+
+        WebApi.getSeerRooms(roomIds,false).then(rooms => {
+          this.setState({
+            myCreatedPredictions:rooms
+          });
+        });
+      });
     }
 
-    _setDimensions() {
-        let width = window.innerWidth;
-
-        if (width !== this.state.width) {
-            this.setState({width});
-        }
+    openRoom(room) {
+      this.setState({current_room: room},()=>{
+        ZfApi.publish("open_room", "open");
+      });
     }
 
-    _onToggleIgnored() {
-        this.setState({
-            showIgnored: !this.state.showIgnored
-        });
+    stopParticipate(room) {
+      this.setState({current_room: room},()=>{
+        ZfApi.publish("stop_participate", "open");
+      });
     }
 
-    _onSwitchType(type) {
-        this.setState({
-            currentEntry: type
-        });
-        SettingsActions.changeViewSetting({
-            dashboardEntry: type
-        });
+    inputRoom(room) {
+      this.setState({
+        current_room: room,
+        inputType: "input"
+      });
+    }
+
+    oracleInputRoom(room) {
+      this.setState({
+        current_room: room,
+        inputType: "oracleInput"
+      });
+    }
+
+    finalRoom(room) {
+      var args = {
+        issuer: this.props.account.get("id"),
+        room: room.id,
+      };
+      SeerActions.finalRoom(args);
+    }
+
+    settleRoom(room) {
+      var args = {
+        issuer: this.props.account.get("id"),
+        room: room.id,
+      };
+      SeerActions.settleRoom(args);
     }
 
     render() {
         let { account ,linkedAccounts, myIgnoredAccounts, accountsReady, passwordAccount } = this.props;
         let {width, showIgnored, featuredMarkets, newAssets, currentEntry} = this.state;
+        let isMyAccount = AccountStore.isMyAccount(account);
 
         if (passwordAccount && !linkedAccounts.has(passwordAccount)) {
             linkedAccounts = linkedAccounts.add(passwordAccount);
@@ -158,7 +196,7 @@ class Accounts extends React.Component {
             <tr key={r.id}>
               <td>{r.room.id}</td>
               <td style={{textAlign:"center"}}>{r.room.room_type === 0 ? "PVD" : r.room.room_type === 1 ? "PVP" : "AVD"}</td>
-              <td style={{lineHeight:"22px"}}><div>{r.room.description}{r.room.description}{r.room.description}{r.room.description}</div></td>
+              <td style={{lineHeight:"22px"}}><div>{r.room.description}</div></td>
               <td style={{lineHeight:"22px"}}><div>{r.room.option.start} - </div><div>{r.room.option.stop}</div></td>
               <td style={{color:r.room.status==="opening"?"#FB7704":"#666"}}>{r.room.status}</td>
               <td style={{textAlign:"right"}}><FormattedAsset amount={r.paid} asset={r.asset_id} hide_asset={false}/></td>
@@ -166,6 +204,99 @@ class Accounts extends React.Component {
             </tr>
           );
         });
+
+
+      let createdRows = this.state.myCreatedPredictions.map(room=>{
+        let isMyRoom = isMyAccount && (room.owner === account.get("id"));
+        let localUTCTime = new Date().getTime() + new Date().getTimezoneOffset() * 60000;
+        return(
+          <tr key={room.id}>
+            <td>{room.id}</td>
+            <td style={{textAlign:"center"}}>{room.room_type === 0 ? "PVD" : room.room_type === 1 ? "PVP" : "AVD"}</td>
+            <td style={{lineHeight:"22px"}}><div>{room.description}</div></td>
+            <td style={{lineHeight:"22px"}}><div>{room.label && room.label.length > 0 ?  room.label.join("/") : "--"}</div></td>
+            <td style={{lineHeight:"22px"}}><div>{room.option.start} - </div><div>{room.option.stop}</div></td>
+            <td style={{color:room.status==="opening"?"#FB7704":"#666"}}>{room.status}</td>
+            <td style={{textAlign:"right"}}>
+              <div className="nowrap">
+              <Link className="button tiny outline fillet" to={"prediction/rooms/" + room.id}><Translate content="seer.room.view"/></Link>
+              {
+                isMyRoom && room.status == "closed" ?
+                  <button className="button tiny outline fillet" onClick={this.openRoom.bind(this, room)}>
+                    <Translate content="seer.room.open"/>
+                  </button>
+                  :
+                  null
+              }
+
+              {
+                isMyRoom && room.status == "opening" && new Date(room.option.stop).getTime() > localUTCTime ?
+                  <button className="button tiny outline fillet" onClick={this.stopParticipate.bind(this, room)}>
+                    <Translate content="seer.room.stop_participate"/>
+                  </button>
+                  :
+                  null
+              }
+              {
+                ((room.status == "opening" || room.status == "inputing") &&
+                  ( (new Date(room.option.stop).getTime() < localUTCTime )&&
+                  new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 > localUTCTime ||
+                  new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 < localUTCTime &&
+                    new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 + 7 * 24 * 3600000 > localUTCTime &&
+                  (!room.owner_result || room.owner_result.length === 0) &&
+                  (!room.committee_result || room.committee_result.length === 0) &&
+                  (!room.oracle_sets || room.oracle_sets.length === 0))) ?
+                  <span>
+                      {
+                        isMyRoom
+                          ?
+                          <button className="button tiny outline fillet" onClick={this.inputRoom.bind(this, room)}>
+                              <Translate content="seer.room.input"/>
+                          </button>
+                          :
+                          null
+                      }
+
+                      <button className="button tiny outline fillet" onClick={this.oracleInputRoom.bind(this, room)}>
+                         <Translate content="seer.oracle.input"/>
+                      </button>
+                     </span>
+                  :
+                  null
+              }
+              {
+                isMyRoom && (room.status == "opening" || room.status == "inputing") &&
+                new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 < localUTCTime &&
+                ((room.owner_result && room.owner_result.length !== 0) || (room.committee_result && room.committee_result.length !==0)  || (room.oracle_sets && room.oracle_sets.length !== 0)) ?
+                  <button className="button tiny outline fillet" onClick={this.finalRoom.bind(this, room)}>
+                    <Translate content="seer.room.final"/>
+                  </button>
+                  :
+                  null
+              }
+              {
+                isMyRoom && (room.status == "finaling" || room.status == "settling") ?
+                  <button className="button tiny outline fillet" onClick={this.settleRoom.bind(this, room)}>
+                    <Translate content="seer.room.settle"/>
+                  </button>
+                  :
+                  null
+              }
+
+              {
+                isMyRoom && (room.status == "closed" || room.room_type == 2) ?
+                  <Link to={`/account/${this.props.account.get("name")}/update-room/${room.id}`} className="button tiny outline fillet">
+                    <Translate content="seer.room.update"/>
+                  </Link>
+                  :
+                  null
+              }
+              </div>
+            </td>
+          </tr>
+        );
+      });
+
 
         return (
             <div ref="wrapper" className="grid-block page-layout vertical">
@@ -201,25 +332,63 @@ class Accounts extends React.Component {
                         </Tab>
 
                       <Tab title="seer.house.my_created">
-                        <RecentTransactions
-                          accountsList={Immutable.fromJS([account.get("id")])}
-                          compactView={false}
-                          showMore={true}
-                          fullHeight={true}
-                          limit={15}
-                          showFilters={true}
-                          dashboard
-                        />
+                        <div className="generic-bordered-box">
+                          <div className="box-content">
+                            { this.state.inputType === null ?
+                              <table className="table table-hover dashboard-table">
+                                <thead>
+                                <tr>
+                                  <th width="100px"><Translate content="seer.room.room_id"/></th>
+                                  <th width="100px" style={{ textAlign: "center" }}><Translate content="seer.room.type"/></th>
+                                  <th><Translate content="seer.oracle.description"/></th>
+                                  <th><Translate content="seer.room.label"/></th>
+                                  <th width="200px"><Translate content="seer.room.start_stop"/></th>
+                                  <th width="140px"><Translate content="seer.room.status"/></th>
+                                  <th style={{ textAlign: "right" }}><Translate content="account.witness.collateral.operation"/></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {createdRows}
+                                </tbody>
+                              </table>
+                              : this.state.inputType === "input" ?
+                                <RoomInput room={this.state.current_room} account={account} onBack={()=>this.setState({inputType:null})}/>
+                                :
+                                <OracleInput room={this.state.current_room} account={account} onBack={()=>this.setState({inputType:null})}/>
+                            }
+                          </div>
+                        </div>
                       </Tab>
                     </Tabs>
                 </div>
+
+              <BaseModal id="open_room" overlay={true}>
+                <br/>
+                <div className="grid-block vertical">
+                  <OpenRoomModal
+                    room={this.state.current_room}
+                    account={this.props.account}
+                    onClose={() => {ZfApi.publish("open_room", "close");}}
+                  />
+                </div>
+              </BaseModal>
+              <BaseModal id="stop_participate" overlay={true}>
+                <br/>
+                <div className="grid-block vertical">
+                  <StopParticipateModal
+                    room={this.state.current_room}
+                    account={this.props.account}
+                    onClose={() => {ZfApi.publish("stop_participate", "close");}}
+                  />
+                </div>
+              </BaseModal>
             </div>
         );
     }
 }
 
-const DashboardAccountsOnly = (props) => {
-    return <AccountsContainer {...props} onlyAccounts />;
+const AccountPredictionWapper = (props) => {
+    return <AccountPredictionContainer {...props} onlyAccounts />;
 };
 
-export default DashboardAccountsOnly;
+export default AccountPredictionWapper;

@@ -10,7 +10,7 @@ const getSeerRoom = async function(roomId,onlyOpen=true){
     {
         Apis.instance().db_api().exec("get_seer_room", [roomId, 0, 0]).then(room => {
             if(room){
-                if(onlyOpen && (room.status === "finished" || room.status === "closed")){
+                if(onlyOpen && (room.status === "finished" || room.status === "closed" || room.status === "inputing")){
                     resolve()
                 }else{
                   resolve(room);
