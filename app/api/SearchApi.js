@@ -85,19 +85,19 @@ const searchTransaction = async function(key){
 };
 
 const search = (key) => {
-  return Promise.all([searchAccount(key,10),searchBlock(key),searchAssets(key,10),searchTransaction(key)])
+  return Promise.all([searchAssets(key,10),searchAccount(key,10),searchBlock(key),searchTransaction(key)])
     .then((result)=>{
         let res = [];
         if(result[0] && result[0].length > 0){
             res.push(...result[0]);
         }
 
-        if(!!result[1]){
-          res.push(result[1]);
+        if(result[1] && result[1].length > 0){
+            res.push(...result[1]);
         }
 
-        if(result[2] && result[2].length > 0){
-            res.push(...result[2]);
+        if(!!result[2]){
+          res.push(result[2]);
         }
 
         if(!!result[3]){

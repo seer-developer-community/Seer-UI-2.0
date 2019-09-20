@@ -547,7 +547,7 @@ class OrderBook extends React.Component {
                     </div>
                     <div className="v-align no-padding align-center grid-block footer shrink bottom-header">
                         <div onClick={this.props.moveOrderBook}>
-                            <Icon name="thumb-untack" className="icon-14px" className="order-book-button-h" />
+                            <Icon name="thumb-untack" className="order-book-button-h icon-14px" />
                         </div>
                     </div>
                 </div>

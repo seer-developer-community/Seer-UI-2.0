@@ -28,8 +28,10 @@ const gatewaySuppots =[
     "erc20.transfer_out_title",
     "bts.transfer_in_title",
     "bts.transfer_out_title",
-    "erc20.transfer_opc_in_title",
-    "erc20.transfer_opc_out_title"
+    "erc20.transfer_pfc_in_title",
+    "erc20.transfer_pfc_out_title",
+    "erc20.transfer_usdt_in_title",
+    "erc20.transfer_usdt_out_title"
 ];
 
 const network_fee_asset=[
@@ -37,8 +39,10 @@ const network_fee_asset=[
     "1.3.0",
     "1.3.0",
     "1.3.0",
-    "1.3.1",
-    "1.3.1"
+    "1.3.2",
+    "1.3.2",
+    "1.3.5",
+    "1.3.5"
 ];
 
 const gateway_account =[
@@ -46,8 +50,10 @@ const gateway_account =[
     "1.2.9981",
     "1.2.9981",
     "1.2.9981",
-    "1.2.12590",
-    "1.2.12590"
+    "1.2.20339",
+    "1.2.20339",
+    "1.2.20340",
+    "1.2.20340"
 ];
 
 class ERC20Gateway extends React.Component {
@@ -67,6 +73,7 @@ class ERC20Gateway extends React.Component {
             curInx:0,
             modalIsShow:true,
             ethaddr:null,
+            omniaddr:null,
             account:null,
             unit:'',
             from_name: null,
@@ -87,10 +94,17 @@ class ERC20Gateway extends React.Component {
     }
 
     changeUser(user) {
-          if(user && AccountStore.isMyAccount(user) ){
+        if(user && AccountStore.isMyAccount(user) ){
             let self = this
             let id = user.get("id")
-            console.log(this.state.ethaddr,"  ",this.state.account,"  ",id,"  ")
+
+            ERC20GatewayActions.getOmniAddrByAccount({seer_account_id:user.get("id")}).then(function(res){
+                self.setState({
+                    omniaddr:res,account:id
+                })
+            })
+
+            console.log(this.state.omniaddr,"  ",this.state.account,"  ",id,"  ")
             ERC20GatewayActions.getAddrByAccount({seer_account_id:user.get("id")}).then(function(res){
                 self.setState({
                     ethaddr:res,account:id
@@ -145,7 +159,11 @@ class ERC20Gateway extends React.Component {
         }else if(idx == 4){
             this.setState({curInx: idx});
         }else if(idx == 5){
-            this.setState({curInx: idx,asset_id:"1.3.1",network_fee_amount:5000000,memo:"erc20#",unit:"OPC"});
+            this.setState({curInx: idx,asset_id:"1.3.2",network_fee_amount:500000,memo:"erc20#",unit:"PFC"});
+        }else if(idx == 6){
+            this.setState({curInx: idx});
+        }else if(idx == 7){
+            this.setState({curInx: idx,asset_id:"1.3.5",network_fee_amount:500,memo:"omni#",unit:"USDT"});
         }
     }
 
@@ -172,14 +190,23 @@ class ERC20Gateway extends React.Component {
         let ethaddr;
 
         let self=this
-            ERC20GatewayActions.bindAccount({
-                seer_account_id:account_id,
-                seer_account_name:account_name
-            }).then((res) => {
-                self.setState({
-                    ethaddr:res
-                })
+        ERC20GatewayActions.bindAccount({
+            seer_account_id:account_id,
+            seer_account_name:account_name
+        }).then((res) => {
+            self.setState({
+                ethaddr:res
             })
+        })
+
+        ERC20GatewayActions.bindOmniAccount({
+            seer_account_id:account_id,
+            seer_account_name:account_name
+        }).then((res) => {
+            self.setState({
+                omniaddr:res
+            })
+        })
     }
 
     handleAmountChange(e) {
@@ -197,6 +224,8 @@ class ERC20Gateway extends React.Component {
             this.setState({account_bts: e.target.value,memo:"bts#"+e.target.value});
         } else if (this.state.curInx == 5){
             this.setState({address: e.target.value,memo:"erc20#"+e.target.value});
+        }else if (this.state.curInx == 7){
+            this.setState({address: e.target.value,memo:"omni#"+e.target.value});
         }
     }
 
@@ -212,7 +241,7 @@ class ERC20Gateway extends React.Component {
             this.changeUser(this.props.currentAccount);
 
         }
-        
+
         return(
             <div data-title={counterpart.translate("erc20.transfer_in_title")}>
                 <div className="m-t-20 balance-whitespace desc-text">{counterpart.translate("erc20.note")}</div>
@@ -224,7 +253,7 @@ class ERC20Gateway extends React.Component {
                 <div className="label-text">{counterpart.translate("erc20.bind_eth")}</div>
                 {ethaddr == null || this.state.account != this.props.currentAccount.get("id")?
                     <button className="button" onClick={this.seerErc20Bind.bind(this)}>
-                      <Translate content="erc20.btn_generate"/>
+                        <Translate content="erc20.btn_generate"/>
                     </button>
                     : (
                     <span>
@@ -248,7 +277,6 @@ class ERC20Gateway extends React.Component {
             </div>
         )
     }
-
 
 
     renderERC20SeerOut(){
@@ -274,12 +302,12 @@ class ERC20Gateway extends React.Component {
                 <div className="m-t-12 desc-text">{counterpart.translate("erc20.transfer_out_note")}</div>
                 <br/>
                 <div className="label-text" style={{marginTop:"1em"}}>
-                  <Translate content="erc20.transfer_out_to" />
+                    <Translate content="erc20.transfer_out_to" />
                 </div>
                 <input type="text" placeholder={counterpart.translate("erc20.placeholder_out_address")}
                        className="w600 m-t-14 "  value={this.state.address} onChange={this.handleAddressChange.bind(this)}/><br/>
                 <div className="label-text">
-                  <Translate content="erc20.transfer_out_amount" />
+                    <Translate content="erc20.transfer_out_amount" />
                 </div>
                 <input type="text"
                        placeholder={counterpart.translate("erc20.placeholder_out_amount", {unit: this.state.unit})}
@@ -288,21 +316,21 @@ class ERC20Gateway extends React.Component {
                        onChange={this.handleAmountChange.bind(this)}/>
 
                 <div className="desc-text">
-                  <Translate content="erc20.useable" />
-                  <FormattedAsset amount={account_balance} asset={this.state.asset_id}/>
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  <Translate content="erc20.fees" />
-                  <FormattedAsset amount={this.state.network_fee_amount} asset={network_fee_asset[this.state.curInx]}/>
-                  <br/>
-                  <Translate content="erc20.confirm_note" />
-                  <FormattedAsset amount={this.state.network_fee_amount} asset={network_fee_asset[this.state.curInx]}/>
-                  <br/><br/>
+                    <Translate content="erc20.useable" />
+                    <FormattedAsset amount={account_balance} asset={this.state.asset_id}/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <Translate content="erc20.fees" />
+                    <FormattedAsset amount={this.state.network_fee_amount} asset={network_fee_asset[this.state.curInx]}/>
+                    <br/>
+                    <Translate content="erc20.confirm_note" />
+                    <FormattedAsset amount={this.state.network_fee_amount} asset={network_fee_asset[this.state.curInx]}/>
+                    <br/><br/>
                 </div>
 
                 <br/><br/>
                 {loading ? <TextLoading/> :
                     <button className="button large" onClick={this.confirmTransfer.bind(this)}>
-                      <Translate content="erc20.confirm_btn" />
+                        <Translate content="erc20.confirm_btn" />
                     </button>
                 }
 
@@ -314,15 +342,15 @@ class ERC20Gateway extends React.Component {
         let {master, address,account_bts, amount, useCsaf} = this.state;
         let {wallet, ethaddr, balance, loading, fees} = this.props;
         return (
-        <div  data-title={counterpart.translate("bts.transfer_in_title")} >
-            <div className="m-t-20 desc-text">
-              <Translate content="bts.note_info" />
-              <Translate content="bts.note" component="div"/>
-            </div>
+            <div  data-title={counterpart.translate("bts.transfer_in_title")} >
+                <div className="m-t-20 desc-text">
+                    <Translate content="bts.note_info" />
+                    <Translate content="bts.note" component="div"/>
+                </div>
 
-            <br/><br/>
-            <img className="balance-bisin-img" src={require('../../assets/bts_gateway_example.png')} alt=''/>
-        </div>
+                <br/><br/>
+                <img className="balance-bisin-img" src={require('../../assets/bts_gateway_example.png')} alt=''/>
+            </div>
         )
     }
 
@@ -346,7 +374,7 @@ class ERC20Gateway extends React.Component {
         return (
             <div data-title={counterpart.translate("bts.transfer_out_title")} >
                 <div className="m-t-20 desc-text">
-                  <Translate content="bts.transfer_out_note" />
+                    <Translate content="bts.transfer_out_note" />
                 </div>
                 <br/> <br/>
                 <div className="label-text"> <Translate content="bts.transfer_out_to" /></div>
@@ -359,20 +387,20 @@ class ERC20Gateway extends React.Component {
                        value={amount}
                        onChange={this.handleAmountChange.bind(this)}/>
 
-              <div className="desc-text">
-                  <Translate content="bts.useable" />
-                  <FormattedAsset amount={account_balance} asset={this.state.asset_id}/>
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  <Translate content="bts.fees" />
-                  <FormattedAsset amount={this.state.network_fee_amount} asset={network_fee_asset[this.state.curInx]}/>
-                  <br/>
-                  <Translate content="bts.confirm_note" />
-                  <FormattedAsset amount={this.state.network_fee_amount} asset={network_fee_asset[this.state.curInx]}/>
-              </div>
-              <br/><br/>
+                <div className="desc-text">
+                    <Translate content="bts.useable" />
+                    <FormattedAsset amount={account_balance} asset={this.state.asset_id}/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <Translate content="bts.fees" />
+                    <FormattedAsset amount={this.state.network_fee_amount} asset={network_fee_asset[this.state.curInx]}/>
+                    <br/>
+                    <Translate content="bts.confirm_note" />
+                    <FormattedAsset amount={this.state.network_fee_amount} asset={network_fee_asset[this.state.curInx]}/>
+                </div>
+                <br/><br/>
                 {loading ? <TextLoading/> :
                     <button className="button large" onClick={this.confirmTransfer.bind(this)}>
-                      <Translate content="bts.confirm_btn" />
+                        <Translate content="bts.confirm_btn" />
                     </button>
                 }
             </div>
@@ -380,7 +408,7 @@ class ERC20Gateway extends React.Component {
     }
 
 
-    renderERC20OPCIn()
+    renderERC20PFCIn()
     {
         let from_error = null;
         let {propose, from_account, to_account, asset, asset_id, propose_account, feeAmount,
@@ -394,20 +422,19 @@ class ERC20Gateway extends React.Component {
         return(
             <div data-title={counterpart.translate("erc20.transfer_in_title")}>
                 <div className="m-t-20 desc-text">
-                  <Translate content="erc20.note_opc" />
-                  </div>
+                    <Translate content="erc20.note_pfc" />
+                </div>
                 <br/> <br/>
 
-                <div className="label-text">
-                  <Translate content="erc20.current_account" />
-                  </div>
-                <div><input type="text" readOnly={true} className="w600 erc-btn m-t-14" value={this.props.currentAccount.get("name")}/> </div> <br/>
+                <div className="label-text">{counterpart.translate("erc20.current_account")}</div>
+                <div><input type="text" style={{width:"600px"}} readOnly={true} className="erc-btn m-t-14" value={this.props.currentAccount.get("name")}/> </div> <br/>
 
-                <div className="label-text"><Translate content="erc20.bind_eth" /></div>
+
+                <div className="label-text">{counterpart.translate("erc20.bind_eth")}</div>
                 {ethaddr == null || this.state.account != this.props.currentAccount.get("id")?
-                  <button onClick={this.seerErc20Bind.bind(this)} className="button">
-                    <Translate content="erc20.btn_generate" />
-                  </button>
+                    <button className="button" onClick={this.seerErc20Bind.bind(this)}>
+                        <Translate content="erc20.btn_generate"/>
+                    </button>
                     : (
                     <span>
                         <input type="text" readOnly={true} className="erc-btn text-center m-t-14" value={ethaddr}/>
@@ -432,8 +459,8 @@ class ERC20Gateway extends React.Component {
     }
 
 
-    renderERC20OPCOut(){
-        let {master, address,account_bts, amount, useCsaf} = this.state;
+    renderERC20PFCOut(){
+        let {master, address,account_bts, amount} = this.state;
         let {wallet, ethaddr, balance, loading, fees} = this.props;
 
         let account_balances = this.props.currentAccount.get("balances").toJS();
@@ -452,35 +479,148 @@ class ERC20Gateway extends React.Component {
 
         return (
             <div data-title={counterpart.translate("erc20.transfer_out_title")}>
+
                 <div className="m-t-20 desc-text">
-                  <Translate content="erc20.transfer_out_note" />
+                    <Translate content="erc20.transfer_out_note" />
                 </div>
+                <br/> <br/>
+
+                <div className="label-text"> <Translate content="erc20.transfer_out_to" /></div>
+                <input type="text" className="w600 m-t-14" placeholder={counterpart.translate("erc20.placeholder_out_address")}  value={this.state.address}  onChange={this.handleAddressChange.bind(this)}/>
                 <br/><br/>
-                <div className="label-text"><Translate content="erc20.transfer_out_to" /></div>
-                <input type="text" placeholder={counterpart.translate("erc20.placeholder_out_address")}
-                       className="w600 m-t-14"  value={this.state.address} onChange={this.handleAddressChange.bind(this)}/><br/>
+
+
                 <div className="label-text"><Translate content="erc20.transfer_out_amount" /></div>
                 <input type="text"
                        placeholder={counterpart.translate("erc20.placeholder_out_amount", {unit: this.state.unit})}
-                       className="w600 m-t-14"
+                       className="w600 m-t-14 "
                        value={amount}
                        onChange={this.handleAmountChange.bind(this)}/>
 
-              <div className="desc-text">
-                 <Translate content="erc20.useable" />
-                <FormattedAsset amount={account_balance} asset={this.state.asset_id}/>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <Translate content="erc20.fees" />
-                <FormattedAsset amount={this.state.network_fee_amount} asset={network_fee_asset[this.state.curInx]}/>
-                <br/>
-                <Translate content="erc20.confirm_note" />
-                <FormattedAsset amount={this.state.network_fee_amount} asset={network_fee_asset[this.state.curInx]}/>
+                <div className="desc-text">
+                    <Translate content="erc20.useable" />
+                    <FormattedAsset amount={account_balance} asset={this.state.asset_id}/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <Translate content="erc20.fees" />
+                    <FormattedAsset amount={this.state.network_fee_amount} asset={network_fee_asset[this.state.curInx]}/>
+                    <br/>
+                    <Translate content="erc20.confirm_note" />
+                    <FormattedAsset amount={this.state.network_fee_amount} asset={network_fee_asset[this.state.curInx]}/>
+                </div>
                 <br/><br/>
-              </div>
-                <br/><br/>
+
                 {loading ? <TextLoading/> :
                     <button className="button large" onClick={this.confirmTransfer.bind(this)}>
-                      <Translate content="erc20.confirm_btn" />
+                        <Translate content="erc20.confirm_btn" />
+                    </button>
+                }
+            </div>
+        )
+    }
+
+    //usdt
+    renderOmniUSDTIn()
+    {
+        let from_error = null;
+        let {propose, from_account, to_account, asset, asset_id, propose_account, feeAmount,
+            amount, error, to_name, from_name, memo, feeAsset, fee_asset_id, balanceError ,omniaddr} = this.state;
+
+        let {eth_address} = this.props;
+        if(omniaddr == null || this.state.account != this.props.currentAccount.get("id")){
+            this.changeUser(this.props.currentAccount);
+        }
+
+        return(
+            <div data-title={counterpart.translate("erc20.transfer_in_title")}>
+                <div className="m-t-20 desc-text">
+                    <Translate content="erc20.note_usdt" />
+                </div>
+                <br/> <br/>
+
+                <div className="label-text">{counterpart.translate("erc20.current_account")}</div>
+                <div><input type="text" style={{width:"600px"}} readOnly={true} className="erc-btn m-t-14" value={this.props.currentAccount.get("name")}/> </div> <br/>
+
+
+                <div className="label-text">{counterpart.translate("erc20.bind_omni")}</div>
+                {omniaddr == null || this.state.account != this.props.currentAccount.get("id")?
+                    <button className="button" onClick={this.seerErc20Bind.bind(this)}>
+                        <Translate content="erc20.btn_generate"/>
+                    </button>
+                    : (
+                    <span>
+                        <input type="text" readOnly={true} className="erc-btn text-center m-t-14" value={omniaddr}/>
+                        <div className="layer-modal" display={ this.state.modalIsShow ? '' : 'none' }>
+                            <div>
+                                <h4>{counterpart.translate("erc20.omniqrcode")}</h4>
+                                <dl>
+                                    <dt>
+                                        <span className="qrcode">
+                                        <QRCode size={136} value={omniaddr} /></span>
+                                    </dt>
+                                </dl>
+                            </div>
+                        </div>
+                    </span>
+                )
+
+                }
+                <span className="mini_code"></span>
+            </div>
+        )
+    }
+
+
+    renderOmniUSDTOut(){
+        let {master, address,account_bts, amount} = this.state;
+        let {wallet, omniaddr, balance, loading, fees} = this.props;
+
+        let account_balances = this.props.currentAccount.get("balances").toJS();
+
+        let account_balance;
+
+        for (let key in account_balances) {
+            if(key == this.state.asset_id)
+            {
+                let balanceObject = ChainStore.getObject(account_balances[key]);
+                account_balance = balanceObject.get("balance");
+                console.log(account_balance)
+                break;
+            }
+        }
+
+        return (
+            <div data-title={counterpart.translate("erc20.transfer_out_title")}>
+                <div className="m-t-20 desc-text">
+                    <Translate content="erc20.transfer_out_omninote" />
+                </div>
+                <br/> <br/>
+
+                <div className="label-text"> <Translate content="erc20.transfer_out_to" /></div>
+                <input type="text" className="w600 m-t-14" placeholder={counterpart.translate("erc20.placeholder_out_omniaddress")}  value={this.state.address}  onChange={this.handleAddressChange.bind(this)}/>
+                <br/><br/>
+
+                <div className="label-text"><Translate content="erc20.transfer_out_amount" /></div>
+                <input type="text"
+                       placeholder={counterpart.translate("erc20.placeholder_out_amount", {unit: this.state.unit})}
+                       className="w600 m-t-14 "
+                       value={amount}
+                       onChange={this.handleAmountChange.bind(this)}/>
+
+                <div className="desc-text">
+                    <Translate content="erc20.useable" />
+                    <FormattedAsset amount={account_balance} asset={this.state.asset_id}/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <Translate content="erc20.fees" />
+                    <FormattedAsset amount={this.state.network_fee_amount} asset={network_fee_asset[this.state.curInx]}/>
+                    <br/>
+                    <Translate content="erc20.confirm_note" />
+                    <FormattedAsset amount={this.state.network_fee_amount} asset={network_fee_asset[this.state.curInx]}/>
+                </div>
+                <br/><br/>
+
+                {loading ? <TextLoading/> :
+                    <button className="button large" onClick={this.confirmTransfer.bind(this)}>
+                        <Translate content="erc20.confirm_btn" />
                     </button>
                 }
             </div>
@@ -490,17 +630,17 @@ class ERC20Gateway extends React.Component {
     render() {
         if(!this.props.currentAccount){
             return(
-            <div className="balance-body">
-                <h3>{counterpart.translate("erc20.title")}</h3>
-                <br/>
-                <div>{counterpart.translate("account.errors.unknown")}</div>
-            </div>
+                <div className="balance-body">
+                    <h3>{counterpart.translate("erc20.title")}</h3>
+                    <br/>
+                    <div>{counterpart.translate("account.errors.unknown")}</div>
+                </div>
             );
         }
 
         let content = null;
         if(!AccountStore.isMyAccount(this.props.currentAccount)) {
-          content = (
+            content = (
                 <div className="balance-body">
                     <h3>{counterpart.translate("erc20.title")}</h3>
                     <br/>
@@ -519,9 +659,13 @@ class ERC20Gateway extends React.Component {
         } else if(this.state.curInx == 3){
             detail = this.renderBTSOut();
         }else if(this.state.curInx == 4){
-            detail = this.renderERC20OPCIn();
+            detail = this.renderERC20PFCIn();
         }else if(this.state.curInx == 5){
-            detail = this.renderERC20OPCOut();
+            detail = this.renderERC20PFCOut();
+        }else if(this.state.curInx == 6){
+            detail = this.renderOmniUSDTIn();
+        }else if(this.state.curInx == 7){
+            detail = this.renderOmniUSDTOut();
         }
 
         let type_options=[];
@@ -529,6 +673,7 @@ class ERC20Gateway extends React.Component {
         gatewaySuppots.forEach( (item,index) => {
             type_options.push(<option key={index} value={index}>{counterpart.translate(item)}</option>)
         });
+
 
 
         content = (
@@ -548,12 +693,12 @@ class ERC20Gateway extends React.Component {
 
         return (
             <div className="grid-content app-tables no-padding" ref="appTables">
-              <div className="content-block small-12" style={{paddingTop:"34px"}}>
-                <Translate content="erc20.title" component="h5" style={{fontWeight:"bold"}}/>
-                {content}
-              </div>
+                <div className="content-block small-12" style={{paddingTop:"34px"}}>
+                    <Translate content="erc20.title" component="h5" style={{fontWeight:"bold"}}/>
+                    {content}
+                </div>
             </div>
-          );
+        );
     }
 }
 

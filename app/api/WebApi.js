@@ -31,6 +31,29 @@ const getSeerRooms = async function(roomIds = [],onlyOpen) {
     });
 }
 
+const getSeerRoomRecords = async function(roomId,limit){
+    return await new Promise((resolve) =>
+    {
+        Apis.instance().db_api().exec("get_seer_room_records", [roomId, "2.18.999999999999", limit]).then(results => {
+            resolve(results ? results : []);
+        });
+    });
+}
+
+const getSeersRoomRecords = async function(roomIds = [],limit) {
+    let reqs = [];
+    roomIds.map(id => reqs.push(getSeerRoomRecords(id,limit)));
+
+    return Promise.all(reqs).then(result=>{
+        result = _.filter(result || [], o=>o.length>0);
+        let mapping = {};
+        result.map(a=>{
+            mapping = Object.assign(mapping, _.groupBy(a,"room"))
+        });
+        return mapping;
+    });
+}
+
 
 const getBlockRecords = function(limit,codeNumber){
     return new Promise((resolve)=>{
@@ -86,5 +109,7 @@ const getBlockRecords = function(limit,codeNumber){
 export default {
     getSeerRoom,
     getSeerRooms,
-    getBlockRecords
+    getBlockRecords,
+    getSeerRoomRecords,
+    getSeersRoomRecords
 }

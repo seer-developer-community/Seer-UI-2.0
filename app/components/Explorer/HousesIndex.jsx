@@ -152,7 +152,11 @@ class HouseList extends React.Component {
         houses:React.PropTypes.array,
         sortBy:React.PropTypes.number,
         sortType:React.PropTypes.string,
-        onRoomOptionCheck:React.PropTypes.func
+        onRoomOptionCheck:React.PropTypes.func,
+        enableHousesWhiteList:React.PropTypes.bool,
+        housesWhiteList:React.PropTypes.array,
+        excludedHouses:React.PropTypes.array,
+        excludedRooms:React.PropTypes.array
     }
 
     constructor () {
@@ -198,11 +202,30 @@ class HouseList extends React.Component {
 
     _loadRooms(houses){
         let roomIds = [];
-        houses.map(h=>roomIds.push(...h.rooms));
+        houses.map(h=>{
+            if(this.props.excludedHouses.indexOf(h.id) !== -1)
+                return;
+
+            if(!this.props.enableHousesWhiteList){
+                roomIds.push(...h.rooms)
+            }else{
+                if(this.props.housesWhiteList.indexOf(h.id) !== -1){
+                    roomIds.push(...h.rooms);
+                }
+            }
+        });
+
+        roomIds = _.difference(roomIds,this.props.excludedRooms);
 
         WebApi.getSeerRooms(roomIds).then((rooms) => {
-            this.setState({
-                rooms: this._groupRooms(rooms)
+            WebApi.getSeersRoomRecords(roomIds,1).then(records=>{
+                rooms.map(r=>{
+                    r.last_record_time = _.has(records,r.id) ? new Date(records[r.id][0].when).getTime(): 0;
+                })
+
+                this.setState({
+                    rooms: this._groupRooms(rooms)
+                });
             });
         });
     }
@@ -215,9 +238,9 @@ class HouseList extends React.Component {
           let start = r.description.indexOf(prefix);
           let end = r.description.indexOf(suffix);
           if(start !== -1 && end !== -1){
-              let head = r.description.match(/(?<=\(@#-)\S+(?=-#@\))/g)[0];
-              let groupId = head.match(/[^\(\)]+(?=\))/g)[0];
-              let title = head.replace("("+groupId+")","").trim();
+              let head = r.description.match(new RegExp("(?<=\\(@#-)\\S+(?=-#@\\))", "g"))[0];
+              let groupId = head.match(new RegExp("[^\\(\\)]+(?=\\))","g"))[0];
+              //let title = head.replace("("+groupId+")","").trim();
               if(_.has(groupIdsIndex,"g-" + groupId)){
                 rooms[groupIdsIndex["g-" + groupId]].subRooms.push(r);
               }else{
@@ -268,6 +291,9 @@ class HouseList extends React.Component {
                 return o.option.stop;
               } else if(props.sortBy === 4) {
                 return o.option.result_owner_percent;
+              }else{
+                //最新参与
+                return o.last_record_time;
               }
             }]);
             if(this.props.sortType === "desc"){
@@ -425,10 +451,14 @@ class Houses extends React.Component {
           houses: [],
           oracles: [],
           filterRoomType:null,
-          sortBy:null,
-          sortType:"asc",
+          sortBy:0,
+          sortType:"desc",
           myRooms:[],
-          noticeList:[]
+          noticeList:[],
+          enableWhiteList:false,
+          whiteList:[],
+          excludedHouses:[],
+          excludedRooms:[]
         }
     }
 
@@ -461,19 +491,22 @@ class Houses extends React.Component {
             roomList:[]
           };
           if(json && json.result && json.result.length > 0){
-            if(IntlStore.getState().currentLocale === "zh"){
-              let labels = json.result[0].indexlabels;
+            //if(IntlStore.getState().currentLocale === "zh"){
+              let labels = IntlStore.getState().currentLocale === "zh" ? json.result[0].indexlabels : json.result[0].indexlabelsen;
               labels = labels.replace("，",",");
+              labels = labels.replace(new RegExp("\\[","gm"),"");
               labels = labels.split("],").join("-*-");
-              labels = labels.split(",[").join("-*-");
-              labels = labels.replace(new RegExp("\\[|\\]","gm"),"");
               labels = labels.replace(new RegExp(",","gm"),"/");
               object.labelArrays = labels.split("-*-");
-            }else{
-              let labels = json.result[0].indexlabelsen;
-              object.labelArrays = labels.split(",");
-            }
+           // }else{
+           //   let labels = json.result[0].indexlabelsen;
+           //   object.labelArrays = labels.split(",");
+          //  }
             object.roomList = json.result[0].roomoidlist.split(",");
+            object.enableWhiteList = json.result[0].enablewhitelist === "true";
+            object.whiteList = json.result[0].whitelist.split(",");
+            object.excludedHouses = json.result[0].excludedhouses ? json.result[0].excludedhouses.split(",") : [];
+            object.excludedRooms = json.result[0].excludedrooms ? json.result[0].excludedrooms.split(",") : [];
           }
           return object;
         })
@@ -499,13 +532,25 @@ class Houses extends React.Component {
       Promise.all([this._getHouseLabels.bind(this)(),this._getImages.bind(this)()])
         .then(([houseObj, images]) => {
           this.setState({
-            houseLabels:houseObj.labelArrays,
-           // roomList:houseObj.roomList,
-            //roomList:["1.15.10","1.15.1642","1.15.1628"],
+                houseLabels:houseObj.labelArrays,
+                roomList:houseObj.roomList,
+                enableWhiteList:houseObj.enableWhiteList,
+                whiteList:houseObj.whiteList,
+                excludedHouses:houseObj.excludedHouses,
+                excludedRooms:houseObj.excludedRooms,
 
-            images
+
+                // excludedRooms:["1.15.54"],
+              // enableWhiteList:true,
+              // whiteList:["1.14.1"],
+            //roomList:["1.15.10","1.15.1642","1.15.1628"],
+                images
           });
         });
+    }
+
+    _initHouseList(){
+
     }
 
     _getNotice(){
@@ -664,21 +709,25 @@ class Houses extends React.Component {
                       <li className={"house-category" + (this.state.filterRoomType === 1 ? " checked" :"")} onClick={e => this.setState({filterRoomType:1})}>PVP</li>
                       <li className={"house-category" + (this.state.filterRoomType === 0 ? " checked" :"")} onClick={e => this.setState({filterRoomType:0})}>PVD</li>
                       <li className={"house-category" + (this.state.filterRoomType === 2 ? " checked" :"")} onClick={e => this.setState({filterRoomType:2})}>ADV</li>
+                      <li className={"house-sort" + (this.state.sortBy === 0 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:0,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
+                            最新参与&nbsp;
+                            <Icon size="14px" name="sort"/>
+                      </li>
                       <li className={"house-sort" + (this.state.sortBy === 1 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:1,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
-                        参与总量&nbsp;
-                        <Icon size="14px" name="sort"/>
+                            参与总量&nbsp;
+                            <Icon size="14px" name="sort"/>
                       </li>
                       <li className={"house-sort" + (this.state.sortBy === 2 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:2,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
-                        参与人数&nbsp;
-                        <Icon size="14px" name="sort"/>
+                            参与人数&nbsp;
+                            <Icon size="14px" name="sort"/>
                       </li>
                       <li className={"house-sort" + (this.state.sortBy === 3 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:3,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
-                        结束时间&nbsp;
-                        <Icon size="14px" name="sort"/>
+                            结束时间&nbsp;
+                            <Icon size="14px" name="sort"/>
                       </li>
                       <li className={"house-sort" + (this.state.sortBy === 4 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:4,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
-                        创建者权重&nbsp;
-                        <Icon size="14px" name="sort"/>
+                            创建者权重&nbsp;
+                            <Icon size="14px" name="sort"/>
                       </li>
                     </ul>
                   </div>
@@ -715,6 +764,10 @@ class Houses extends React.Component {
                       sortBy={this.state.sortBy}
                       sortType={this.state.sortType}
                       houses={this.state.houses}
+                      enableHousesWhiteList={this.state.enableWhiteList}
+                      housesWhiteList={this.state.whiteList}
+                      excludedHouses={this.state.excludedHouses}
+                      excludedRooms={this.state.excludedRooms}
                       onRoomOptionCheck={(room,idx)=>{
                           this._onSelectRoom.bind(this)(room,idx);
                       }}

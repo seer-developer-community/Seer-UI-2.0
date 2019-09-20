@@ -10,9 +10,9 @@ class ERC20GatewayStore extends BaseStore {
     constructor() {
         super();
         this.state = {
-            ethaddr: null, 
-            error: null, 
-            balance: {}, 
+            ethaddr: null,
+            error: null,
+            balance: {},
             loading: false,
             fees: {
                 min_fees: 0,
@@ -39,7 +39,7 @@ class ERC20GatewayStore extends BaseStore {
             this.setState({error: ethaddr});
         }
     }
-    
+
     onGetBalanceByUid(balance){
         if(balance){
             this.setState({balance: balance})

@@ -68,23 +68,24 @@ class RoomCard extends React.Component {
             let precision = ret.length > 0 ? Math.pow(10, parseInt(ret[0].precision)) : 1;
             this.setState({ asset: symbol, precision: precision });
           });
+
+            if(this.state.room.description.indexOf("(@#-") !== -1 && this.state.room.description.indexOf("-#@)") !== -1) {
+                let titles = [];
+                titles.push(this._getRoomSubTitle(this.state.room.description));
+                this.state.room.description = this._fixRoomdesc(this.state.room.description);
+
+                if(this._isMutiRooms()) {
+                    this.state.room.subRooms.map(r => {
+                        titles.push(this._getRoomSubTitle(r.description));
+                        r.description = this._fixRoomdesc(r.description);
+                    });
+                }else{
+                    this.state.room.description = "[ " + titles[0] + " ] " + this.state.room.description;
+                }
+                this.state.mutiRoomSubTitles = titles;
+            }
         }
 
-      if(this.state.room.description.indexOf("(@#-") !== -1 && this.state.room.description.indexOf("-#@)") !== -1) {
-        let titles = [];
-        titles.push(this._getRoomSubTitle(this.state.room.description));
-        this.state.room.description = this._fixRoomdesc(this.state.room.description);
-
-        if(this._isMutiRooms()) {
-          this.state.room.subRooms.map(r => {
-            titles.push(this._getRoomSubTitle(r.description));
-            r.description = this._fixRoomdesc(r.description);
-          });
-        }else{
-          this.state.room.description = "[ " + titles[0] + " ] " + this.state.room.description;
-        }
-        this.state.mutiRoomSubTitles = titles;
-      }
 /*
         if(this.state.room.option.allowed_oracles.length>0)
         {

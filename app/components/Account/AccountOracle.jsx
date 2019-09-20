@@ -20,6 +20,8 @@ import { Map, List } from "immutable";
 import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
 import {Tabs, Tab} from "../Utility/Tabs";
+import SettingsActions from "actions/SettingsActions";
+import SettingsStore from "stores/SettingsStore";
 var Apis =  require("seerjs-ws").Apis;
 
 class AccountOracle extends React.Component {
@@ -69,7 +71,11 @@ class AccountOracle extends React.Component {
                 reputation: 0,
                 script: "",
                 volume: 0
-            }
+            },
+            awardsGt:SettingsStore.getState().settings.get("room_notice_awards_gt"),
+            awardsGtEditable:false,
+            endTime:SettingsStore.getState().settings.get("room_notice_end_time_lt"),
+            endTimeEditable:false,
         };
 
 
@@ -99,6 +105,24 @@ class AccountOracle extends React.Component {
     _editButtonClick(symbol, account_name, e) {
         e.preventDefault();
         this.props.router.push(`/account/${account_name}/update-asset/${symbol}`);
+    }
+
+    _onAwardsGtEditClick(){
+        if(this.state.awardsGtEditable){
+            SettingsActions.changeSetting({
+                setting : "room_notice_awards_gt", value : this.state.awardsGt
+            });
+        }
+        this.setState({awardsGtEditable:!this.state.awardsGtEditable})
+    }
+
+    _onEndTimeEditClick(){
+        if(this.state.endTimeEditable){
+            SettingsActions.changeSetting({
+                setting : "room_notice_end_time_lt", value : this.state.endTime
+            });
+        }
+        this.setState({endTimeEditable:!this.state.endTimeEditable})
     }
 
     render() {
@@ -154,6 +178,45 @@ class AccountOracle extends React.Component {
                                                     <tr>
                                                       <td style={{width:"150px"}}><Translate content="seer.oracle.description"/></td>
                                                       <td>{this.state.oracle.description}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td rowSpan="2" style={{verticalAlign:"top",paddingTop:20}}><Translate content="seer.oracle.remind"/></td>
+                                                        <td>
+                                                            <div className="flex-align-middle">
+                                                                <Translate content="seer.oracle.remind_awards_gt"/>
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                                                {
+                                                                    this.state.awardsGtEditable ?
+                                                                    <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14,borderColor:"#4BA180"}} value={this.state.awardsGt} onChange={e=>this.setState({awardsGt:e.target.value})}/>
+                                                                        :
+                                                                    <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14}} disabled={true} value={this.state.awardsGt}/>
+                                                                }
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;SEER
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <a onClick={this._onAwardsGtEditClick.bind(this)}>
+                                                                    <Translate content={this.state.awardsGtEditable ? "confirm" : "seer.oracle.remind_update"}/>
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div style={{marginLeft:5}}  className="flex-align-middle">
+                                                                <Translate content="seer.oracle.remind_end_time_lt"/>
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                                                {
+                                                                    this.state.endTimeEditable ?
+                                                                        <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14,borderColor:"#4BA180"}} value={this.state.endTime} onChange={e=>this.setState({endTime:e.target.value})}/>
+                                                                        :
+                                                                        <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14}} disabled={true} value={this.state.endTime}/>
+                                                                }
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;MIN
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <a onClick={this._onEndTimeEditClick.bind(this)}>
+                                                                    <Translate content={this.state.endTimeEditable ? "confirm" : "seer.oracle.remind_update"}/>
+                                                                </a>
+                                                            </div>
+                                                        </td>
                                                     </tr>
                                                     </tbody>
                                                 </table>

@@ -287,9 +287,12 @@ class HeaderExplorer extends React.Component {
     }
 
     _onSearchKeyDown(e){
-        if (e.key === 'Enter') {
-          this._doSearch(this.state.searchKey);
-        }
+        this.setState({searchKey:e.target.value},()=>{
+            this._doSearch(this.state.searchKey);
+        })
+       // if (e.key === 'Enter') {
+        //this._doSearch(this.state.searchKey);
+        //}
     }
 
     _doSearch(key){
@@ -473,8 +476,10 @@ class HeaderExplorer extends React.Component {
                   <div className="input-search">
                     {/* onChange={this._onFilter.bind(this, "filterUIA")}*/}
                     <input placeholder={counterpart.translate("explorer.search")} type="text" value={this.state.searchKey}
-                           onChange={e=>this.setState({searchKey:e.target.value})}
-                           onKeyDown={this._onSearchKeyDown.bind(this)} />
+                           onChange={e=> this._onSearchKeyDown.bind(this,e)()}
+
+                    />
+                      {/*       onKeyDown={this._onSearchKeyDown.bind(this)}*/}
                     <svg className="icon" aria-hidden="true">
                       <use xlinkHref="#icon-sousuo"></use>
                     </svg>

@@ -20,11 +20,16 @@ function split_into_sections(str) {
     for (let i = sections.length - 1; i >= 1; i -= 2) {
         // remove extra </p> and <p>
         sections[i] = sections[i].replace(/(^<\/p>|<p>$)/g, '');
-        sections[i - 1] = [sections[i - 1], sections[i]];
+        sections[i - 1] = [sections[i - 1],sections[i]];
         sections.splice(i, 1);
     }
 
-    return zipObject(sections);
+    let s = {};
+    for(let i = 0;i<sections.length;i++){
+        s[sections[i][0]] = sections[i][1];
+    }
+
+    return s;
 }
 
 function adjust_links(str) {

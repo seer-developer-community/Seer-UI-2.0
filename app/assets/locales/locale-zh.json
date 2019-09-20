@@ -1721,7 +1721,11 @@
             "not_created": "还未创建预言机",
             "update": "更新预言机",
             "input": "Oracle输入",
-            "balance": "(负数表提现,正数表增加)   当前余额："
+            "balance": "(负数表提现,正数表增加)   当前余额：",
+            "remind" : "设置提醒",
+            "remind_awards_gt" : "预言机奖励大于",
+            "remind_update":"修改",
+            "remind_end_time_lt":"房间结束时间距离现在小于"
         },
         "room": {
             "title": "房间",
@@ -1815,10 +1819,13 @@
     "note": "支持将以太钱包的SEER代币自动兑换至主网钱包。点击“生成地址”按钮，系统会自动为您的主网账号分配一个ETH地址。将以太钱包中的SEER代币转入该地址，Seer主网帐号即可自动获得等额SEER币。",
     "current_account": "当前帐号：",
     "bind_eth": "绑定ETH地址：",
+    "bind_omni": "绑定Omni地址：",
     "btn_generate": "生成地址",
     "transfer_out_note": "网关自动充提，到账时间视以太网络确认速度而定。",
+    "transfer_out_omninote": "网关自动充提，到账时间视Omni网络确认速度而定。",
     "transfer_out_to": "转出至：",
     "placeholder_out_address": "请输入ETH地址",
+    "placeholder_out_omniaddress": "请输入Omni地址",
     "transfer_out_amount": "转出数量：",
     "placeholder_out_amount": "请输入转出%(unit)s数量",
     "useable": "可用：",
@@ -1838,8 +1845,14 @@
     "button_generate_QR": "点击生产二维码",
     "transfer_opc_in_title": "转入 OPC(ERC20)",
     "transfer_opc_out_title": "转出 OPC(ERC20)",
+    "transfer_pfc_in_title": "转入 PFC(ERC20)",
+    "transfer_pfc_out_title": "转出 PFC(ERC20)",
+    "transfer_usdt_in_title": "转入 USDT(Omni)",
+    "transfer_usdt_out_title": "转出 USDT(Omni)",
     "to_require": "请填写转出账户",
-    "note_opc": "支持将以太钱包的OPC代币自动兑换至主网钱包。点击“生成地址”按钮，系统会自动为您的主网账号分配一个ETH地址。将以太钱包中的OPC代币转入该地址，Seer主网帐号即可自动获得等额OPC币。"
+    "note_opc": "支持将以太钱包的OPC代币自动兑换至主网钱包。点击“生成地址”按钮，系统会自动为您的主网账号分配一个ETH地址。将以太钱包中的OPC代币转入该地址，Seer主网帐号即可自动获得等额OPC币。",
+    "note_pfc": "支持将以太钱包的PFC代币自动兑换至主网钱包。点击“生成地址”按钮，系统会自动为您的主网账号分配一个ETH地址。将以太钱包中的PFC代币转入该地址，Seer主网帐号即可自动获得等额PFC币。",
+    "note_usdt": "支持将omni钱包的USDT代币自动兑换至主网钱包。点击“生成地址”按钮，系统会自动为您的主网账号分配一个Omni地址。将Omni钱包中的USDT代币转入该地址，Seer主网帐号即可自动获得等额USDT币。"
   },
   "bts": {
     "title": "网关",

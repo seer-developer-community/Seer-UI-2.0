@@ -1219,6 +1219,12 @@ $input-border
             color: $secondary-text-color;
             border-left: 3px solid $panel-bg-color;
         }
+        em{
+          font-style: normal;
+        }
+        p{
+          margin-bottom: 6px;
+        }
     }
 
 
