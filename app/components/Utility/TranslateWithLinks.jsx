@@ -3,6 +3,7 @@ import counterpart from "counterpart";
 import utils from "common/utils";
 import LinkToAccountById from "../Utility/LinkToAccountById";
 import LinkToAssetById from "../Utility/LinkToAssetById";
+import LinkToRoomById from "../Utility/LinkToRoomById";
 import {Link} from "react-router/es";
 import FormattedAsset from "../Utility/FormattedAsset";
 import FormattedPrice from "../Utility/FormattedPrice";
@@ -57,6 +58,14 @@ export default class TranslateWithLinks extends React.Component {
             <Link to={`/asset/${symbol_or_id}`}><AssetName name={symbol_or_id} noTip /></Link>;
     }
 
+    linkToRoom(room_or_id) {
+        const {noLink} = this.props;
+        if(!room_or_id) return <span>-</span>;
+        return utils.is_object_id(room_or_id) ?
+          <LinkToRoomById room={room_or_id} noLink={noLink} /> : noLink ? <span>{room_or_id}</span> :
+            <Link to={`/prediction/rooms/${room_or_id}`}>{room_or_id}</Link>;
+    }
+
     render() {
 
         let {string, params, keys} = this.props;
@@ -70,6 +79,10 @@ export default class TranslateWithLinks extends React.Component {
                 switch (key.type) {
                     case "account":
                         value = this.linkToAccount(key.value);
+                        break;
+
+                    case "room":
+                        value = this.linkToRoom(key.value);
                         break;
 
                     case "amount":

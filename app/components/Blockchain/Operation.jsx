@@ -986,7 +986,7 @@ class Operation extends React.Component {
                         string="operation.seer_room_update"
                         keys={[
                             {type: "account", value: op[1].issuer, arg: "issuer"},
-                            {type: "string", value: op[1].room, arg: "room"}
+                            {type: "room", value: op[1].room, arg: "room"}
                         ]}
                     />
                 );
@@ -998,7 +998,7 @@ class Operation extends React.Component {
                         string="operation.seer_room_input"
                         keys={[
                             {type: "account", value: op[1].issuer, arg: "issuer"},
-                            {type: "string", value: op[1].room, arg: "room"},
+                            {type: "room", value: op[1].room, arg: "room"},
                             {type: "string", value: op[1].input[0], arg: "input"}
                         ]}
                     />
@@ -1011,7 +1011,7 @@ class Operation extends React.Component {
                         string="operation.seer_room_open"
                         keys={[
                             {type: "account", value: op[1].issuer, arg: "issuer"},
-                            {type: "string", value: op[1].room, arg: "room"}
+                            {type: "room", value: op[1].room, arg: "room"}
                         ]}
                     />
                 );
@@ -1044,7 +1044,7 @@ class Operation extends React.Component {
                         string="operation.seer_room_final"
                         keys={[
                             {type: "account", value: op[1].issuer, arg: "issuer"},
-                            {type: "string", value: op[1].room, arg: "room"},
+                            {type: "room", value: op[1].room, arg: "room"},
                             {type: "amount", value: {amount: balance, asset_id:this.props.result[1].asset_id}, arg: "balance"}
                         ]}
                     />
@@ -1066,7 +1066,7 @@ class Operation extends React.Component {
                         string="operation.seer_room_settle"
                         keys={[
                             {type: "account", value: op[1].issuer, arg: "issuer"},
-                            {type: "string", value: op[1].room, arg: "room"},
+                            {type: "room", value: op[1].room, arg: "room"},
                             {type: "amount", value: {amount: balance, asset_id:this.props.result[1].asset_id}, arg: "balance"}
                         ]}
                     />
@@ -1091,7 +1091,7 @@ class Operation extends React.Component {
                             string="operation.seer_room_participate"
                             keys={[
                                 {type: "account", value: op[1].issuer, arg: "issuer"},
-                                {type: "string", value: op[1].room, arg: "room"},
+                                {type: "room", value: op[1].room, arg: "room"},
                                 {type: "amount", value: {amount: balance, asset_id:this.props.result[1].asset_id}, arg: "balance"},
                                 {type: "number", value: op[1].input[0] + 1, arg: "index"},
                                 {type: "string", value: op[1].input_desc[0], arg: "option"}
@@ -1104,7 +1104,7 @@ class Operation extends React.Component {
                             string="operation.seer_room_participate"
                             keys={[
                                 {type: "account", value: op[1].issuer, arg: "issuer"},
-                                {type: "string", value: op[1].room, arg: "room"},
+                                {type: "room", value: op[1].room, arg: "room"},
                                 {type: "number", value: op[1].input[0] + 1, arg: "index"},
                                 {type: "string", value: op[1].input_desc[0], arg: "option"}
                             ]}
@@ -1131,7 +1131,7 @@ class Operation extends React.Component {
                         string="operation.seer_room_pool"
                         keys={[
                             {type: "account", value: op[1].issuer, arg: "issuer"},
-                            {type: "string", value: op[1].room, arg: "room"},
+                            {type: "room", value: op[1].room, arg: "room"},
                             {type: "amount", value: op[1].amount, arg: "amount"}
                         ]}
                     />

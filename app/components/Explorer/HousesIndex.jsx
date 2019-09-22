@@ -149,14 +149,14 @@ class HouseList extends React.Component {
         witnesses: ChainTypes.ChainObjectsList.isRequired,
         filterLabel:React.PropTypes.string,
         filterRoomType:React.PropTypes.number,
-        houses:React.PropTypes.array,
         sortBy:React.PropTypes.number,
         sortType:React.PropTypes.string,
         onRoomOptionCheck:React.PropTypes.func,
         enableHousesWhiteList:React.PropTypes.bool,
         housesWhiteList:React.PropTypes.array,
         excludedHouses:React.PropTypes.array,
-        excludedRooms:React.PropTypes.array
+        excludedRooms:React.PropTypes.array,
+        recommendRooms:React.PropTypes.array
     }
 
     constructor () {
@@ -169,15 +169,13 @@ class HouseList extends React.Component {
     }
 
     componentWillMount() {
-      if(this.props.houses && this.props.houses.length > 0){
-        this._loadRooms.bind(this)(this.props.houses);
-      }
+      this._loadRooms();
     }
 
     componentWillReceiveProps(nextProps) {
-      if(!_.isEmpty(_.differenceWith(nextProps.houses, this.props.houses, _.isEqual))) {
-        this._loadRooms.bind(this)(nextProps.houses);
-      }
+      // if(!_.isEmpty(_.differenceWith(nextProps.houses, this.props.houses, _.isEqual))) {
+      //   this._loadRooms.bind(this)(nextProps.houses);
+      // }
     }
 
     shouldComponentUpdate(newProps, newState) {
@@ -200,33 +198,24 @@ class HouseList extends React.Component {
       return false;
     }
 
-    _loadRooms(houses){
-        let roomIds = [];
-        houses.map(h=>{
-            if(this.props.excludedHouses.indexOf(h.id) !== -1)
-                return;
-
-            if(!this.props.enableHousesWhiteList){
-                roomIds.push(...h.rooms)
-            }else{
-                if(this.props.housesWhiteList.indexOf(h.id) !== -1){
-                    roomIds.push(...h.rooms);
-                }
-            }
-        });
-
-        roomIds = _.difference(roomIds,this.props.excludedRooms);
-
-        WebApi.getSeerRooms(roomIds).then((rooms) => {
-            WebApi.getSeersRoomRecords(roomIds,1).then(records=>{
-                rooms.map(r=>{
-                    r.last_record_time = _.has(records,r.id) ? new Date(records[r.id][0].when).getTime(): 0;
-                })
-
-                this.setState({
-                    rooms: this._groupRooms(rooms)
-                });
+    _loadRooms(){
+        WebApi.getAllSeerRoom({
+          onlyLoadWhiteListHouses:this.props.enableHousesWhiteList,
+          housesWhiteList:this.props.housesWhiteList,
+          excludedHouses:this.props.excludedHouses,
+          excludedRooms:this.props.excludedRooms,
+          extraRooms:this.props.recommendRooms
+        }).then(rooms=>{
+          let roomIds = rooms.map(r=>r.id);
+          WebApi.getSeersRoomRecords(roomIds,1).then(records=>{
+            rooms.map(r=>{
+              r.last_record_time = _.has(records,r.id) ? new Date(records[r.id][0].when).getTime(): 0;
             });
+
+            this.setState({
+              rooms: this._groupRooms(rooms)
+            });
+          });
         });
     }
 
@@ -275,14 +264,27 @@ class HouseList extends React.Component {
 
         if (witnesses.length > 0 && witnesses[1]) {
           let rooms = _.clone(this.state.rooms);
-          if(this.props.filterRoomType !== null && this.props.filterRoomType >= 0) {
-            rooms = _.filter(rooms, { 'room_type': this.props.filterRoomType });
+
+          let recommendRooms = [];
+          let sortRooms = [];
+          for(let i = 0;i < rooms.length; i++){
+            if(this.props.recommendRooms.indexOf(rooms[i].id) !== -1){
+              recommendRooms.push(rooms[i]);
+            }else{
+              sortRooms.push(rooms[i]);
+            }
           }
+
+          if(this.props.filterRoomType !== null && this.props.filterRoomType >= 0) {
+            sortRooms = _.filter(sortRooms, { 'room_type': this.props.filterRoomType });
+          }
+
+
 
           //sort
           if(this.props.sortBy !== null){
             let props = this.props;
-            rooms = _.sortBy(rooms, [function(o) {
+            sortRooms = _.sortBy(sortRooms, [function(o) {
               if(props.sortBy === 1) {
                 return o.running_option.total_shares;
               }else if(props.sortBy === 2) {
@@ -296,10 +298,13 @@ class HouseList extends React.Component {
                 return o.last_record_time;
               }
             }]);
+
             if(this.props.sortType === "desc"){
-              rooms = rooms.reverse();
+              sortRooms = sortRooms.reverse();
             }
           }
+
+          rooms = [...recommendRooms,...sortRooms];
 
           roomCards = rooms.map((r, index) => {
             let match = false;
@@ -311,9 +316,9 @@ class HouseList extends React.Component {
                 }
               }
 
-              return match ? <RoomCard roomObject={r} key={r.id} onOptionCheck={(idx,currRoom)=>this._onRoomOptionCheck(currRoom,idx)}/> : null;
+              return match ? <RoomCard room={r} key={r.id} recommend={this.props.recommendRooms.indexOf(r.id) !== -1} onOptionCheck={(idx,currRoom)=>this._onRoomOptionCheck(currRoom,idx)}/> : null;
             } else {
-              return <RoomCard roomObject={r} key={r.id} onOptionCheck={(idx,currRoom)=>this._onRoomOptionCheck(currRoom,idx)}/>;
+              return <RoomCard room={r} key={r.id} recommend={this.props.recommendRooms.indexOf(r.id) !== -1} onOptionCheck={(idx,currRoom)=>this._onRoomOptionCheck(currRoom,idx)}/>;
             }
           });
         }
@@ -497,6 +502,7 @@ class Houses extends React.Component {
               labels = labels.replace(new RegExp("\\[","gm"),"");
               labels = labels.split("],").join("-*-");
               labels = labels.replace(new RegExp(",","gm"),"/");
+            labels = labels.replace(new RegExp("\\]","gm"),"");
               object.labelArrays = labels.split("-*-");
            // }else{
            //   let labels = json.result[0].indexlabelsen;
@@ -745,13 +751,6 @@ class Houses extends React.Component {
                     </Slider>
                   </div>
                   <div style={{marginTop:"26px"}}>
-                    {
-                      this.state.roomList && this.state.roomList.map((room,index)=>{
-                          return (
-                            <RoomCard room={room} key={index} recommend={true} onOptionCheck={idx => this._onSelectRoom.bind(this)(room,idx)}/>
-                          );
-                      })
-                    }
                     <HouseList
                       current_aslot={dynGlobalObject.current_aslot}
                       current={current ? current.get("id") : null}
@@ -764,6 +763,7 @@ class Houses extends React.Component {
                       sortBy={this.state.sortBy}
                       sortType={this.state.sortType}
                       houses={this.state.houses}
+                      recommendRooms={this.state.roomList}
                       enableHousesWhiteList={this.state.enableWhiteList}
                       housesWhiteList={this.state.whiteList}
                       excludedHouses={this.state.excludedHouses}

@@ -5,6 +5,7 @@ import {ChainTypes as GraphChainTypes, ChainStore} from "seerjs/es";
 import counterpart from "counterpart";
 import utils from "common/utils";
 import Notify from "notifyjs";
+import BrowserNotificationStore from "stores/BrowserNotificationStore";
 let {operations} = GraphChainTypes;
 
 let OPERATIONS = Object.keys(operations);
@@ -16,10 +17,21 @@ class BrowserNotifications extends React.Component {
         settings: React.PropTypes.object,
     };
 
+    constructor(props) {
+        super();
+
+        this._listenNotice = this._listenNotification.bind(this);
+    }
+
     componentWillMount() {
         if(Notify.needsPermission) {
             Notify.requestPermission();
         }
+        BrowserNotificationStore.listen(this._listenNotice)
+    }
+
+    componentWillUnmount () {
+        BrowserNotificationStore.unlisten(this._listenNotice)
     }
 
     componentWillReceiveProps(nextProps) {
@@ -37,7 +49,6 @@ class BrowserNotifications extends React.Component {
         }
 
         if (nextProps.account.size && this.props.account.get("history") && nextProps.account.get("history")) {
-
             let lastOperationOld = this.props.account.get("history").first();
             let lastOperationNew = nextProps.account.get("history").first();
 
@@ -49,7 +60,17 @@ class BrowserNotifications extends React.Component {
             if(this._isOperationTransfer(lastOperationNew) && this._isTransferToMyAccount(lastOperationNew) && nextProps.settings.get("browser_notifications").additional.transferToMe) {
                 this._notifyUserAboutTransferToHisAccount(lastOperationNew);
             }
+        }
+    }
 
+    _listenNotification(newState,err){
+        let notification = newState.notification;
+        if(notification){
+            BrowserNotificationStore.reset();
+            this.notifyUsingBrowserNotification({
+                closeOnClick:true,
+                ...notification
+            });
         }
     }
 
@@ -120,13 +141,13 @@ class BrowserNotifications extends React.Component {
             notifyParams.notifyShow = params.onNotifyShow;
 
         if(typeof params.onNotifyClose === "function")
-            notifyParams.notifyClose = params.onNotifyShow;
+            notifyParams.notifyClose = params.onNotifyClose;
 
         if(typeof params.onNotifyClick === "function")
-            notifyParams.notifyClick = params.onNotifyShow;
+            notifyParams.notifyClick = params.onNotifyClick;
 
         if(typeof params.onNotifyError === "function")
-            notifyParams.notifyError = params.onNotifyShow;
+            notifyParams.notifyError = params.onNotifyError;
 
         const notify = new Notify(params.title, notifyParams);
 

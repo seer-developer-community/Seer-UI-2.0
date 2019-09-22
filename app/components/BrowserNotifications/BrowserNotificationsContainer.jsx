@@ -17,7 +17,7 @@ class BrowserNotificationsContainer extends React.Component {
                     },
                     settings: () => {
                         return SettingsStore.getState().settings;
-                    },
+                    }
                 }}
             >
                 <BrowserNotifications/>

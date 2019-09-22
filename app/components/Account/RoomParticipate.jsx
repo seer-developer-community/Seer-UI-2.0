@@ -99,11 +99,8 @@ class RoomParticipate extends React.Component {
     }
 
     _getHistory(){
-        WebApi.getBlockRecords(50,"43-52").then(records=>{
-            let list = [];
-            records.map(r => r.operations[1].room === this.state.room.id && list.length < 10 && list.push(r));
-
-            this.setState({historyList: list})
+        WebApi.getSeerRoomRecords(this.state.room.id,20).then(records=>{
+           this.setState({historyList: records})
         });
     }
 
@@ -415,6 +412,7 @@ class RoomParticipate extends React.Component {
             <div className="group-title"><Translate content="seer.room.room_detail"/></div>
             <div className="group-content">
               <table className="room-detail-table" width="100%">
+                <tbody>
                 <tr>
                   <td width="33.33333%">
                     <Translate content="seer.room.room_id"/>：{room.id}
@@ -480,6 +478,7 @@ class RoomParticipate extends React.Component {
                   <td width="33.33333%">
                   </td>
                 </tr>
+                </tbody>
               </table>
             </div>
           </div>
@@ -493,17 +492,19 @@ class RoomParticipate extends React.Component {
           <div className="group-title"><Translate content="seer.room.filter"/></div>
           <div className="group-content">
             <table className="room-detail-table" width="100%">
-              <tr>
-                <td width="33.33333%">
-                  <Translate content="seer.room.reputation"/>：{room.option.filter.reputation}
-                </td>
-                <td width="33.33333%">
-                  <Translate content="seer.room.guaranty"/>：<FormattedAsset amount={room.option.filter.guaranty} asset={"1.3.0"}/>
-                </td>
-                <td width="33.33333%">
-                  <Translate content="seer.room.volume"/>：{room.option.filter.volume}
-                </td>
-              </tr>
+              <tbody>
+                <tr>
+                  <td width="33.33333%">
+                    <Translate content="seer.room.reputation"/>：{room.option.filter.reputation}
+                  </td>
+                  <td width="33.33333%">
+                    <Translate content="seer.room.guaranty"/>：<FormattedAsset amount={room.option.filter.guaranty} asset={"1.3.0"}/>
+                  </td>
+                  <td width="33.33333%">
+                    <Translate content="seer.room.volume"/>：{room.option.filter.volume}
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
@@ -666,26 +667,48 @@ class RoomParticipate extends React.Component {
           <div className="group-content" style={{padding:0}}>
             <table className="room-history-table" width="100%">
               <thead>
-              <tr>
-                <th><Translate content="account.transactions.type"/></th>
-                <th><Translate content="account.transactions.info"/></th>
-                <th><Translate content="account.transactions.time"/></th>
-                <th><Translate content="account.transactions.tx_link"/></th>
-              </tr>
+                <tr>
+                  <th><Translate content="account.transactions.type"/></th>
+                  <th><Translate content="account.transactions.info"/></th>
+                  <th><Translate content="account.transactions.time"/></th>
+                </tr>
               </thead>
               <tbody>
               {
                 this.state.historyList.map(h=>{
+
+                  let op = [50,{
+                    fee:{
+                      amount:0,
+                      asset_id:h.asset_id
+                    },
+                    issuer:h.player,
+                    input:[h.input],
+                    room:h.room
+                  }];
+
+                  // "operations": [//操作列表
+                  //   [46, {//46操作类型表示开启房间
+                  //     "fee": {//手续费
+                  //       "amount": 10000000,//手续费金额，带100000精度，此处表示100.00000
+                  //       "asset_id": "1.3.0"//手续费资产类型。此处表示SEER
+                  //     },
+                  //     "issuer": "1.2.14054",//发起人
+                  //     "room": "1.15.1160",//房间号
+                  //     "start": "2019-03-19T02:17:16",//开始时间
+                  //     "stop": "2019-03-25T07:00:00",//结束时间
+                  //     "input_duration_secs": 9600//开奖时间
+                  //   }]
+                  // ],
+
                   return (
                     <Operation
                       key={h.id}
-                      op={h.operations}
-                      result={h.operationResults}
-                      block={h.blockHeight}
+                      op={op}
+                      block={h.block_num}
                       hideFee={true}
-                      withTxId={true}
+                      withTxId={false}
                       timeTd={true}
-                      txId={h.txId}
                       hideOpLabel={false}
                       current={"1.2.0"}/>
                   );
@@ -703,9 +726,6 @@ class RoomParticipate extends React.Component {
 
     render() {
         let { room } = this.state;
-
-        console.log("----------")
-        console.log(room)
 
         let options;
         if (!this.state.room.status){
@@ -815,7 +835,7 @@ class RoomParticipate extends React.Component {
             <div className="grid-content app-tables no-padding" ref="appTables">
                 <div className="content-block small-12">
                     <div>
-                      <RoomCard roomObject={this.state.room} checkMode={true} showDetail={true} checkedItem={this.state.checked_item}
+                      <RoomCard room={this.state.room} checkMode={true} showDetail={true} checkedItem={this.state.checked_item}
                                 onOptionCheck={i=>this.setState({checked_item:i})}>
                         <div>
                           <div className="group-title">

@@ -313,7 +313,7 @@ class HeaderExplorer extends React.Component {
         const a = ChainStore.getAccount(currentAccount);
         const isMyAccount = !a ? false : (AccountStore.isMyAccount(a) || (passwordLogin && currentAccount === passwordAccount));
         const isContact = this.props.linkedAccounts.has(currentAccount);
-        const enableDepositWithdraw = Apis.instance().chain_id.substr(0, 8) === "4018d784" && isMyAccount;
+        const enableDepositWithdraw = Apis.instance().chain_id.substr(0, 8) === "cea4fdf4" && isMyAccount;
 
         if (starredAccounts.size) {
             for (let i = tradingAccounts.length - 1; i >= 0; i--) {

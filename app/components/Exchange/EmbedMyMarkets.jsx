@@ -22,6 +22,8 @@ import {Tabs, Tab} from "../Utility/Tabs";
 import counterpart from "counterpart";
 import LoadingIndicator from "../LoadingIndicator";
 import {ChainValidation} from "seerjs/es";
+import { websiteAPIs } from "../../api/apiConfig";
+import IntlStore from "../../stores/IntlStore";
 
 let lastLookup = new Date();
 
@@ -45,6 +47,22 @@ class MarketGroup extends React.Component {
             inputValue: ""
         };
     }
+
+    // componentWillMount(){
+    //   fetch(websiteAPIs.BASE + websiteAPIs.HOUSES_INDEX_DATA, {
+    //     method:"post",
+    //     mode:"cors"
+    //   }).then((response) => response.json()
+    //     .then( json => {
+    //        this.setState({
+    //           marketlists:json.marketlists
+    //        });
+    //       // json.marketlists
+    //       // "marketlists": "[[SEER],[OPC,PFC,SCP]],[[USDT],[OPC,PFC,SCP,SEER]]",
+    //       //   "findmarketdefauft": "SEER,USDT"
+    //     })
+    //   );
+    // }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.findMarketTab !== this.props.findMarketTab) {
@@ -385,11 +403,12 @@ class MyMarkets extends React.Component {
     }
 
     _changeTab(tab) {
+        let s = tab === 0 ? "my-market" : "find-market";
         SettingsActions.changeViewSetting({
-            favMarketTab: tab
+            favMarketTab: s
         });
         this.setState({
-            activeTab: tab
+            activeTab: s
         });
 
         this._setMinWidth();
@@ -631,7 +650,7 @@ class MyMarkets extends React.Component {
                             base: market.base
                         }
                     );
-                    return null;
+                  return null
                 } else {
                     return (
                         {
@@ -676,7 +695,8 @@ class MyMarkets extends React.Component {
                     defaultActiveTab={1}
                     segmented={false}
                     tabsClass="account-overview small title-bold no-padding bordered-header content-block"
-                    style={{width:"100%",fontSize:14}}>
+                    style={{width:"100%",fontSize:14}}
+                    onChangeTab={this._changeTab.bind(this)}>
                     <Tab title="exchange.market_name">
                         <div>
                             <div style={{display:"flex",justifyContent:"center",alignItems: "center",marginTop:12}}>

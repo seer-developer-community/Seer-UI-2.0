@@ -160,7 +160,7 @@ class SettingsStore {
             this.marketsKey = this._getChainKey("userMarkets");
             // Default markets setup
             let topMarkets = {
-                markets_4018d784: [ // BTS MAIN NET
+                markets_cea4fdf4: [ // BTS MAIN NET
                     "OPEN.MKR", "BTS", "OPEN.ETH", "ICOO", "BTC", "OPEN.LISK", "BKT",
                     "OPEN.STEEM", "OPEN.GAME", "OCT", "USD", "CNY", "BTSR", "OBITS",
                     "OPEN.DGD", "EUR", "GOLD", "SILVER", "IOU.CNY", "OPEN.DASH",
@@ -172,24 +172,24 @@ class SettingsStore {
                     "GDEX.BTO", "WIN.ETH", "WIN.ETC", "WIN.HSR"
                 ],
                 markets_39f5e2ed: [ // TESTNET
-                    "PEG.FAKEUSD", "BTWTY"
+                    "PEG.FAKEUSD", "BTWTY","SEER"
                 ]
             };
 
             let bases = {
-                markets_4018d784: [ // BTS MAIN NET
-                    "USD", "OPEN.BTC", "CNY", "BTS", "BTC"
+                markets_cea4fdf4: [ // BTS MAIN NET
+                  "SEER","USDT"//, "OPEN.BTC", "CNY", "BTS", "BTC"
                 ],
                 markets_39f5e2ed: [ // TESTNET
-                    "TEST"
+                  "SEER","USDT"
                 ]
             };
 
-            let coreAssets = {markets_4018d784: "BTS", markets_39f5e2ed: "TEST"};
+            let coreAssets = {markets_cea4fdf4: "SEER", markets_39f5e2ed: "SEER"};
             let coreAsset = coreAssets[this.starredKey] || "SEER";
             this.defaults.unit[0] = coreAsset;
 
-            let chainBases = bases[this.starredKey] || bases.markets_4018d784;
+            let chainBases = bases[this.starredKey] || bases.markets_cea4fdf4;
             this.preferredBases = Immutable.List(chainBases);
 
             function addMarkets(target, base, markets) {

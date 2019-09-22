@@ -72,13 +72,13 @@ class AccountOracle extends React.Component {
                 script: "",
                 volume: 0
             },
-            awardsGt:SettingsStore.getState().settings.get("room_notice_awards_gt"),
+            awardsGt:SettingsStore.getState().settings.get("room_notice_awards_gt",0),
+            awardsGtEnable:SettingsStore.getState().settings.get("room_notice_awards_gt_enable",false),
             awardsGtEditable:false,
-            endTime:SettingsStore.getState().settings.get("room_notice_end_time_lt"),
+            endTime:SettingsStore.getState().settings.get("room_notice_end_time_lt",0),
+            endTimeEnable:SettingsStore.getState().settings.get("room_notice_end_time_lt_enable",false),
             endTimeEditable:false,
         };
-
-
     }
 
     componentWillMount() {
@@ -107,22 +107,38 @@ class AccountOracle extends React.Component {
         this.props.router.push(`/account/${account_name}/update-asset/${symbol}`);
     }
 
-    _onAwardsGtEditClick(){
+    _onAwardsGTEditClick(){
         if(this.state.awardsGtEditable){
             SettingsActions.changeSetting({
-                setting : "room_notice_awards_gt", value : this.state.awardsGt
+                setting : "room_notice_awards_gt", value : parseInt(this.state.awardsGt)
             });
         }
         this.setState({awardsGtEditable:!this.state.awardsGtEditable})
     }
 
-    _onEndTimeEditClick(){
+    _onEndTimeLTEditClick(){
         if(this.state.endTimeEditable){
             SettingsActions.changeSetting({
-                setting : "room_notice_end_time_lt", value : this.state.endTime
+                setting : "room_notice_end_time_lt", value : parseInt(this.state.endTime)
             });
         }
         this.setState({endTimeEditable:!this.state.endTimeEditable})
+    }
+
+    _onAwardsGTSwitch(){
+      this.setState({awardsGtEnable:!this.state.awardsGtEnable},()=>{
+        SettingsActions.changeSetting({
+          setting : "room_notice_awards_gt_enable", value : this.state.awardsGtEnable
+        });
+      });
+    }
+
+    _onEndTimeLTSwitch(){
+      this.setState({endTimeEnable:!this.state.endTimeEnable},()=>{
+        SettingsActions.changeSetting({
+          setting : "room_notice_end_time_lt_enable", value : this.state.endTimeEnable
+        });
+      });
     }
 
     render() {
@@ -137,7 +153,6 @@ class AccountOracle extends React.Component {
         if (!accountExists) {
             return <div className="grid-block"><h5><Translate component="h5" content="account.errors.not_found" name={account_name} /></h5></div>;
         }
-
 
         return (
             <div className="grid-content app-tables no-padding" ref="appTables">
@@ -187,15 +202,21 @@ class AccountOracle extends React.Component {
                                                                 &nbsp;&nbsp;&nbsp;&nbsp;
                                                                 {
                                                                     this.state.awardsGtEditable ?
-                                                                    <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14,borderColor:"#4BA180"}} value={this.state.awardsGt} onChange={e=>this.setState({awardsGt:e.target.value})}/>
+                                                                    <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14,borderColor:"#4BA180"}} value={this.state.awardsGt} onInput={e=>this.setState({awardsGt:e.target.value.replace(/[^\d]/g,'')})}/>
                                                                         :
                                                                     <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14}} disabled={true} value={this.state.awardsGt}/>
                                                                 }
                                                                 &nbsp;&nbsp;&nbsp;&nbsp;SEER
                                                                 &nbsp;&nbsp;&nbsp;&nbsp;
-                                                                <a onClick={this._onAwardsGtEditClick.bind(this)}>
+                                                                <a onClick={this._onAwardsGTEditClick.bind(this)}>
                                                                     <Translate content={this.state.awardsGtEditable ? "confirm" : "seer.oracle.remind_update"}/>
                                                                 </a>
+                                                                <div style={{flex:1,textAlign:"right"}}>
+                                                                  <div className="switch" onClick={this._onAwardsGTSwitch.bind(this)}>
+                                                                    <input type="checkbox" checked={this.state.awardsGtEnable} />
+                                                                    <label />
+                                                                  </div>
+                                                                </div>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -206,15 +227,21 @@ class AccountOracle extends React.Component {
                                                                 &nbsp;&nbsp;&nbsp;&nbsp;
                                                                 {
                                                                     this.state.endTimeEditable ?
-                                                                        <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14,borderColor:"#4BA180"}} value={this.state.endTime} onChange={e=>this.setState({endTime:e.target.value})}/>
+                                                                        <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14,borderColor:"#4BA180"}} value={this.state.endTime} pattern="[0-9]*" onInput={e=>this.setState({endTime:e.target.value.replace(/[^\d]/g,'')})}/>
                                                                         :
                                                                         <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14}} disabled={true} value={this.state.endTime}/>
                                                                 }
                                                                 &nbsp;&nbsp;&nbsp;&nbsp;MIN
                                                                 &nbsp;&nbsp;&nbsp;&nbsp;
-                                                                <a onClick={this._onEndTimeEditClick.bind(this)}>
+                                                                <a onClick={this._onEndTimeLTEditClick.bind(this)}>
                                                                     <Translate content={this.state.endTimeEditable ? "confirm" : "seer.oracle.remind_update"}/>
                                                                 </a>
+                                                                  <div style={{flex:1,textAlign:"right"}}>
+                                                                    <div className="switch" onClick={this._onEndTimeLTSwitch.bind(this)}>
+                                                                      <input type="checkbox" checked={this.state.endTimeEnable} />
+                                                                      <label />
+                                                                    </div>
+                                                                  </div>
                                                             </div>
                                                         </td>
                                                     </tr>

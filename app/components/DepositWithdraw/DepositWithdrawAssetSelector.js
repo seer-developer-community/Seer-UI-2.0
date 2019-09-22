@@ -52,7 +52,7 @@ DepositWithdrawAssetSelector = BindToChainState(DepositWithdrawAssetSelector);
 class DepositStoreWrapper extends React.Component {
 
     componentWillMount() {
-        if (Apis.instance().chain_id.substr(0, 8) === "4018d784") { // Only fetch this when on BTS main net
+        if (Apis.instance().chain_id.substr(0, 8) === "cea4fdf4") { // Only fetch this when on BTS main net
             GatewayActions.fetchCoins.defer(); // Openledger
             GatewayActions.fetchCoinsSimple.defer({backer: "RUDEX", url:rudexAPIs.BASE+rudexAPIs.COINS_LIST}); // RuDEX
             GatewayActions.fetchCoins.defer({backer: "TRADE"}); // Blocktrades

@@ -1,25 +1,13 @@
 import React from "react";
 import Translate from "react-translate-component";
-import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
-import utils from "common/utils";
-import counterpart from "counterpart";
-import AssetActions from "actions/AssetActions";
-import AccountSelector from "../Account/AccountSelector";
-import AmountSelector from "../Utility/AmountSelector";
 import moment from 'moment'
 import {Link} from "react-router/es";
-import SeerActions from "../../actions/SeerActions";
-import {ChainStore} from "seerjs/es";
 var Apis =  require("seerjs-ws").Apis;
-import LinkToAccountById from "../Utility/LinkToAccountById";
-import LinkToAssetById from "../Utility/LinkToAssetById";
 import FormattedAsset from "../Utility/FormattedAsset";
-import {Tabs, Tab} from "../Utility/Tabs";
-
-import AccountStore from "../../stores/AccountStore";
-import { Asset } from "../../lib/common/MarketClasses";
 import _ from "lodash";
+import WebApi from "../../api/WebApi";
+
 let roomType =
 {
     0:"PVD",
@@ -29,8 +17,10 @@ let roomType =
 class RoomCard extends React.Component {
 
     static propTypes = {
-        room: ChainTypes.ChainObject,
-        roomObject:React.PropTypes.object,
+        room: React.PropTypes.oneOfType([
+          React.PropTypes.object,
+          React.PropTypes.string
+        ]),
         recommend:React.PropTypes.bool,
         checkMode:React.PropTypes.bool,
         onOptionCheck:React.PropTypes.func,
@@ -41,12 +31,11 @@ class RoomCard extends React.Component {
     constructor(props) {
         super(props);
 
-        let room = ((this.props.room && this.props.room.toJS()) || this.props.roomObject);
         this.state = {
             checked_item: typeof this.props.checkedItem === "undefined" ? -1 : this.props.checkedItem,
             amount: null,
-            room: room,
-            currentRoom:room,
+            room: null,
+            currentRoom:null,
             currentRoomIndex:0,
             account: null,
             asset:null,
@@ -57,33 +46,22 @@ class RoomCard extends React.Component {
     }
 
     componentWillMount() {
-        if(this.state.room) {
-          Apis.instance().db_api().exec("get_assets", [[this.state.room.option.accept_asset]]).then(objs => {
-            var ret = [];
-            objs.forEach(function(item, index) {
-              ret.push(item);
-            });
-            let symbol = ret.length > 0 ? ret[0].symbol : "";
-
-            let precision = ret.length > 0 ? Math.pow(10, parseInt(ret[0].precision)) : 1;
-            this.setState({ asset: symbol, precision: precision });
+        if(typeof this.props.room === "string"){
+          WebApi.getSeerRoom(this.props.room,false).then(room=>{
+              this.setState({
+                room:room,
+                currentRoom:room
+              },()=>{
+                this.initRoom();
+              });
           });
-
-            if(this.state.room.description.indexOf("(@#-") !== -1 && this.state.room.description.indexOf("-#@)") !== -1) {
-                let titles = [];
-                titles.push(this._getRoomSubTitle(this.state.room.description));
-                this.state.room.description = this._fixRoomdesc(this.state.room.description);
-
-                if(this._isMutiRooms()) {
-                    this.state.room.subRooms.map(r => {
-                        titles.push(this._getRoomSubTitle(r.description));
-                        r.description = this._fixRoomdesc(r.description);
-                    });
-                }else{
-                    this.state.room.description = "[ " + titles[0] + " ] " + this.state.room.description;
-                }
-                this.state.mutiRoomSubTitles = titles;
-            }
+        }else{
+          this.setState({
+            room:this.props.room,
+            currentRoom:this.props.room
+          },()=>{
+            this.initRoom();
+          });
         }
 
 /*
@@ -98,6 +76,35 @@ class RoomCard extends React.Component {
             });
         }
         */
+    }
+
+    initRoom(){
+      Apis.instance().db_api().exec("get_assets", [[this.state.room.option.accept_asset]]).then(objs => {
+        var ret = [];
+        objs.forEach(function(item, index) {
+          ret.push(item);
+        });
+        let symbol = ret.length > 0 ? ret[0].symbol : "";
+
+        let precision = ret.length > 0 ? Math.pow(10, parseInt(ret[0].precision)) : 1;
+        this.setState({ asset: symbol, precision: precision });
+      });
+
+      if(this.state.room.description.indexOf("(@#-") !== -1 && this.state.room.description.indexOf("-#@)") !== -1) {
+        let titles = [];
+        titles.push(this._getRoomSubTitle(this.state.room.description));
+        this.state.room.description = this._fixRoomdesc(this.state.room.description);
+
+        if(this._isMutiRooms()) {
+          this.state.room.subRooms.map(r => {
+            titles.push(this._getRoomSubTitle(r.description));
+            r.description = this._fixRoomdesc(r.description);
+          });
+        }else{
+          this.state.room.description = "[ " + titles[0] + " ] " + this.state.room.description;
+        }
+        this.state.mutiRoomSubTitles = titles;
+      }
     }
 
     _fixRoomdesc(desc){

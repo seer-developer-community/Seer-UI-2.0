@@ -65,6 +65,7 @@ class AccountPrediction extends React.Component {
             myCreatedPredictions:[],
             current_room:null,
             inputType:null, //input ,oracleInput
+            inComeList:[]
         };
     }
 
@@ -122,6 +123,39 @@ class AccountPrediction extends React.Component {
           this.setState({
             myCreatedPredictions:rooms
           });
+        });
+      });
+
+
+      AccountApi.getPlayerInfo(oid).then(res=>{
+        //
+        let incomes = {};
+        res.count_total.map(t=>{
+          incomes[t[0]] = {
+            asset_id:t[0],
+            count:t[1]
+          };
+        });
+
+        res.share_total.map(t=>{
+          incomes[t[0]].expend = t[1];
+        });
+
+        res.count_wins.map(t=>{
+          incomes[t[0]].wins_count = t[1];
+        });
+
+        res.share_wins.map(t=>{
+          incomes[t[0]].win = t[1];
+        });
+
+        let arr = [];
+        for(let k in incomes){
+          arr.push(incomes[k])
+        }
+
+        this.setState({
+          inComeList: arr
         });
       });
     }
@@ -297,6 +331,19 @@ class AccountPrediction extends React.Component {
         );
       });
 
+      let incomeRows = this.state.inComeList.map(r=>{
+          return(
+              <tr key={r.asset_id}>
+                <td>
+                  <FormattedAsset asset={r.asset_id} hide_asset={false} hide_amount={true}/>
+                </td>
+                <td style={{ textAlign: "right" }}>{r.count}</td>
+                <td style={{ textAlign: "right" }}>{r.wins_count}</td>
+                <td style={{ textAlign: "right" }}><FormattedAsset amount={r.expend} asset={r.asset_id} hide_asset={false} hide_amount={false}/></td>
+                <td style={{textAlign:"right",color:r.win < 0 ?"#E20E26": r.win === 0 ? "#666" : "#449E7B"}}><FormattedAsset amount={r.win} asset={r.asset_id} hide_asset={false} hide_amount={false}/></td>
+              </tr>
+          );
+      });
 
         return (
             <div ref="wrapper" className="grid-block page-layout vertical">
@@ -349,6 +396,33 @@ class AccountPrediction extends React.Component {
                                 </thead>
                                 <tbody>
                                 {createdRows}
+                                </tbody>
+                              </table>
+                              : this.state.inputType === "input" ?
+                                <RoomInput room={this.state.current_room} account={account} onBack={()=>this.setState({inputType:null})}/>
+                                :
+                                <OracleInput room={this.state.current_room} account={account} onBack={()=>this.setState({inputType:null})}/>
+                            }
+                          </div>
+                        </div>
+                      </Tab>
+
+                      <Tab title="seer.room.income_list">
+                        <div className="generic-bordered-box">
+                          <div className="box-content">
+                            { this.state.inputType === null ?
+                              <table className="table table-hover dashboard-table">
+                                <thead>
+                                  <tr>
+                                    <th width="100px"><Translate content="explorer.asset.title"/></th>
+                                    <th style={{ textAlign: "right" }}><Translate content="seer.room.in_join_count"/></th>
+                                    <th style={{ textAlign: "right" }}><Translate content="seer.room.win_count"/></th>
+                                    <th style={{ textAlign: "right" }}><Translate content="seer.room.in_join_amount"/></th>
+                                    <th style={{ textAlign: "right" }}><Translate content="seer.room.win_amount"/></th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                {incomeRows}
                                 </tbody>
                               </table>
                               : this.state.inputType === "input" ?

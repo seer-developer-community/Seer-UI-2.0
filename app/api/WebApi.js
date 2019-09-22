@@ -36,6 +36,8 @@ const getSeerRoomRecords = async function(roomId,limit){
     {
         Apis.instance().db_api().exec("get_seer_room_records", [roomId, "2.18.999999999999", limit]).then(results => {
             resolve(results ? results : []);
+        },err=>{
+          resolve([]);
         });
     });
 }
@@ -52,7 +54,75 @@ const getSeersRoomRecords = async function(roomIds = [],limit) {
         });
         return mapping;
     });
-}
+};
+
+
+const getHousesSeerRooms = async function(houseIds=[],excludedRooms=[],extraRooms=[]) {
+    return await new Promise((resolve) => {
+        if(!houseIds || houseIds.length === 0){
+            resolve([]);
+            return;
+        }
+
+        Apis.instance().db_api().exec("get_houses", [houseIds]).then(houses => {
+          let roomIds = [];
+          houses.map(h=>{
+            roomIds.push(...h.rooms)
+          });
+          //
+          roomIds.push(...extraRooms);
+          roomIds = _.difference(roomIds,excludedRooms);
+          roomIds = _.uniq(roomIds);
+          //
+          getSeerRooms(roomIds).then((rooms) => {
+                resolve(rooms);
+          });
+        });
+    });
+};
+
+/**
+ * load all seer room
+ * @param option.onlyLoadWhiteListHouses
+ * @param option.housesWhiteList
+ * @param option.excludedHouses
+ * @param option.excludedRooms
+ * @param option.extraRooms
+ * @returns {Promise<void>}
+ */
+const getAllSeerRoom = async function(option={
+    onlyLoadWhiteListHouses:false,
+    housesWhiteList:[],
+    excludedHouses:[],
+    excludedRooms:[],
+    extraRooms:[]
+}) {
+    option.excludedRooms = option.excludedRooms || [];
+    option.excludedHouses = option.excludedHouses || [];
+    option.housesWhiteList = option.housesWhiteList || [];
+    option.extraRooms = option.extraRooms || [];
+
+    if(option.onlyLoadWhiteListHouses){
+      return await new Promise((resolve) => {
+        let houseIds = _.difference(option.housesWhiteList,option.excludedHouses);
+        getHousesSeerRooms(houseIds, option.excludedRooms,option.extraRooms).then(rooms => {
+            resolve(rooms);
+        });
+      });
+    }else{
+
+      return await new Promise((resolve) => {
+        Apis.instance().db_api().exec("lookup_house_accounts", ["", 1000]).then((results) => {
+          let ids = results.map(r => r[1]);
+
+          ids = _.difference(ids,option.excludedHouses);
+          getHousesSeerRooms(ids, option.excludedRooms,option.extraRooms).then(rooms => {
+            resolve(rooms);
+          });
+        });
+      });
+    }
+};
 
 
 const getBlockRecords = function(limit,codeNumber){
@@ -111,5 +181,6 @@ export default {
     getSeerRooms,
     getBlockRecords,
     getSeerRoomRecords,
-    getSeersRoomRecords
+    getSeersRoomRecords,
+    getAllSeerRoom
 }

@@ -83,7 +83,7 @@ class RoomInput extends React.Component {
             <div className="grid-container " style={{paddingTop: "2rem",marginLeft:0}}>
               <Translate component="div" content="seer.room.input" style={{color:"#666",fontSize:14,fontWeight:"bold",margin:"0 0 28px 0"}}/>
 
-              <RoomCard roomObject={this.state.room} checkMode={true} showDetail={true} showGiveUpOption={true} checkedItem={this.state.input}
+              <RoomCard room={this.state.room} checkMode={true} showDetail={true} showGiveUpOption={true} checkedItem={this.state.input}
                         onOptionCheck={i=>this.setState({input:i})}>
                 <div style={{display:"flex",justifyContent:"flex-end",padding:"86px 31px 40px 0"}}>
                     <button className="button large outline" style={{width:220,height:54}} onClick={this.onBack.bind(this)}><Translate content="transfer.back"/></button>

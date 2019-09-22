@@ -12,6 +12,7 @@ import LoadingIndicator from "./components/LoadingIndicator";
 import BrowserNotifications from "./components/BrowserNotifications/BrowserNotificationsContainer";
 import Header from "components/Layout/HeaderNav";
 import HeaderExplorer from "components/Layout/HeaderExplorer";
+import BrowserNotificationActions from "actions/BrowserNotificationActions"
 // import MobileMenu from "components/Layout/MobileMenu";
 import ReactTooltip from "react-tooltip";
 import NotificationSystem from "react-notification-system";
@@ -23,6 +24,9 @@ import Deprecate from "./Deprecate";
 import  _ from "lodash";
 import IntlActions from "actions/IntlActions";
 import IntlStore from "stores/IntlStore";
+import WebApi from "./api/WebApi";
+import counterpart from "counterpart";
+import { websiteAPIs } from "./api/apiConfig";
 
 // import Incognito from "./components/Layout/Incognito";
 // import { isIncognito } from "feature_detect";
@@ -45,13 +49,15 @@ class App extends React.Component {
             isMobile: !!(/android|ipad|ios|iphone|windows phone/i.test(user_agent) || isSafari),
             incognito: false,
             incognitoWarningDismissed: false,
-            height: window && window.innerHeight
+            height: window && window.innerHeight,
+            notifiedList:[]
         };
 
         this._rebuildTooltips = this._rebuildTooltips.bind(this);
         this._onSettingsChange = this._onSettingsChange.bind(this);
         this._chainStoreSub = this._chainStoreSub.bind(this);
         this._syncStatus = this._syncStatus.bind(this);
+        this._roomNotices = this._roomNotices.bind(this);
         this._getWindowHeight = this._getWindowHeight.bind(this);
     }
 
@@ -61,6 +67,58 @@ class App extends React.Component {
         SettingsStore.unlisten(this._onSettingsChange);
         ChainStore.unsubscribe(this._chainStoreSub);
         clearInterval(this.syncCheckInterval);
+        clearInterval(this.checkRoomNoticeInterval);
+    }
+
+    _roomNotices(){
+        console.log("check room notice！");
+        WebApi.getAllSeerRoom().then(rooms=>{
+            let awardsGt = SettingsStore.getState().settings.get("room_notice_awards_gt",-1);
+            let endTimeLt = SettingsStore.getState().settings.get("room_notice_end_time_lt",-1);
+            let awardsGtEnable = SettingsStore.getState().settings.get("room_notice_awards_gt_enable",false);
+            let endTimeLtEnable = SettingsStore.getState().settings.get("room_notice_end_time_lt_enable",false);
+
+            if((awardsGtEnable && awardsGt >= 0) || (endTimeLtEnable && endTimeLt > 0)){
+                rooms.every(r=>{
+
+                    if(endTimeLtEnable){
+                        let timeDiff = new Date(r.option.stop).getTime() - new Date().getTime();
+                        if(timeDiff > 0 && timeDiff <= endTimeLt * 60 * 1000 && this.state.notifiedList.indexOf(r.id) === -1) {
+                          this.state.notifiedList.push(r.id);
+                          BrowserNotificationActions.addNotification({
+                            title: counterpart.translate("browser_notification_messages.room_end_time_lt_title"),
+                            body:counterpart.translate("browser_notification_messages.room_end_time_lt_body", {
+                              room: r.id,
+                              min:endTimeLt
+                            }),
+                            onNotifyClick:()=>{
+                              this.props.router.push(`/prediction/rooms/${r.id}`);
+                            }
+                          });
+                          return false;
+                        }
+                    }
+
+                    if(awardsGtEnable && r.option.reward_per_oracle >= awardsGt && this.state.notifiedList.indexOf(r.id) === -1){
+                      this.state.notifiedList.push(r.id);
+                      BrowserNotificationActions.addNotification({
+                        title: counterpart.translate("browser_notification_messages.room_awards_gt_title"),
+                        body:counterpart.translate("browser_notification_messages.room_awards_gt_body", {
+                          room: r.id,
+                          amount:r.option.reward_per_oracle,
+                          awards:awardsGt
+                        }),
+                        onNotifyClick:()=>{
+                          this.props.router.push(`/prediction/rooms/${r.id}`);
+                        }
+                      });
+                      return false;
+                    }
+
+                    return true;
+                });
+            }
+        });
     }
 
     _syncStatus(setState = false) {
@@ -97,6 +155,7 @@ class App extends React.Component {
     componentDidMount() {
         this._setListeners();
         this.syncCheckInterval = setInterval(this._syncStatus, 5000);
+        this.checkRoomNoticeInterval = setInterval(this._roomNotices, 1000 * 60);
         const user_agent = navigator.userAgent.toLowerCase();
         if (!(window.electron || user_agent.indexOf("firefox") > -1 || user_agent.indexOf("chrome") > -1 || user_agent.indexOf("edge") > -1)) {
             this.refs.browser_modal.show();

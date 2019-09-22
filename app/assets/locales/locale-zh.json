@@ -63,7 +63,11 @@
     },
     "browser_notification_messages": {
         "money_received_title": "从转移 %(from)s",
-        "money_received_body": "发给你了 %(amount)s %(symbol)s"
+        "money_received_body": "发给你了 %(amount)s %(symbol)s",
+        "room_awards_gt_title": "预测房间提醒",
+        "room_awards_gt_body":"预测房间 %(room)s 奖励 %(amount)s SEER ,大于您设置的提醒值 %(awards)s SEER，请留意",
+        "room_end_time_lt_title": "预测房间提醒",
+        "room_end_time_lt_body":"预测房间 %(room)s 距离结束小于您设置的提醒值 %(min)s 分钟，请留意"
     },
     "tooltip": {
         "call_limit": "市场中抵押率最低的债仓的平仓价",
@@ -512,6 +516,7 @@
             "signing_key": "出块密钥",
             "not_created": "您还没有创建见证人",
             "not_lifetime_member": "创建见证人需要成为终身会员",
+            "generate_keys":"生成密钥对",
             "collateral": {
                 "title": "见证人抵押",
                 "date": "抵押时间",
@@ -1811,7 +1816,12 @@
             "input_option_group_title":"请输入竞猜项目标题",
             "msg_group_title_empty":"高级竞猜项目的标题 %(index)s 不能为空，请检查！",
             "msg_group_title_repeat":"高级竞猜项目的标题 “%(title)s” 多次重复，请检查！",
-            "msg_group_all_created":"共 %(count)s 个竞猜项目，已全部创建！"
+            "msg_group_all_created":"共 %(count)s 个竞猜项目，已全部创建！",
+            "income_list":"总收支列表",
+            "in_join_count":"总参与次数",
+            "win_count":"总获胜次数",
+            "in_join_amount":"总参与金额",
+            "win_amount":"总收益金额"
         }
     },
   "erc20": {

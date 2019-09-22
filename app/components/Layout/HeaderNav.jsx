@@ -290,7 +290,7 @@ class HeaderNav extends React.Component {
         const a = ChainStore.getAccount(currentAccount);
         const isMyAccount = !a ? false : (AccountStore.isMyAccount(a) || (passwordLogin && currentAccount === passwordAccount));
         const isContact = this.props.linkedAccounts.has(currentAccount);
-        const enableDepositWithdraw = Apis.instance().chain_id.substr(0, 8) === "4018d784" && isMyAccount;
+        const enableDepositWithdraw = Apis.instance().chain_id.substr(0, 8) === "cea4fdf4" && isMyAccount;
 
         if (starredAccounts.size) {
             for (let i = tradingAccounts.length - 1; i >= 0; i--) {
@@ -495,23 +495,24 @@ class HeaderNav extends React.Component {
                         </ul>
                     </div>
                 </div>
+              <div className="truncated" >&nbsp;</div>
               {
                 (!hasLocalWallet || !currentAccount) &&
-                <div className="truncated" style={{textAlign: "right",paddingRight:10}}>
+                <div style={{textAlign: "right",paddingRight:10}}>
                   <i className="iconfont icon-qianbao1" style={{color:"#449E7B"}}></i>&nbsp;&nbsp;
                   <Link to={"/create-account/wallet"}><Translate content="account.create_wallet" style={{fontSize:16,color:"#666"}}/></Link>
                 </div>
               }
               {
                 hasLocalWallet && currentAccount && isMyAccount &&
-                <div className="truncated" style={{ textAlign: "right", paddingRight: 10 }}>
+                <div style={{ textAlign: "right", paddingRight: 10 }}>
                   <i className="iconfont icon-chuangjian2" style={{ color: "#449E7B" }}></i>&nbsp;&nbsp;
                   <Link to={"/account/" + currentAccount + "/create-room/single=false"}><Translate content="seer.room.create" style={{ fontSize: 16, color: "#666" }}/></Link>
                 </div>
               }
               {
-                hasLocalWallet && currentAccount && !isMyAccount &&
-                <div className="truncated" style={{ textAlign: "right", paddingRight: 10 }}>
+                !isMyAccount &&
+                <div style={{ textAlign: "right", paddingRight: 10 }}>
                   <i className="iconfont icon-tishi2" style={{ color: "#449E7B" }}></i>&nbsp;&nbsp;
                   <Translate content="account.observer_model" style={{ fontSize: 16, color: "#666" }}/>
                 </div>

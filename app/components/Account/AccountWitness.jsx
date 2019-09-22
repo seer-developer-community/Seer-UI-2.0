@@ -14,6 +14,10 @@ import BaseModal from "../Modal/BaseModal";
 import counterpart from "counterpart";
 import AmountSelector from "../Utility/AmountSelector";
 import {Link} from "react-router/es";
+import WalletDb from "../../stores/WalletDb";
+import WalletUnlockActions from "actions/WalletUnlockActions";
+import PrivateKey from "seerjs/es/ecc/src/PrivateKey";
+import ReserveAssetModal from "../Modal/ReserveAssetModal";
 
 class CollateralList extends React.Component {
     static defaultProps = {
@@ -119,6 +123,7 @@ class AccountWitness extends React.Component {
             signingKey: "",
             witnessUrl: "",
             viewStatus:null,
+            generateKeys:""
         };
         this.update = this.update.bind(this);
     }
@@ -186,6 +191,23 @@ class AccountWitness extends React.Component {
         WitnessActions.claimCollateral(args);
     }
 
+    generateKeys(){
+          WalletUnlockActions.unlock().then(e=>{
+            let brainKey = WalletDb.getBrainKey();
+            let private_key = PrivateKey.fromSeed(brainKey);
+            let wif = private_key.toWif();
+            let publicKey = private_key.toPublicKey().toPublicKeyString();
+
+            let keys = {
+              brain_priv_key:brainKey,
+              wif_priv_key:wif,
+              pub_key:publicKey
+            };
+
+            this.setState({generateKeys: `"brain_priv_key":"${keys.brain_priv_key}",\n"wif_priv_key":"${keys.wif_priv_key}",\n"pub_key":"${keys.pub_key}"`});
+            ZfApi.publish("show_keys", "open");
+        });
+    }
 
     render() {
         const {
@@ -295,9 +317,14 @@ class AccountWitness extends React.Component {
             if(this.state.viewStatus === "witness_create"){
                 children = (
                   <div>
+                    <div>
+                      <button onClick={this.generateKeys.bind(this)} className="button outline" style={{margin:"20px 0px"}}>
+                        <Translate content="account.witness.generate_keys"/>
+                      </button>
+                    </div>
                     <div className="content-block">
                       <Translate component="label" content="account.witness.signing_key"/>
-                      <textarea onChange={(e) => this.setState({signingKey: e.target.value})} style={{height:"6.69em",resize: "none"}}>{this.state.signingKey}</textarea>
+                      <textarea onChange={(e) => this.setState({signingKey: e.target.value})} style={{height:"6.69em",resize: "none",color:"#666",fontSize:14,lineHeight:"22px"}} value={this.state.signingKey}></textarea>
                     </div>
 
                     <div className="content-block">
@@ -341,6 +368,12 @@ class AccountWitness extends React.Component {
                   {children}
                 </div>
                 </div>
+              <BaseModal id="show_keys" overlay={true}>
+                <br/><br/>
+                <div className="grid-block vertical">
+                  <textarea style={{height:"9em",resize: "none",color:"#666",fontSize:14,lineHeight:"22px"}} value={this.state.generateKeys}></textarea>
+                </div>
+              </BaseModal>
             </div>
         );
     }
