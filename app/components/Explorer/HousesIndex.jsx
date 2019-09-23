@@ -169,7 +169,7 @@ class HouseList extends React.Component {
     }
 
     componentWillMount() {
-      this._loadRooms();
+        this._loadRooms();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -192,6 +192,14 @@ class HouseList extends React.Component {
         return true;
       }
       if(newProps.sortType !== this.props.sortType){
+        return true;
+      }
+      if(newProps.recommendRooms !== this.props.recommendRooms ||
+          newProps.excludedRooms !== this.props.excludedRooms ||
+          newProps.excludedHouses !== this.props.excludedHouses ||
+          newProps.housesWhiteList !== this.props.housesWhiteList ||
+          newProps.enableHousesWhiteList !== this.props.enableHousesWhiteList){
+
         return true;
       }
 
