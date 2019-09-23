@@ -76,6 +76,7 @@ class Accounts extends React.Component {
             nextProps.linkedAccounts !== this.props.linkedAccounts ||
             nextProps.ignoredAccounts !== this.props.ignoredAccounts ||
             nextProps.passwordAccount !== this.props.passwordAccount ||
+            nextProps.account !== this.props.account ||
             nextState.width !== this.state.width ||
             nextProps.accountsReady !== this.props.accountsReady ||
             nextState.showIgnored !== this.state.showIgnored ||

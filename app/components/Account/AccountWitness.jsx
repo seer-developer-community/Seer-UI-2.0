@@ -125,19 +125,25 @@ class AccountWitness extends React.Component {
             viewStatus:null,
             generateKeys:""
         };
-        this.update = this.update.bind(this);
+        this.update = this.update.bind(this,this.props.account);
     }
     componentWillMount() {
         ChainStore.subscribe(this.update);
-        this.update();
+        this.update(this.props.account);
+    }
+
+    componentWillReceiveProps(nextProps) {
+      if(nextProps.account !== this.props.account || nextProps.account_name !== this.props.account_name){
+        this.update(nextProps.account);
+      }
     }
 
     componentWillUnmount() {
         ChainStore.unsubscribe(this.update);
     }
 
-    update(obj) {
-        let witness = ChainStore.getWitnessById(this.props.account.get("id"));
+    update(account) {
+        let witness = ChainStore.getWitnessById(account.get("id"));
         if (witness) this.setState({witness: witness.toJS()})
     }
 

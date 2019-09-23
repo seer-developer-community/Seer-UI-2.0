@@ -81,10 +81,20 @@ class AccountOracle extends React.Component {
         };
     }
 
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.account !== this.props.account){
+            this._loadData(nextProps.account);
+        }
+    }
+
     componentWillMount() {
-        Apis.instance().db_api().exec("get_oracle_by_account", [this.props.account.get("id")]).then((results) => {
-            this.setState({oracle: results})
-        });
+        this._loadData(this.props.account);
+    }
+
+    _loadData(account){
+      Apis.instance().db_api().exec("get_oracle_by_account", [account.get("id")]).then((results) => {
+        this.setState({oracle: results})
+      });
     }
 
     _reserveButtonClick(assetId, e) {

@@ -169,13 +169,27 @@ class HouseList extends React.Component {
     }
 
     componentWillMount() {
-        this._loadRooms();
+
     }
 
     componentWillReceiveProps(nextProps) {
       // if(!_.isEmpty(_.differenceWith(nextProps.houses, this.props.houses, _.isEqual))) {
       //   this._loadRooms.bind(this)(nextProps.houses);
       // }
+      if(nextProps.recommendRooms !== this.props.recommendRooms ||
+        nextProps.excludedRooms !== this.props.excludedRooms ||
+        nextProps.excludedHouses !== this.props.excludedHouses ||
+        nextProps.housesWhiteList !== this.props.housesWhiteList ||
+        nextProps.enableHousesWhiteList !== this.props.enableHousesWhiteList){
+
+        this._loadRooms({
+          onlyLoadWhiteListHouses:nextProps.enableHousesWhiteList,
+          housesWhiteList:nextProps.housesWhiteList,
+          excludedHouses:nextProps.excludedHouses,
+          excludedRooms:nextProps.excludedRooms,
+          extraRooms:nextProps.recommendRooms
+        });
+      }
     }
 
     shouldComponentUpdate(newProps, newState) {
@@ -194,26 +208,12 @@ class HouseList extends React.Component {
       if(newProps.sortType !== this.props.sortType){
         return true;
       }
-      if(newProps.recommendRooms !== this.props.recommendRooms ||
-          newProps.excludedRooms !== this.props.excludedRooms ||
-          newProps.excludedHouses !== this.props.excludedHouses ||
-          newProps.housesWhiteList !== this.props.housesWhiteList ||
-          newProps.enableHousesWhiteList !== this.props.enableHousesWhiteList){
-
-        return true;
-      }
 
       return false;
     }
 
-    _loadRooms(){
-        WebApi.getAllSeerRoom({
-          onlyLoadWhiteListHouses:this.props.enableHousesWhiteList,
-          housesWhiteList:this.props.housesWhiteList,
-          excludedHouses:this.props.excludedHouses,
-          excludedRooms:this.props.excludedRooms,
-          extraRooms:this.props.recommendRooms
-        }).then(rooms=>{
+    _loadRooms(options){
+        WebApi.getAllSeerRoom(options).then(rooms=>{
           let roomIds = rooms.map(r=>r.id);
           WebApi.getSeersRoomRecords(roomIds,1).then(records=>{
             rooms.map(r=>{
