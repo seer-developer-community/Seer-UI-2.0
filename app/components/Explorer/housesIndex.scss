@@ -5,11 +5,43 @@
     //background: #f2f2f2;
     //min-height: 100%;
 
+    @media (max-width: 1450px) {
+        .main {
+            width: 1400px;
+            max-width: 1400px;
+        }
+
+        .image-slider {
+            width: 828px;
+            height: 125px;
+
+            a{
+                width: 828px;
+                height: 125px;
+            }
+        }
+    }
+
+    @media (min-width: 1460px) {
+        .main {
+            width: 1460px;
+            max-width: 1460px;
+        }
+
+        .image-slider {
+            width: 888px;
+            height: 134px;
+
+            a{
+                width: 888px;
+                height: 134px;
+            }
+        }
+    }
+
     .main {
         display: flex;
         flex-direction: row;
-        width: 1460px;
-        max-width: 1460px;
         margin: 0 auto;
         background: #fff;
 
@@ -136,15 +168,11 @@
             }
 
             .image-slider {
-                width: 888px;
-                height: 134px;
                 margin-top: 10px;
                 overflow: hidden;
 
                 a {
                     display: block;
-                    width: 888px;
-                    height: 134px;
                     background-size: cover !important;
                 }
 
