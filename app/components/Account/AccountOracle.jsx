@@ -22,6 +22,10 @@ import BindToChainState from "../Utility/BindToChainState";
 import {Tabs, Tab} from "../Utility/Tabs";
 import SettingsActions from "actions/SettingsActions";
 import SettingsStore from "stores/SettingsStore";
+import RoomInput from "./RoomInput";
+import OracleInput from "./OracleInput";
+import WebApi from "../../api/WebApi";
+import AccountStore from "../../stores/AccountStore";
 var Apis =  require("seerjs-ws").Apis;
 
 class AccountOracle extends React.Component {
@@ -78,6 +82,9 @@ class AccountOracle extends React.Component {
             endTime:SettingsStore.getState().settings.get("room_notice_end_time_lt",0),
             endTimeEnable:SettingsStore.getState().settings.get("room_notice_end_time_lt_enable",false),
             endTimeEditable:false,
+            needOracleInputRooms:[],
+            isOracleInputting:false,
+            current_room:null
         };
     }
 
@@ -95,7 +102,23 @@ class AccountOracle extends React.Component {
       Apis.instance().db_api().exec("get_oracle_by_account", [account.get("id")]).then((results) => {
         this.setState({oracle: results})
       });
+
+      //
+      WebApi.getAllSeerRoom({statusFilter:["inputing"]}).then(rooms=>{
+          rooms = rooms || [];
+          rooms = _.filter(rooms,r=>r.option.reward_per_oracle > 0);
+          this.setState({
+            needOracleInputRooms:rooms
+          });
+      });
     }
+
+      oracleInputRoom(room) {
+        this.setState({
+          current_room: room,
+          isOracleInputting: true
+        });
+      }
 
     _reserveButtonClick(assetId, e) {
         e.preventDefault();
@@ -151,6 +174,199 @@ class AccountOracle extends React.Component {
       });
     }
 
+    renderOracle() {
+      let {account_name} = this.props;
+
+      return (
+        <div className="content-block small-12" style={{paddingTop:"34px"}}>
+
+          <Translate content="seer.oracle.my" component="h5" style={{fontWeight:"bold"}}/>
+          <Translate content="seer.oracle.explain" component="p" style={{fontSize:"14px",color:"#999"}}/>
+
+          <div className="tabs-container generic-bordered-box">
+
+            {
+              this.state.oracle && this.state.oracle.id ?
+                <div className="content-block">
+                  <table className="table key-value-table">
+                    <tbody>
+                    <tr>
+                      <td><Translate content="seer.oracle.guaranty"/></td>
+                      <td><FormattedAsset amount={this.state.oracle.guaranty} asset={"1.3.0"}/></td>
+                    </tr>
+                    <tr>
+                      <td><Translate content="seer.oracle.locked_guaranty"/></td>
+                      <td>{this.state.oracle.locked_guaranty}</td>
+                    </tr>
+                    <tr>
+                      <td><Translate content="seer.oracle.reputation"/></td>
+                      <td>{this.state.oracle.reputation}</td>
+                    </tr>
+                    <tr>
+                      <td><Translate content="seer.oracle.volume"/></td>
+                      <td>{this.state.oracle.volume}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span><Translate content="seer.oracle.script"/></span>
+                      </td>
+                      <td>{this.state.oracle.script} </td>
+                    </tr>
+                    <tr>
+                      <td style={{width:"150px"}}><Translate content="seer.oracle.description"/></td>
+                      <td>{this.state.oracle.description}</td>
+                    </tr>
+                    <tr>
+                      <td rowSpan="2" style={{verticalAlign:"top",paddingTop:20}}><Translate content="seer.oracle.remind"/></td>
+                      <td>
+                        <div className="flex-align-middle">
+                          <Translate content="seer.oracle.remind_awards_gt"/>
+                          &nbsp;&nbsp;&nbsp;&nbsp;
+                          {
+                            this.state.awardsGtEditable ?
+                              <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14,borderColor:"#4BA180"}} value={this.state.awardsGt} onInput={e=>this.setState({awardsGt:e.target.value.replace(/[^\d]/g,'')})}/>
+                              :
+                              <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14}} disabled={true} value={this.state.awardsGt}/>
+                          }
+                          &nbsp;&nbsp;&nbsp;&nbsp;SEER
+                          &nbsp;&nbsp;&nbsp;&nbsp;
+                          <a onClick={this._onAwardsGTEditClick.bind(this)}>
+                            <Translate content={this.state.awardsGtEditable ? "confirm" : "seer.oracle.remind_update"}/>
+                          </a>
+                          <div style={{flex:1,textAlign:"right"}}>
+                            <div className="switch" onClick={this._onAwardsGTSwitch.bind(this)}>
+                              <input type="checkbox" checked={this.state.awardsGtEnable} />
+                              <label />
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div style={{marginLeft:5}}  className="flex-align-middle">
+                          <Translate content="seer.oracle.remind_end_time_lt"/>
+                          &nbsp;&nbsp;&nbsp;&nbsp;
+                          {
+                            this.state.endTimeEditable ?
+                              <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14,borderColor:"#4BA180"}} value={this.state.endTime} pattern="[0-9]*" onInput={e=>this.setState({endTime:e.target.value.replace(/[^\d]/g,'')})}/>
+                              :
+                              <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14}} disabled={true} value={this.state.endTime}/>
+                          }
+                          &nbsp;&nbsp;&nbsp;&nbsp;MIN
+                          &nbsp;&nbsp;&nbsp;&nbsp;
+                          <a onClick={this._onEndTimeLTEditClick.bind(this)}>
+                            <Translate content={this.state.endTimeEditable ? "confirm" : "seer.oracle.remind_update"}/>
+                          </a>
+                          <div style={{flex:1,textAlign:"right"}}>
+                            <div className="switch" onClick={this._onEndTimeLTSwitch.bind(this)}>
+                              <input type="checkbox" checked={this.state.endTimeEnable} />
+                              <label />
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                  <div className="content-block" style={{marginTop:"48px"}}>
+                    <Link className="button primary" to={`/account/${account_name}/update-oracle/${this.state.oracle.id}`}>
+                      <Translate content="seer.oracle.update" />
+                    </Link>
+                  </div>
+                </div>
+                :
+                <div className="content-block" style={{textAlign:"center",marginTop:"10em"}}>
+                  <svg className="icon" aria-hidden="true" style={{width:"5.19em",height:"4.35em",marginBottom:"10px"}}>
+                    <use xlinkHref="#icon-zanwujilu1-copy"></use>
+                  </svg>
+                  <p><Translate content="seer.oracle.not_created" style={{fontSize:"14px",color:"#999999"}}/></p>
+                  <br/>
+                  <Link className="button primary" to={`/account/${account_name}/create-oracle/`}>
+                    <Translate content="seer.oracle.create" />
+                  </Link>
+                </div>
+
+            }
+
+          </div>
+        </div>
+      );
+    }
+
+    renderNeedInputTab(){
+      let {account} = this.props;
+
+      let roomRows = this.state.needOracleInputRooms.map(room=>{
+        let localUTCTime = new Date().getTime() + new Date().getTimezoneOffset() * 60000;
+
+        return(
+          <tr key={room.id}>
+            <td>{room.id}</td>
+            <td style={{lineHeight:"22px"}}><div>{room.description}</div></td>
+            <td style={{lineHeight:"22px"}}>{room.option.filter.reputation}</td>
+            <td style={{lineHeight:"22px"}}><FormattedAsset amount={room.option.filter.guaranty} asset={"1.3.0"}/></td>
+            <td style={{lineHeight:"22px"}}><FormattedAsset amount={room.option.reward_per_oracle} asset={"1.3.0"}/></td>
+            <td style={{lineHeight:"22px"}}><div>{room.option.start} - </div><div>{room.option.stop}</div></td>
+            <td style={{color:room.status==="opening"?"#FB7704":"#666"}}>{room.status}</td>
+            <td style={{textAlign:"right"}}>
+              <div className="nowrap">
+                <Link className="button tiny outline fillet" to={"prediction/rooms/" + room.id}><Translate content="seer.room.view"/></Link>
+
+                {
+                  ((room.status == "opening" || room.status == "inputing") &&
+                    ( (new Date(room.option.stop).getTime() < localUTCTime )&&
+                      new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 > localUTCTime ||
+                      new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 < localUTCTime &&
+                      new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 + 7 * 24 * 3600000 > localUTCTime &&
+                     (!room.owner_result || room.owner_result.length === 0) &&
+                      (!room.committee_result || room.committee_result.length === 0) &&
+                      (!room.oracle_sets || room.oracle_sets.length === 0))) ?
+
+                    <button className="button tiny outline fillet" onClick={this.oracleInputRoom.bind(this, room)}>
+                      <Translate content="seer.oracle.input"/>
+                    </button>
+                    :
+                    null
+                }
+
+              </div>
+            </td>
+          </tr>
+        );
+      });
+      
+      return (
+        <Tab title="seer.oracle.need_oracle_input_room">
+          <div className="generic-bordered-box">
+            <div className="box-content">
+              { !this.state.isOracleInputting ?
+                <table className="table table-hover dashboard-table">
+                  <thead>
+                  <tr>
+                    <th width="100px"><Translate content="seer.room.room_id"/></th>
+                    <th><Translate content="seer.oracle.description"/></th>
+                    <th><Translate content="seer.room.in_join_need_reputation"/></th>
+                    <th><Translate content="seer.room.in_join_need_guaranty"/></th>
+                    <th><Translate content="seer.room.reward_per_oracle"/></th>
+                    <th width="200px"><Translate content="seer.room.start_stop"/></th>
+                    <th width="140px"><Translate content="seer.room.status"/></th>
+                    <th style={{ textAlign: "right" }}><Translate content="account.witness.collateral.operation"/></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {roomRows}
+                  </tbody>
+                </table>
+                :
+                  <OracleInput room={this.state.current_room} account={account} onBack={()=>this.setState({isOracleInputting:false})}/>
+              }
+            </div>
+          </div>
+        </Tab>
+      );
+    }
+
     render() {
         let {account, account_name} = this.props;
 
@@ -165,141 +381,55 @@ class AccountOracle extends React.Component {
         }
 
         return (
-            <div className="grid-content app-tables no-padding" ref="appTables">
-                <div className="content-block small-12" style={{paddingTop:"34px"}}>
+            <div className="app-tables no-padding" ref="appTables">
 
-                  <Translate content="seer.oracle.my" component="h5" style={{fontWeight:"bold"}}/>
-                  <Translate content="seer.oracle.explain" component="p" style={{fontSize:"14px",color:"#999"}}/>
+              {
+                  this.state.oracle && this.state.oracle.id ?
+                    <div ref="container" className="tabs-container generic-bordered-box">
+                      <Tabs
+                        setting="myOracleTab"
+                        className="account-tabs"
+                        defaultActiveTab={0}
+                        segmented={false}
+                        tabsClass="account-overview no-padding bordered-header content-block">
 
-                    <div className="tabs-container generic-bordered-box">
+                        <Tab title="seer.oracle.my">
+                          <div className="generic-bordered-box">
+                            <div className="box-content">
+                              {this.renderOracle.bind(this)()}
+                            </div>
+                          </div>
+                        </Tab>
 
-                                    {
-                                      this.state.oracle && this.state.oracle.id ?
-                                            <div className="content-block">
-                                                <table className="table key-value-table">
-                                                    <tbody>
-                                                    <tr>
-                                                      <td><Translate content="seer.oracle.guaranty"/></td>
-                                                      <td><FormattedAsset amount={this.state.oracle.guaranty} asset={"1.3.0"}/></td>
-                                                    </tr>
-                                                    <tr>
-                                                      <td><Translate content="seer.oracle.locked_guaranty"/></td>
-                                                      <td>{this.state.oracle.locked_guaranty}</td>
-                                                    </tr>
-                                                    <tr>
-                                                      <td><Translate content="seer.oracle.reputation"/></td>
-                                                      <td>{this.state.oracle.reputation}</td>
-                                                    </tr>
-                                                    <tr>
-                                                      <td><Translate content="seer.oracle.volume"/></td>
-                                                      <td>{this.state.oracle.volume}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <span><Translate content="seer.oracle.script"/></span>
-                                                        </td>
-                                                        <td>{this.state.oracle.script} </td>
-                                                    </tr>
-                                                    <tr>
-                                                      <td style={{width:"150px"}}><Translate content="seer.oracle.description"/></td>
-                                                      <td>{this.state.oracle.description}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td rowSpan="2" style={{verticalAlign:"top",paddingTop:20}}><Translate content="seer.oracle.remind"/></td>
-                                                        <td>
-                                                            <div className="flex-align-middle">
-                                                                <Translate content="seer.oracle.remind_awards_gt"/>
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;
-                                                                {
-                                                                    this.state.awardsGtEditable ?
-                                                                    <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14,borderColor:"#4BA180"}} value={this.state.awardsGt} onInput={e=>this.setState({awardsGt:e.target.value.replace(/[^\d]/g,'')})}/>
-                                                                        :
-                                                                    <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14}} disabled={true} value={this.state.awardsGt}/>
-                                                                }
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;SEER
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;
-                                                                <a onClick={this._onAwardsGTEditClick.bind(this)}>
-                                                                    <Translate content={this.state.awardsGtEditable ? "confirm" : "seer.oracle.remind_update"}/>
-                                                                </a>
-                                                                <div style={{flex:1,textAlign:"right"}}>
-                                                                  <div className="switch" onClick={this._onAwardsGTSwitch.bind(this)}>
-                                                                    <input type="checkbox" checked={this.state.awardsGtEnable} />
-                                                                    <label />
-                                                                  </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <div style={{marginLeft:5}}  className="flex-align-middle">
-                                                                <Translate content="seer.oracle.remind_end_time_lt"/>
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;
-                                                                {
-                                                                    this.state.endTimeEditable ?
-                                                                        <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14,borderColor:"#4BA180"}} value={this.state.endTime} pattern="[0-9]*" onInput={e=>this.setState({endTime:e.target.value.replace(/[^\d]/g,'')})}/>
-                                                                        :
-                                                                        <input type="text" style={{display:"inline-block",width:80,height:22,margin:0,padding:"0 3px",fontSize:14}} disabled={true} value={this.state.endTime}/>
-                                                                }
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;MIN
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;
-                                                                <a onClick={this._onEndTimeLTEditClick.bind(this)}>
-                                                                    <Translate content={this.state.endTimeEditable ? "confirm" : "seer.oracle.remind_update"}/>
-                                                                </a>
-                                                                  <div style={{flex:1,textAlign:"right"}}>
-                                                                    <div className="switch" onClick={this._onEndTimeLTSwitch.bind(this)}>
-                                                                      <input type="checkbox" checked={this.state.endTimeEnable} />
-                                                                      <label />
-                                                                    </div>
-                                                                  </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
-                                                <div className="content-block" style={{marginTop:"48px"}}>
-                                                    <Link className="button primary" to={`/account/${account_name}/update-oracle/${this.state.oracle.id}`}>
-                                                      <Translate content="seer.oracle.update" />
-                                                    </Link>
-                                                </div>
-                                            </div>
-                                            :
-                                            <div className="content-block" style={{textAlign:"center",marginTop:"10em"}}>
-                                              <svg className="icon" aria-hidden="true" style={{width:"5.19em",height:"4.35em",marginBottom:"10px"}}>
-                                                <use xlinkHref="#icon-zanwujilu1-copy"></use>
-                                              </svg>
-                                                <p><Translate content="seer.oracle.not_created" style={{fontSize:"14px",color:"#999999"}}/></p>
-                                                <br/>
-                                                <Link className="button primary" to={`/account/${account_name}/create-oracle/`}>
-                                                  <Translate content="seer.oracle.create" />
-                                                </Link>
-                                            </div>
-
-                                    }
-
+                        {this.renderNeedInputTab.bind(this)()}
+                      </Tabs>
                     </div>
+                    :
+                    <div>
+                      {this.renderOracle.bind(this)()}
+                    </div>
+              }
 
-                    <BaseModal id="issue_asset" overlay={true}>
-                        <br/>
-                        <div className="grid-block vertical">
-                            <IssueModal
-                                asset_to_issue={this.state.issue.asset_id}
-                                onClose={() => {ZfApi.publish("issue_asset", "close");}}
-                            />
-                        </div>
-                    </BaseModal>
-
-                    <BaseModal id="reserve_asset" overlay={true}>
-                        <br/>
-                        <div className="grid-block vertical">
-                            <ReserveAssetModal
-                                assetId={this.state.reserve}
-                                account={account}
-                                onClose={() => {ZfApi.publish("reserve_asset", "close");}}
-                            />
-                        </div>
-                    </BaseModal>
+              <BaseModal id="issue_asset" overlay={true}>
+                <br/>
+                <div className="grid-block vertical">
+                  <IssueModal
+                    asset_to_issue={this.state.issue.asset_id}
+                    onClose={() => {ZfApi.publish("issue_asset", "close");}}
+                  />
                 </div>
+              </BaseModal>
+
+              <BaseModal id="reserve_asset" overlay={true}>
+                <br/>
+                <div className="grid-block vertical">
+                  <ReserveAssetModal
+                    assetId={this.state.reserve}
+                    account={account}
+                    onClose={() => {ZfApi.publish("reserve_asset", "close");}}
+                  />
+                </div>
+              </BaseModal>
             </div>
         );
     }

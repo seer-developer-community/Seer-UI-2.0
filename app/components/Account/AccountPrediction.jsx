@@ -22,6 +22,7 @@ import SeerActions from "../../actions/SeerActions";
 import StopParticipateModal from "../Modal/StopParticipateModal";
 import RoomInput from "./RoomInput";
 import OracleInput from "./OracleInput";
+import _ from "lodash";
 
 class AccountPredictionContainer extends React.Component {
     render() {
@@ -65,7 +66,11 @@ class AccountPrediction extends React.Component {
             myCreatedPredictions:[],
             current_room:null,
             inputType:null, //input ,oracleInput
-            inComeList:[]
+            inComeList:[],
+            myRoomActives:[],
+            myRoomHistories:[],
+            pageSize:20,
+            pageNumber:1
         };
     }
 
@@ -94,6 +99,7 @@ class AccountPrediction extends React.Component {
             nextState.currentEntry !== this.state.currentEntry||
             nextState.myJoinedPredictions !== this.state.myJoinedPredictions||
             nextState.myCreatedPredictions !== this.state.myCreatedPredictions||
+            !_.isEmpty(_.differenceWith(nextState.myCreatedPredictions, this.state.myCreatedPredictions, _.isEqual)) ||
             nextState.inputType !== this.state.inputType||
             nextState.current_room !== this.state.current_room
         );
@@ -105,6 +111,34 @@ class AccountPrediction extends React.Component {
       }
     }
 
+    _loadMore(){
+      this.state.pageNumber = this.state.pageNumber + 1;
+      this._loadPage();
+    }
+
+    _loadPage(){
+      let roomIds = [];
+      if(this.state.pageNumber === 1){
+        roomIds.push(...this.state.myRoomActives);
+      }
+
+      let startIndex = (this.state.pageNumber  - 1) * this.state.pageSize;
+      let endIndex = startIndex + this.state.pageSize;
+      if(this.state.myRoomHistories.length <= endIndex){
+        endIndex = this.state.myRoomHistories.length - 1;
+      }
+
+      roomIds.push(...(_.slice(this.state.myRoomHistories,startIndex,endIndex)));
+
+      WebApi.getSeerRooms(roomIds).then(rooms => {
+        let newRooms = _.clone(this.state.myCreatedPredictions);
+        newRooms.push(...rooms);
+        this.setState({
+          myCreatedPredictions:newRooms
+        });
+      });
+    }
+
     _loadData(oid){
       AccountApi.getAccountPredictionRecord(oid).then(res=>{
         this.setState({
@@ -114,16 +148,15 @@ class AccountPrediction extends React.Component {
 
       AccountApi.getRoomsByAccount(oid).then(res=>{
         let roomIds = [];
-        console.log(res);
+
+        this.state.myRoomActives = _.reverse(res[0][1]);
+        this.state.myRoomHistories = _.reverse(res[1][1]);
+
         roomIds.push(...res[0][1]);
         let histories = res[1][1].length > 10 ? _.slice(res[1][1],0,10) : res[1][1];
         roomIds.push(...histories);
 
-        WebApi.getSeerRooms(roomIds,false).then(rooms => {
-          this.setState({
-            myCreatedPredictions:rooms
-          });
-        });
+        this._loadPage();
       });
 
 
@@ -396,6 +429,15 @@ class AccountPrediction extends React.Component {
                                 </thead>
                                 <tbody>
                                 {createdRows}
+                                {
+                                  this.state.pageNumber * this.state.pageSize >= this.state.myRoomHistories ? null :
+                                  <tr height="57px">
+                                    <td colSpan="7" style={{ textAlign: "center", fontSize: 14, color: "#666" }}>
+                                      <Translate component="span" content="account.more" className="clickable"
+                                                 onClick={this._loadMore.bind(this)}/>
+                                    </td>
+                                  </tr>
+                                }
                                 </tbody>
                               </table>
                               : this.state.inputType === "input" ?
@@ -435,7 +477,10 @@ class AccountPrediction extends React.Component {
                       </Tab>
                     </Tabs>
                 </div>
+              {
+                this.state.current_room ?
 
+              <div>
               <BaseModal id="open_room" overlay={true}>
                 <br/>
                 <div className="grid-block vertical">
@@ -456,6 +501,9 @@ class AccountPrediction extends React.Component {
                   />
                 </div>
               </BaseModal>
+            </div>
+                  :null
+              }
             </div>
         );
     }

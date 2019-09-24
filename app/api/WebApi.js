@@ -5,16 +5,20 @@ import {Apis} from "seerjs-ws";
 import {websiteAPIs} from "api/apiConfig";
 import _ from "lodash";
 
-const getSeerRoom = async function(roomId,onlyOpen=true){
+const getSeerRoom = async function(roomId,statusFilter=[]){
     return await new Promise((resolve) =>
     {
         Apis.instance().db_api().exec("get_seer_room", [roomId, 0, 0]).then(room => {
             if(room){
-                if(onlyOpen && (room.status === "finished" || room.status === "closed" || room.status === "inputing")){
-                    resolve()
-                }else{
+              if(statusFilter && statusFilter.length > 0){
+                if(statusFilter.indexOf(room.status) !== -1) {
                   resolve(room);
+                }else{
+                  resolve();
                 }
+              }else{
+                resolve(room);
+              }
             }else{
                 resolve();
             }
@@ -22,9 +26,9 @@ const getSeerRoom = async function(roomId,onlyOpen=true){
     });
 }
 
-const getSeerRooms = async function(roomIds = [],onlyOpen) {
+const getSeerRooms = async function(roomIds = [],statusFilter) {
     let getSeerReqs = [];
-    roomIds.map(id => getSeerReqs.push(getSeerRoom(id,onlyOpen)));
+    roomIds.map(id => getSeerReqs.push(getSeerRoom(id,statusFilter)));
 
     return Promise.all(getSeerReqs).then(result=>{
         return _.without(result || [], undefined);
@@ -57,7 +61,7 @@ const getSeersRoomRecords = async function(roomIds = [],limit) {
 };
 
 
-const getHousesSeerRooms = async function(houseIds=[],excludedRooms=[],extraRooms=[]) {
+const getHousesSeerRooms = async function(houseIds=[],excludedRooms=[],extraRooms=[],statusFilter=[]) {
     return await new Promise((resolve) => {
         if(!houseIds || houseIds.length === 0){
             resolve([]);
@@ -74,7 +78,7 @@ const getHousesSeerRooms = async function(houseIds=[],excludedRooms=[],extraRoom
           roomIds = _.difference(roomIds,excludedRooms);
           roomIds = _.uniq(roomIds);
           //
-          getSeerRooms(roomIds).then((rooms) => {
+          getSeerRooms(roomIds,statusFilter).then((rooms) => {
                 resolve(rooms);
           });
         });
@@ -88,6 +92,7 @@ const getHousesSeerRooms = async function(houseIds=[],excludedRooms=[],extraRoom
  * @param option.excludedHouses
  * @param option.excludedRooms
  * @param option.extraRooms
+ * @param option.statusFilter
  * @returns {Promise<void>}
  */
 const getAllSeerRoom = async function(option={
@@ -95,17 +100,19 @@ const getAllSeerRoom = async function(option={
     housesWhiteList:[],
     excludedHouses:[],
     excludedRooms:[],
-    extraRooms:[]
+    extraRooms:[],
+    statusFilter:["opening"]
 }) {
     option.excludedRooms = option.excludedRooms || [];
     option.excludedHouses = option.excludedHouses || [];
     option.housesWhiteList = option.housesWhiteList || [];
     option.extraRooms = option.extraRooms || [];
+    option.statusFilter = option.statusFilter || ["opening"];
 
     if(option.onlyLoadWhiteListHouses){
       return await new Promise((resolve) => {
         let houseIds = _.difference(option.housesWhiteList,option.excludedHouses);
-        getHousesSeerRooms(houseIds, option.excludedRooms,option.extraRooms).then(rooms => {
+        getHousesSeerRooms(houseIds, option.excludedRooms,option.extraRooms,option.statusFilter).then(rooms => {
             resolve(rooms);
         });
       });
@@ -116,7 +123,7 @@ const getAllSeerRoom = async function(option={
           let ids = results.map(r => r[1]);
 
           ids = _.difference(ids,option.excludedHouses);
-          getHousesSeerRooms(ids, option.excludedRooms,option.extraRooms).then(rooms => {
+          getHousesSeerRooms(ids, option.excludedRooms,option.extraRooms,option.statusFilter).then(rooms => {
             resolve(rooms);
           });
         });

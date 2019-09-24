@@ -1240,7 +1240,7 @@ class OperationWrapper extends React.Component {
   componentWillMount() {
     let { op } = this.props;
     if(op[0] === 50 && !op[1].input_desc) {
-      WebApi.getSeerRoom(op[1].room,false).then(room => {
+      WebApi.getSeerRoom(op[1].room).then(room => {
         op[1].input_desc = [room.running_option.selection_description[op[1].input[0]]];
         this.setState({
           op

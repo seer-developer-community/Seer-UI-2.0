@@ -1730,7 +1730,8 @@
             "remind" : "设置提醒",
             "remind_awards_gt" : "预言机奖励大于",
             "remind_update":"修改",
-            "remind_end_time_lt":"房间结束时间距离现在小于"
+            "remind_end_time_lt":"房间结束时间距离现在小于",
+            "need_oracle_input_room":"需要输入结果的预测"
         },
         "room": {
             "title": "房间",
@@ -1821,7 +1822,9 @@
             "in_join_count":"总参与次数",
             "win_count":"总获胜次数",
             "in_join_amount":"总参与金额",
-            "win_amount":"总收益金额"
+            "win_amount":"总收益金额",
+            "in_join_need_reputation":"参与所需声誉",
+            "in_join_need_guaranty":"参与所需保证金"
         }
     },
   "erc20": {

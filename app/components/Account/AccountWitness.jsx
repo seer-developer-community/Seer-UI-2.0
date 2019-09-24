@@ -125,7 +125,7 @@ class AccountWitness extends React.Component {
             viewStatus:null,
             generateKeys:""
         };
-        this.update = this.update.bind(this,this.props.account);
+        this.update = this.update.bind(this);
     }
     componentWillMount() {
         ChainStore.subscribe(this.update);
@@ -143,8 +143,11 @@ class AccountWitness extends React.Component {
     }
 
     update(account) {
+        account = account || this.props.account;
         let witness = ChainStore.getWitnessById(account.get("id"));
-        if (witness) this.setState({witness: witness.toJS()})
+        this.setState({
+          witness: witness ? witness.toJS() : null
+        });
     }
 
     openCreateCollateralModal() {

@@ -47,7 +47,7 @@ class RoomCard extends React.Component {
 
     componentWillMount() {
         if(typeof this.props.room === "string"){
-          WebApi.getSeerRoom(this.props.room,false).then(room=>{
+          WebApi.getSeerRoom(this.props.room).then(room=>{
               this.setState({
                 room:room,
                 currentRoom:room
