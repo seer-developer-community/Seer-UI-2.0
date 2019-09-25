@@ -1544,13 +1544,14 @@ $input-border
 
     .mymarkets-tabs {
         > li {
-            @include button-focus($secondary-text-color, $panel-bg-color, 0);
+            background: #fff;
+
             &:hover {
                 @include button-focus($primary-text-color, $panel-bg-color, 10);
             }
 
             &.active {
-                @include button-focus($primary-text-color, $panel-bg-color, 10);
+                background: #eeeeee;
             }
         }
     }
@@ -2427,6 +2428,37 @@ $input-border
 
   &.color-8e8e8e{
     color: #8e8e8e;
+  }
+}
+
+.sort-container {
+
+  .icon {
+    display: none;
+  }
+
+  &.asc {
+    path.asc {
+      fill: #449E7B;
+    }
+    path.desc {
+      fill: #999;
+    }
+    .icon {
+      display: inline;
+    }
+  }
+
+  &.desc {
+    path.asc {
+      fill: #999;
+    }
+    path.desc {
+      fill: #449E7B;
+    }
+    .icon {
+      display: inline;
+    }
   }
 }
 

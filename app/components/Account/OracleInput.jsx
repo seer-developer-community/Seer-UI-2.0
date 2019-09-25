@@ -7,6 +7,7 @@ import ZfApi from "react-foundation-apps/src/utils/foundation-api";
 import Modal from '../Modal/BaseModal';
 import RoomCard from "./RoomCard";
 import FormattedAsset from "../Utility/FormattedAsset";
+var moment = require('moment');
 var Apis =  require("seerjs-ws").Apis;
 
 class OracleInput extends React.Component {
@@ -102,7 +103,7 @@ class OracleInput extends React.Component {
                       <tr height="30px">
                         <td><Translate content="seer.room.reward_per_oracle" />：<FormattedAsset amount={this.state.room.option.reward_per_oracle} asset={this.state.room.option.accept_asset}/></td>
                         <td width="50px">&nbsp;</td>
-                        <td><Translate content="seer.room.end_time" />：{this.state.room.option.stop}</td>
+                        <td><Translate content="seer.room.end_time" />：{moment.utc(this.state.room.option.stop).local().format('YYYY-MM-DD HH:mm:ss')}</td>
                       </tr>
                   </tbody>
               </table>

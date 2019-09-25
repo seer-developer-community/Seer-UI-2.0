@@ -23,6 +23,7 @@ import { websiteAPIs } from "../../api/apiConfig";
 import WalletApi from "../../api/WalletApi";
 import Operation from "../Blockchain/Operation";
 import WebApi from "api/WebApi"
+var moment = require('moment');
 
 let roomType =
 {
@@ -450,13 +451,13 @@ class RoomParticipate extends React.Component {
                 </tr>
                 <tr>
                   <td width="33.33333%">
-                    <Translate content="account.votes.start"/>：{room.option.start}
+                    <Translate content="account.votes.start"/>：{moment.utc(room.option.start).local().format('YYYY-MM-DD HH:mm:ss')}
                   </td>
                   <td width="33.33333%">
-                    <Translate content="account.votes.end"/>：{room.option.stop}
+                    <Translate content="account.votes.end"/>：{moment.utc(room.option.stop).local().format('YYYY-MM-DD HH:mm:ss')}
                   </td>
                   <td width="33.33333%">
-                    <Translate content="account.votes.end"/>：{room.option.input_duration_secs/60}
+                    <Translate content="seer.room.input_duration_secs"/>：{room.option.input_duration_secs/60}
                   </td>
                 </tr>
                 <tr>

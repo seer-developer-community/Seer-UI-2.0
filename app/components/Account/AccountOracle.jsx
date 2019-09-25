@@ -26,6 +26,8 @@ import RoomInput from "./RoomInput";
 import OracleInput from "./OracleInput";
 import WebApi from "../../api/WebApi";
 import AccountStore from "../../stores/AccountStore";
+import Icon from "../Icon/Icon";
+import _ from "lodash"
 var Apis =  require("seerjs-ws").Apis;
 
 class AccountOracle extends React.Component {
@@ -84,7 +86,9 @@ class AccountOracle extends React.Component {
             endTimeEditable:false,
             needOracleInputRooms:[],
             isOracleInputting:false,
-            current_room:null
+            current_room:null,
+            sortType:"desc",
+            sortBy:3
         };
     }
 
@@ -96,6 +100,22 @@ class AccountOracle extends React.Component {
 
     componentWillMount() {
         this._loadData(this.props.account);
+
+        this._loadQueryInputRoom();
+
+        //console.log(this.props.location.query);
+    }
+
+    _loadQueryInputRoom(){
+        if(this.props.location.query.input === "1" && this.props.location.query.room) {
+            WebApi.getSeerRoom(this.props.location.query.room).then(r => {
+                SettingsActions.changeViewSetting({ myOracleTab:1 });
+                this.setState({
+                    isOracleInputting:true,
+                    current_room:r
+                });
+            });
+        }
     }
 
     _loadData(account){
@@ -295,45 +315,66 @@ class AccountOracle extends React.Component {
     }
 
     renderNeedInputTab(){
-      let {account} = this.props;
+        let {account} = this.props;
+        let {sortBy} = this.state;
 
-      let roomRows = this.state.needOracleInputRooms.map(room=>{
-        let localUTCTime = new Date().getTime() + new Date().getTimezoneOffset() * 60000;
+      let rooms = _.clone(this.state.needOracleInputRooms);
 
-        return(
-          <tr key={room.id}>
-            <td>{room.id}</td>
-            <td style={{lineHeight:"22px"}}><div>{room.description}</div></td>
-            <td style={{lineHeight:"22px"}}>{room.option.filter.reputation}</td>
-            <td style={{lineHeight:"22px"}}><FormattedAsset amount={room.option.filter.guaranty} asset={"1.3.0"}/></td>
-            <td style={{lineHeight:"22px"}}><FormattedAsset amount={room.option.reward_per_oracle} asset={"1.3.0"}/></td>
-            <td style={{lineHeight:"22px"}}><div>{room.option.start} - </div><div>{room.option.stop}</div></td>
-            <td style={{color:room.status==="opening"?"#FB7704":"#666"}}>{room.status}</td>
-            <td style={{textAlign:"right"}}>
-              <div className="nowrap">
-                <Link className="button tiny outline fillet" to={"prediction/rooms/" + room.id}><Translate content="seer.room.view"/></Link>
+        rooms = _.sortBy(rooms, [function(o) {
+            if(sortBy === 0) {
+                return o.id;
+            }else if(sortBy === 1) {
+                return o.option.filter.reputation;
+            } else if(sortBy === 2) {
+                return o.option.filter.guaranty;
+            } else if(sortBy === 3) {
+                return o.option.reward_per_oracle;
+            }else{
+                //最大奖励
+                return o.option.reward_per_oracle;
+            }
+        }]);
 
-                {
-                  ((room.status == "opening" || room.status == "inputing") &&
-                    ( (new Date(room.option.stop).getTime() < localUTCTime )&&
-                      new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 > localUTCTime ||
-                      new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 < localUTCTime &&
-                      new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 + 7 * 24 * 3600000 > localUTCTime &&
-                     (!room.owner_result || room.owner_result.length === 0) &&
-                      (!room.committee_result || room.committee_result.length === 0) &&
-                      (!room.oracle_sets || room.oracle_sets.length === 0))) ?
+        if(this.state.sortType === "desc"){
+            rooms = rooms.reverse();
+        }
 
+
+      let roomRows = rooms.map(room=>{
+          let localUTCTime = new Date().getTime() + new Date().getTimezoneOffset() * 60000;
+
+
+          if(!( (new Date(room.option.stop).getTime() < localUTCTime )&&
+              new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 > localUTCTime ||
+              new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 < localUTCTime &&
+              new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 + 7 * 24 * 3600000 > localUTCTime &&
+              (!room.owner_result || room.owner_result.length === 0) &&
+              (!room.committee_result || room.committee_result.length === 0) &&
+              (!room.oracle_sets || room.oracle_sets.length === 0))){
+
+              return null;
+          }
+
+
+          return(
+              <tr key={room.id}>
+                <td>{room.id}</td>
+                <td style={{lineHeight:"22px"}}><div>{room.description}</div></td>
+                <td style={{lineHeight:"22px"}}>{room.option.filter.reputation}</td>
+                <td style={{lineHeight:"22px"}}><FormattedAsset amount={room.option.filter.guaranty} asset={"1.3.0"}/></td>
+                <td style={{lineHeight:"22px"}}><FormattedAsset amount={room.option.reward_per_oracle} asset={"1.3.0"}/></td>
+                <td style={{lineHeight:"22px"}}><div>{moment.utc(room.option.start).local().format('YYYY-MM-DD HH:mm:ss')} - </div><div>{moment.utc(room.option.stop).local().format('YYYY-MM-DD HH:mm:ss')}</div></td>
+                <td style={{color:room.status==="opening"?"#FB7704":"#666"}}>{room.status}</td>
+                <td style={{textAlign:"right"}}>
+                  <div className="nowrap">
+                    <Link className="button tiny outline fillet" to={"prediction/rooms/" + room.id}><Translate content="seer.room.view"/></Link>
                     <button className="button tiny outline fillet" onClick={this.oracleInputRoom.bind(this, room)}>
-                      <Translate content="seer.oracle.input"/>
+                        <Translate content="seer.oracle.input"/>
                     </button>
-                    :
-                    null
-                }
-
-              </div>
-            </td>
-          </tr>
-        );
+                  </div>
+                </td>
+              </tr>
+          );
       });
       
       return (
@@ -344,11 +385,35 @@ class AccountOracle extends React.Component {
                 <table className="table table-hover dashboard-table">
                   <thead>
                   <tr>
-                    <th width="100px"><Translate content="seer.room.room_id"/></th>
+                    <th width="100px" className={"clickable sort-container" + (this.state.sortBy === 0 ? " " + this.state.sortType : "")}
+                        onClick={e => this.setState({sortBy:0,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
+                        <div className="nowrap">
+                            <Translate content="seer.room.room_id"/>
+                            <Icon size="14px" name="sort"/>
+                        </div>
+                    </th>
                     <th><Translate content="seer.oracle.description"/></th>
-                    <th><Translate content="seer.room.in_join_need_reputation"/></th>
-                    <th><Translate content="seer.room.in_join_need_guaranty"/></th>
-                    <th><Translate content="seer.room.reward_per_oracle"/></th>
+                    <th className={"clickable sort-container" + (this.state.sortBy === 1 ? " " + this.state.sortType : "")}
+                        onClick={e => this.setState({sortBy:1,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
+                        <div className="nowrap">
+                            <Translate content="seer.room.in_join_need_reputation"/>
+                            <Icon size="14px" name="sort"/>
+                        </div>
+                    </th>
+                    <th className={"clickable sort-container" + (this.state.sortBy === 2 ? " " + this.state.sortType : "")}
+                        onClick={e => this.setState({sortBy:2,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
+                        <div className="nowrap">
+                            <Translate content="seer.room.in_join_need_guaranty"/>
+                            <Icon size="14px" name="sort"/>
+                        </div>
+                    </th>
+                    <th className={"clickable sort-container" + (this.state.sortBy === 3 ? " " + this.state.sortType : "")}
+                        onClick={e => this.setState({sortBy:3,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
+                        <div className="nowrap">
+                            <Translate content="seer.room.reward_per_oracle"/>
+                            <Icon size="14px" name="sort"/>
+                        </div>
+                    </th>
                     <th width="200px"><Translate content="seer.room.start_stop"/></th>
                     <th width="140px"><Translate content="seer.room.status"/></th>
                     <th style={{ textAlign: "right" }}><Translate content="account.witness.collateral.operation"/></th>

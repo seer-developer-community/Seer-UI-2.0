@@ -723,23 +723,23 @@ class Houses extends React.Component {
                       <li className={"house-category" + (this.state.filterRoomType === 1 ? " checked" :"")} onClick={e => this.setState({filterRoomType:1})}>PVP</li>
                       <li className={"house-category" + (this.state.filterRoomType === 0 ? " checked" :"")} onClick={e => this.setState({filterRoomType:0})}>PVD</li>
                       <li className={"house-category" + (this.state.filterRoomType === 2 ? " checked" :"")} onClick={e => this.setState({filterRoomType:2})}>ADV</li>
-                      <li className={"house-sort" + (this.state.sortBy === 0 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:0,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
+                      <li className={"house-sort sort-container" + (this.state.sortBy === 0 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:0,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
                             最新参与&nbsp;
                             <Icon size="14px" name="sort"/>
                       </li>
-                      <li className={"house-sort" + (this.state.sortBy === 1 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:1,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
+                      <li className={"house-sort sort-container" + (this.state.sortBy === 1 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:1,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
                             参与总量&nbsp;
                             <Icon size="14px" name="sort"/>
                       </li>
-                      <li className={"house-sort" + (this.state.sortBy === 2 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:2,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
+                      <li className={"house-sort sort-container" + (this.state.sortBy === 2 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:2,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
                             参与人数&nbsp;
                             <Icon size="14px" name="sort"/>
                       </li>
-                      <li className={"house-sort" + (this.state.sortBy === 3 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:3,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
+                      <li className={"house-sort sort-container" + (this.state.sortBy === 3 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:3,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
                             结束时间&nbsp;
                             <Icon size="14px" name="sort"/>
                       </li>
-                      <li className={"house-sort" + (this.state.sortBy === 4 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:4,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
+                      <li className={"house-sort sort-container" + (this.state.sortBy === 4 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:4,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
                             创建者权重&nbsp;
                             <Icon size="14px" name="sort"/>
                       </li>

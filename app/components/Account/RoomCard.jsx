@@ -1,12 +1,12 @@
 import React from "react";
 import Translate from "react-translate-component";
 import BindToChainState from "../Utility/BindToChainState";
-import moment from 'moment'
 import {Link} from "react-router/es";
 var Apis =  require("seerjs-ws").Apis;
 import FormattedAsset from "../Utility/FormattedAsset";
 import _ from "lodash";
 import WebApi from "../../api/WebApi";
+import TimeAgo from "../Utility/TimeAgo";
 
 let roomType =
 {
@@ -279,7 +279,7 @@ class RoomCard extends React.Component {
                         <i className="iconfont icon-renshu" style={{color:"#FC4C6C",fontSize:28}}></i>{playerCount}
                     </div>
                     <div className="right">
-                        <Translate content="seer.room.end_time"/>：&nbsp;{moment(currentRoom.option.stop).format('YYYY/MM/DD HH:mm:ss')}
+                        <Translate content="seer.room.end_time"/>：<TimeAgo time={currentRoom.option.stop} />
                         <Link to={"/prediction/rooms/" + currentRoom.id }><Translate content="seer.room.open_detail"/></Link>
                     </div>
                 </div>

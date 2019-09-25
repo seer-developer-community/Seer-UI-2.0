@@ -161,18 +161,10 @@ class SettingsStore {
             // Default markets setup
             let topMarkets = {
                 markets_cea4fdf4: [ // BTS MAIN NET
-                    "OPEN.MKR", "BTS", "OPEN.ETH", "ICOO", "BTC", "OPEN.LISK", "BKT",
-                    "OPEN.STEEM", "OPEN.GAME", "OCT", "USD", "CNY", "BTSR", "OBITS",
-                    "OPEN.DGD", "EUR", "GOLD", "SILVER", "IOU.CNY", "OPEN.DASH",
-                    "OPEN.USDT", "OPEN.EURT", "OPEN.BTC", "CADASTRAL", "BLOCKPAY", "BTWTY",
-                    "OPEN.INCNT", "KAPITAL", "OPEN.MAID", "OPEN.SBD", "OPEN.GRC",
-                    "YOYOW", "HERO", "RUBLE", "SMOKE", "STEALTH", "BRIDGE.BCO",
-                    "BRIDGE.BTC", "KEXCOIN", "PPY", "OPEN.EOS", "OPEN.OMG", "CVCOIN",
-                    "BRIDGE.ZNY", "BRIDGE.MONA", "OPEN.LTC", "GDEX.BTC", "GDEX.EOS", "GDEX.ETH",
-                    "GDEX.BTO", "WIN.ETH", "WIN.ETC", "WIN.HSR"
+                    "OPC", "PFC", "SCP"
                 ],
                 markets_39f5e2ed: [ // TESTNET
-                    "PEG.FAKEUSD", "BTWTY","SEER"
+                    "OPC", "PFC", "SCP"
                 ]
             };
 

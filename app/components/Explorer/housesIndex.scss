@@ -131,37 +131,10 @@
                             color: #449E7B;
                           }
                         }
+
                         &.house-sort {
                             width: 98px;
                             vertical-align: text-top;
-
-                            .icon {
-                                display: none;
-                            }
-
-                            &.asc {
-                                path.asc {
-                                    fill: #449E7B;
-                                }
-                                path.desc {
-                                    fill: #999;
-                                }
-                                .icon {
-                                    display: inline;
-                                }
-                            }
-
-                            &.desc {
-                                path.asc {
-                                    fill: #999;
-                                }
-                                path.desc {
-                                    fill: #449E7B;
-                                }
-                                .icon {
-                                    display: inline;
-                                }
-                            }
                         }
                     }
                 }

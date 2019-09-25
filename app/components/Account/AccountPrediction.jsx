@@ -23,6 +23,7 @@ import StopParticipateModal from "../Modal/StopParticipateModal";
 import RoomInput from "./RoomInput";
 import OracleInput from "./OracleInput";
 import _ from "lodash";
+var moment = require('moment');
 
 class AccountPredictionContainer extends React.Component {
     render() {
@@ -264,7 +265,7 @@ class AccountPrediction extends React.Component {
               <td>{r.room.id}</td>
               <td style={{textAlign:"center"}}>{r.room.room_type === 0 ? "PVD" : r.room.room_type === 1 ? "PVP" : "AVD"}</td>
               <td style={{lineHeight:"22px"}}><div>{r.room.description}</div></td>
-              <td style={{lineHeight:"22px"}}><div>{r.room.option.start} - </div><div>{r.room.option.stop}</div></td>
+              <td style={{lineHeight:"22px"}}><div>{moment.utc(r.room.option.start).local().format('YYYY-MM-DD HH:mm:ss')} - </div><div>{moment.utc(r.room.option.stop).local().format('YYYY-MM-DD HH:mm:ss')}</div></td>
               <td style={{color:r.room.status==="opening"?"#FB7704":"#666"}}>{r.room.status}</td>
               <td style={{textAlign:"right"}}><FormattedAsset amount={r.paid} asset={r.asset_id} hide_asset={false}/></td>
               <td style={{textAlign:"right",color:r.reward < 0 ?"#E20E26": r.reward === 0 ? "#666" : "#449E7B"}}><FormattedAsset amount={r.reward} asset={r.asset_id} hide_asset={false}/></td>
@@ -282,7 +283,7 @@ class AccountPrediction extends React.Component {
             <td style={{textAlign:"center"}}>{room.room_type === 0 ? "PVD" : room.room_type === 1 ? "PVP" : "AVD"}</td>
             <td style={{lineHeight:"22px"}}><div>{room.description}</div></td>
             <td style={{lineHeight:"22px"}}><div>{room.label && room.label.length > 0 ?  room.label.join("/") : "--"}</div></td>
-            <td style={{lineHeight:"22px"}}><div>{room.option.start} - </div><div>{room.option.stop}</div></td>
+            <td style={{lineHeight:"22px"}}><div>{moment.utc(room.option.start).local().format('YYYY-MM-DD HH:mm:ss')} - </div><div>{moment.utc(room.option.stop).local().format('YYYY-MM-DD HH:mm:ss')}</div></td>
             <td style={{color:room.status==="opening"?"#FB7704":"#666"}}>{room.status}</td>
             <td style={{textAlign:"right"}}>
               <div className="nowrap">

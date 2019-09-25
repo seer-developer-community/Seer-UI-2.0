@@ -26,7 +26,9 @@ import IntlActions from "actions/IntlActions";
 import IntlStore from "stores/IntlStore";
 import WebApi from "./api/WebApi";
 import counterpart from "counterpart";
-import { websiteAPIs } from "./api/apiConfig";
+import utils from "common/utils";
+
+var moment = require('moment');
 
 // import Incognito from "./components/Layout/Incognito";
 // import { isIncognito } from "feature_detect";
@@ -50,7 +52,8 @@ class App extends React.Component {
             incognito: false,
             incognitoWarningDismissed: false,
             height: window && window.innerHeight,
-            notifiedList:[]
+            notifiedList:[],
+            seerAsset:null
         };
 
         this._rebuildTooltips = this._rebuildTooltips.bind(this);
@@ -72,7 +75,13 @@ class App extends React.Component {
 
     _roomNotices(){
         console.log("check room notice！");
-        WebApi.getAllSeerRoom().then(rooms=>{
+
+        let asset = ChainStore.getAsset("1.3.0")
+        let account_name = AccountStore.getState().currentAccount;
+        let isMyAccount = AccountStore.isMyAccount(ChainStore.getAccount(account_name));
+        if(!isMyAccount) return;
+
+        WebApi.getAllSeerRoom({statusFilter:["inputing"]}).then(rooms=>{
             let awardsGt = SettingsStore.getState().settings.get("room_notice_awards_gt",-1);
             let endTimeLt = SettingsStore.getState().settings.get("room_notice_end_time_lt",-1);
             let awardsGtEnable = SettingsStore.getState().settings.get("room_notice_awards_gt_enable",false);
@@ -81,8 +90,10 @@ class App extends React.Component {
             if((awardsGtEnable && awardsGt >= 0) || (endTimeLtEnable && endTimeLt > 0)){
                 rooms.every(r=>{
 
+                    let roomEndTime = moment.utc(r.option.stop).local().add(r.option.input_duration_secs, 's').valueOf();
+
                     if(endTimeLtEnable){
-                        let timeDiff = new Date(r.option.stop).getTime() - new Date().getTime();
+                        let timeDiff = roomEndTime - new Date().getTime();
                         if(timeDiff > 0 && timeDiff <= endTimeLt * 60 * 1000 && this.state.notifiedList.indexOf(r.id) === -1) {
                           this.state.notifiedList.push(r.id);
                           BrowserNotificationActions.addNotification({
@@ -92,24 +103,26 @@ class App extends React.Component {
                               min:endTimeLt
                             }),
                             onNotifyClick:()=>{
-                              this.props.router.push(`/prediction/rooms/${r.id}`);
+                              window.open(`/account/${account_name}/oracle?input=1&room=${r.id}`);
                             }
                           });
                           return false;
                         }
                     }
 
-                    if(awardsGtEnable && r.option.reward_per_oracle >= awardsGt && this.state.notifiedList.indexOf(r.id) === -1){
+                    let amount = utils.get_asset_amount(r.option.reward_per_oracle,asset);
+
+                    if(awardsGtEnable && amount >= awardsGt && this.state.notifiedList.indexOf(r.id) === -1){
                       this.state.notifiedList.push(r.id);
                       BrowserNotificationActions.addNotification({
                         title: counterpart.translate("browser_notification_messages.room_awards_gt_title"),
                         body:counterpart.translate("browser_notification_messages.room_awards_gt_body", {
                           room: r.id,
-                          amount:r.option.reward_per_oracle,
+                          amount:utils.get_asset_amount(r.option.reward_per_oracle,asset),
                           awards:awardsGt
                         }),
                         onNotifyClick:()=>{
-                          this.props.router.push(`/prediction/rooms/${r.id}`);
+                            window.open(`/account/${account_name}/oracle?input=1&room=${r.id}`);
                         }
                       });
                       return false;

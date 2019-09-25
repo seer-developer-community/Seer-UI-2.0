@@ -1855,6 +1855,7 @@
     "error_master": "网关账户异常",
     "success_info": "提交转出成功",
     "qrcode": "ETH 地址",
+    "omniqrcode": "Omni 地址",
     "button_generate_QR": "点击生产二维码",
     "transfer_opc_in_title": "转入 OPC(ERC20)",
     "transfer_opc_out_title": "转出 OPC(ERC20)",
