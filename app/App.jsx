@@ -27,6 +27,7 @@ import IntlStore from "stores/IntlStore";
 import WebApi from "./api/WebApi";
 import counterpart from "counterpart";
 import utils from "common/utils";
+import {websiteAPIs} from "api/apiConfig";
 
 var moment = require('moment');
 
@@ -72,6 +73,22 @@ class App extends React.Component {
         clearInterval(this.syncCheckInterval);
         clearInterval(this.checkRoomNoticeInterval);
     }
+
+    // componentWillMount() {
+    //     this._initData();
+    // }
+
+    // _initData(){
+    //     fetch(websiteAPIs.BASE + websiteAPIs.HOUSES_INDEX_DATA, {
+    //         method:"post",
+    //         mode:"cors"
+    //     }).then((response) => response.json())
+    //       .then(r=>{
+    //         if(json && json.result && json.result.length > 0){
+    //
+    //         }
+    //     });
+    // }
 
     _roomNotices(){
         console.log("check room notice！");

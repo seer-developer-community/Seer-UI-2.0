@@ -52,7 +52,7 @@ class Api {
         this.getPlayerInfo(oid).then(res => {
           if (res) {
             let reqs = [];
-            res.count_total.map(item => reqs.push(this.getSeerRecordsByPlayer(oid, item[0], 7, 2592000, date, 10/*item[1]*/)));
+            res.count_total.map(item => reqs.push(this.getSeerRecordsByPlayer(oid, item[0], 7, 2592000, date, 20/*item[1]*/)));
 
             Promise.all(reqs).then(result => {
               result = _.without(result || [], undefined);

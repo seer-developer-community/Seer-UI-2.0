@@ -288,7 +288,6 @@ class HouseList extends React.Component {
           }
 
 
-
           //sort
           if(this.props.sortBy !== null){
             let props = this.props;
@@ -724,23 +723,23 @@ class Houses extends React.Component {
                       <li className={"house-category" + (this.state.filterRoomType === 0 ? " checked" :"")} onClick={e => this.setState({filterRoomType:0})}>PVD</li>
                       <li className={"house-category" + (this.state.filterRoomType === 2 ? " checked" :"")} onClick={e => this.setState({filterRoomType:2})}>ADV</li>
                       <li className={"house-sort sort-container" + (this.state.sortBy === 0 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:0,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
-                            最新参与&nbsp;
+                            <Translate content="seer.room.sort_by_latest_joined"/>&nbsp;
                             <Icon size="14px" name="sort"/>
                       </li>
                       <li className={"house-sort sort-container" + (this.state.sortBy === 1 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:1,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
-                            参与总量&nbsp;
+                            <Translate content="seer.room.sort_by_volume"/>&nbsp;
                             <Icon size="14px" name="sort"/>
                       </li>
                       <li className={"house-sort sort-container" + (this.state.sortBy === 2 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:2,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
-                            参与人数&nbsp;
+                            <Translate content="seer.room.sort_by_joined_number"/>&nbsp;
                             <Icon size="14px" name="sort"/>
                       </li>
                       <li className={"house-sort sort-container" + (this.state.sortBy === 3 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:3,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
-                            结束时间&nbsp;
+                            <Translate content="seer.room.sort_by_end_time"/>&nbsp;
                             <Icon size="14px" name="sort"/>
                       </li>
                       <li className={"house-sort sort-container" + (this.state.sortBy === 4 ? " " + this.state.sortType : "")} onClick={e => this.setState({sortBy:4,sortType: this.state.sortType === "asc" ? "desc" : "asc"})}>
-                            创建者权重&nbsp;
+                            <Translate content="seer.room.sort_by_creator_weight"/>&nbsp;
                             <Icon size="14px" name="sort"/>
                       </li>
                     </ul>

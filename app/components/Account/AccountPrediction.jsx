@@ -68,6 +68,7 @@ class AccountPrediction extends React.Component {
             current_room:null,
             inputType:null, //input ,oracleInput
             inComeList:[],
+            myJoinedRooms:[],
             myRoomActives:[],
             myRoomHistories:[],
             pageSize:20,
@@ -162,6 +163,9 @@ class AccountPrediction extends React.Component {
 
 
       AccountApi.getPlayerInfo(oid).then(res=>{
+
+        //  let myJoinedRooms = res.rooms.map(r=>r[0]);
+
         //
         let incomes = {};
         res.count_total.map(t=>{

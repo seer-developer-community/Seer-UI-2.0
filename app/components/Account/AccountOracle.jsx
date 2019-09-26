@@ -30,6 +30,8 @@ import Icon from "../Icon/Icon";
 import _ from "lodash"
 var Apis =  require("seerjs-ws").Apis;
 
+var moment = require('moment');
+
 class AccountOracle extends React.Component {
 
     static defaultProps = {
@@ -124,7 +126,7 @@ class AccountOracle extends React.Component {
       });
 
       //
-      WebApi.getAllSeerRoom({statusFilter:["inputing"]}).then(rooms=>{
+      WebApi.getAllSeerRoom({statusFilter:["inputing","opening"]}).then(rooms=>{
           rooms = rooms || [];
           rooms = _.filter(rooms,r=>r.option.reward_per_oracle > 0);
           this.setState({
@@ -343,19 +345,6 @@ class AccountOracle extends React.Component {
       let roomRows = rooms.map(room=>{
           let localUTCTime = new Date().getTime() + new Date().getTimezoneOffset() * 60000;
 
-
-          if(!( (new Date(room.option.stop).getTime() < localUTCTime )&&
-              new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 > localUTCTime ||
-              new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 < localUTCTime &&
-              new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 + 7 * 24 * 3600000 > localUTCTime &&
-              (!room.owner_result || room.owner_result.length === 0) &&
-              (!room.committee_result || room.committee_result.length === 0) &&
-              (!room.oracle_sets || room.oracle_sets.length === 0))){
-
-              return null;
-          }
-
-
           return(
               <tr key={room.id}>
                 <td>{room.id}</td>
@@ -368,9 +357,21 @@ class AccountOracle extends React.Component {
                 <td style={{textAlign:"right"}}>
                   <div className="nowrap">
                     <Link className="button tiny outline fillet" to={"prediction/rooms/" + room.id}><Translate content="seer.room.view"/></Link>
-                    <button className="button tiny outline fillet" onClick={this.oracleInputRoom.bind(this, room)}>
-                        <Translate content="seer.oracle.input"/>
-                    </button>
+                    {
+                      ( (new Date(room.option.stop).getTime() < localUTCTime )&&
+                      new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 > localUTCTime ||
+                      new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 < localUTCTime &&
+                      new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 + 7 * 24 * 3600000 > localUTCTime &&
+                      (!room.owner_result || room.owner_result.length === 0) &&
+                      (!room.committee_result || room.committee_result.length === 0) &&
+                      (!room.oracle_sets || room.oracle_sets.length === 0)) ?
+
+                          <button className="button tiny outline fillet" onClick={this.oracleInputRoom.bind(this, room)}>
+                          <Translate content="seer.oracle.input"/>
+                          </button>
+                          :
+                          null
+                    }
                   </div>
                 </td>
               </tr>

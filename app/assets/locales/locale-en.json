@@ -10,7 +10,7 @@
     },
   "languages": {
     "en": "English",
-    "zh": "简体中文",
+    "zh": "Chinese",
     "fr": "Français",
     "ko": "한국어",
     "de": "Deutsch",
@@ -42,6 +42,8 @@
     "settings": "Settings",
     "current": "Current Account",
     "create_account": "Create Account",
+    "backup_bin":"Backup bin document",
+    "restore_bin":"Restore bin document",
     "create_asset": "Create Asset",
     "collateral_ratio": "Collateral ratio",
     "update_asset": "Update Asset",
@@ -55,11 +57,19 @@
     "unlocked_tip": "<br/>Click to log out.<br/><br/>Closing the browser window will also log you out.",
     "account_notify": "The active account is now %(account)s",
     "account_value": "Account value",
-    "gateway":"gateway"
+    "gateway":"gateway",
+        "prediction":"Prediction Market",
+        "wallet_manage":"Wallet Management",
+        "account_manage":"Account Management"
   },
   "browser_notification_messages": {
     "money_received_title": "Transfer from %(from)s",
-    "money_received_body": "Sent you %(amount)s %(symbol)s"
+    "money_received_body": "Sent you %(amount)s %(symbol)s",
+    "room_awards_gt_title": "Prediction room reminder",
+    "room_awards_gt_body":"Prediction room %(room)s awards %(amount)s SEER ,is over the reminder amount you set %(awards)s SEER，please be noted",
+    "room_end_time_lt_title": "Prediction room reminder",
+    "room_end_time_lt_body":"Prediction room %(room)s is less than the %(min)s ending time you set，please be noted"
+
   },
   "tooltip": {
     "call_limit": "This is the call price of the least collateralized margin position in the market.",
@@ -157,6 +167,7 @@
     "name": "Account name",
     "id": "Account ID",
     "mine": "My account",
+    "ta": "Account of TA",
     "more": "see more",
     "deposit_withdraw": "Deposit/Withdraw",
     "as_collateral": "Collateral",
@@ -175,9 +186,16 @@
     "accounts": "Accounts",
     "contacts": "Contacts",
     "estimate_value": "Estimated Account value",
+    "currency_type":"Currency Type",
     "polo_scam": "This account is not the real Poloniex account, please send to this account: poloniexwallet.",
     "bittrex_scam": "This account is not the real Bittrex account, please send to this account: bittrex-deposit.",
     "other_scam": "This account is not known to be an official account, please verify the destination before transferring",
+    "total_assets":"Total Assets：",
+        "total_order_amount":"Total order amount：",
+        "collateral_and_deposit":"Collateral and deposit",
+        "collateral_types":"Collateral types",
+        "release_collateral_qty":"Quantity to be released",
+        "observer_model":"Observer model",
     "whitelist": {
       "title": "Whitelist",
       "black": "Blacklist",
@@ -192,6 +210,12 @@
       "whitelist_authorities": "Whitelist authority",
       "blacklist_authorities": "Blacklist authority"
     },
+    "transactions": {
+      "type": "Type",
+      "info": "Information",
+      "time": "Time",
+      "tx_link":"Transaction link"
+  },
     "transactions": {
       "type": "Type",
       "info": "Info",
@@ -233,7 +257,8 @@
       "claim": "Claim now",
       "available": "Available to claim",
       "referral_link": "Your referral link",
-      "referral_text": "Give this to link to people you want to refer to Seer"
+      "referral_text": "Give this to link to people you want to refer to Seer",
+      "copy_link":"Copy"
     },
     "user_issued_assets": {
       "symbol": "Symbol",
@@ -274,6 +299,7 @@
       "need_asset": "At least one of the two assets must be %(name)s",
       "perm_warning": "WARNING: Permissions may only be disabled, once disabled they may not be reactivated!!",
       "issued_assets": "Issued Assets",
+      "ta_issued_assets": "Assets issued by TA",
       "short": "Short name (max 32 characters)",
       "condition": "Condition (max 60 characters)",
       "expiry": "Market resolution date",
@@ -315,9 +341,12 @@
       "type": "Type",
       "key": "Key/Name",
       "weight": "Weight",
+      "input_weight":"Please input weight",
       "threshold": "Threshold",
       "confirm_add": "Add",
       "cancel": "Cancel",
+      "input_threshold":"Please input threshold",
+      "input_public_key":"Please input public key",
       "add_permission_label": "Enter account name/key and weight",
       "account_name_or_key": "Account name or key",
       "memo_public_key": "Memo Public Key",
@@ -464,8 +493,10 @@
     "percent": "Percent of total supply",
     "please_create_account": "Please create an account",
     "create_account": "Create account",
+    "create_wallet": "Creat wallet",
     "create_wallet_and_account": "Create wallet and account",
     "create_new": "Create A New Account",
+    "agree_text":"I understand that SEER does not store my account password, nor does it provide a retrieve function. I will remember my password.",
     "password_login": "Login with password",
     "identicon": "Identicon",
     "pay_from": "Pay with account",
@@ -493,8 +524,11 @@
         "signing_key": "Signing key",
         "not_created": "You haven't created a witness yet",
         "not_lifetime_member": "Creating witness requires lifetime membership",
+        "generate_keys":"Generate keys",
         "collateral": {
             "title": "Collaterals",
+            "explain": "In the way of producting blocks, SEER adopts the consensus mode of PoS. Users collateralize their own SEER through smart contract to compete for witnesses (block producers) .",
+            "tips":"Click here to learn how to run witness node locally",
             "date": "Start time",
             "amount": "Amount",
             "status": "Status",
@@ -507,6 +541,27 @@
             "operation": "Operation",
             "create":  "Create collateral"
         }
+      },
+      "menus":{
+          "account_all":"Account overview",
+          "asset_mangage":"Asset management",
+          "my_oracle":"My prediction",
+          "ta_oracle":"Prediction of TA",
+          "my_guaranty":"My guaranty",
+          "ta_guaranty":"Guaranty of TA",
+          "my_witness":"My witness",
+          "ta_witness":"Witness of TA",
+          "perm_mangage":"Privilege management",
+          "black_white_list":"Black white list"
+      },
+      "guaranty":{
+          "title":"My guaranty",
+          "explain":"PVD and ADV room can be created after deposit",
+          "submit":"Submit guaranty",
+          "update":"Update guaranty",
+          "script_explain":"Users can insert image code in base64 form",
+          "balance":"Current balance",
+          "balance_explain":"Entering a negative number means withdrawing the guaranty, and a positive number means increasing the guaranty"
     }
   },
   "pagination": {
@@ -606,7 +661,7 @@
     "seer_room_stop_participating": "{issuer} stop room {room}",
     "seer_room_final": "{issuer} final room {room},guaranty change:{balance}",
     "seer_room_settle": "{issuer} settle room {room},balance change:{balance}",
-    "seer_room_participate": "{issuer} participate room {room},balance change:{balance}",
+    "seer_room_participate": "{issuer} participate room {room},option {index} “{option}”",
     "seer_room_close": "{issuer} close room {room}",
     "seer_room_pool": "{issuer} Add {amount} to room {room}'s pool",
     "seer_house_create": "{issuer} create a house with guaranty {guaranty}",
@@ -811,6 +866,7 @@
     "csv_tip": "Download history as comma separated .csv file"
   },
   "explorer": {
+    "search":"Search account block asset transaction",
     "accounts": {
       "title": "Accounts",
       "filter": "Filter accounts",
@@ -956,7 +1012,9 @@
     },
     "committee_members": {
       "title": "Committee",
-      "active": "Total number of active committee members"
+      "active": "Total number of active committee members",
+      "set_voting_proxy":"Set voting proxy",
+            "input_placeholder":"Please input username"
     },
     "committee_member": {
       "title": "Committee member"
@@ -1118,6 +1176,8 @@
     "market": "Market",
     "feed_price": "Feed Price",
     "price_history": "Price Chart",
+    "price_market": "Market price",
+    "description":"Description",
     "order_depth": "Market Depth",
     "history": "Market trades",
     "my_history": "My trades",
@@ -1165,6 +1225,8 @@
     "index": "Index",
     "my_bids": "My bids",
     "my_asks": "My asks",
+    "bids_and_asks":"Bids and asks",
+    "trading_pair":"Trading depth",
     "my_orders": "My open orders",
     "settle_orders": "Settle orders",
     "asks": "Sell orders",
@@ -1195,7 +1257,10 @@
     "price_market": "Market Price",
     "description": "Description",
     "buy_description": "Buy %(baseAsset)s %(baseName)s for %(quoteAsset)s %(quoteName)s",
-    "sell_description": "Sell %(baseAsset)s %(baseName)s for %(quoteAsset)s %(quoteName)s"
+    "sell_description": "Sell %(baseAsset)s %(baseName)s for %(quoteAsset)s %(quoteName)s",
+    "input_quote":"Please input quote",
+    "depth_chart":"Depth chart",
+    "cancel_order":"Cancel the order"
   },
   "fees": {
     "title": "Fee Schedule"
@@ -1205,6 +1270,8 @@
     "base": "Base asset",
     "market_search": "Market Search",
     "filter": "Filter",
+    "input_code_filter":"Please input code to search",
+    "input_account_filter":"Please input account name to search",
     "core_rate": "Core rate",
     "supply": "Supply",
     "search": "Search",
@@ -1287,11 +1354,14 @@
     "need_backup": "This local wallet needs a backup",
     "noneed_backup": "No backup is needed",
     "restore": "Restore Local Wallet from Backup",
+    "restore_wallet":"Restore wallet instantly",
     "create_text": "The Seer local wallet is stored in your browser, it is not stored in the cloud. A wallet can contain multiple accounts and can be easily transferred between browsers and computers using a backup file.",
     "account_create_wallet_text": "This password will be used to create a new Seer local wallet for you, which will only be stored locally in your browser. A Seer wallet can contain multiple accounts and can be easily transferred between browsers and computers using a backup file.",
     "create_account_text": "The account name you choose needs to be unique, as it will be registered publicly on the blockchain and will be your identifer for any transactions you make.",
     "first_account_paid": "Since this is your first account, a faucet will pay the registration fee for you.",
     "not_first_account": "Since you already have an account, you will need to pay for this new account yourself. In order to do so, your account needs to have lifetime membership, which can be bought in the account page.",
+    "auxiliaries_text":"Please write the mnemonic words on paper and keep them properly. .&nbsp;<font color='red'>(No photographs or screenshots are recommended)</font>",
+    "auxiliaries_agree_text":"I understand that the mnemonic words have the highest privileges and can be used for account retrieval and password reset. It can not be retrieved after being lost. If it is leaked, it will lead to the loss of assets.",
     "must_be_ltm": "The fee paying account must be a lifetime member to perform that operation.",
     "backup_explain": "Clicking on the button below will generate a backup file with a .bin extension. This file is encrypted with your wallet password, and contains all the private keys for your accounts. It can be used to restore your wallet, or move it to a different computer/browser.",
     "backup_new_account": "Congratulations, you've just created a new account on the Seer blockchain! It is strongly recommended that you make a backup of your wallet now. Without a backup there is no way to restore your account if something happens to your computer.",
@@ -1318,6 +1388,8 @@
     "wallet_crucial": "Your local wallet is <strong>only stored</strong> in your browser, so it is crucial that you create a backup that will enable you to recover your wallet if the data in your browser is lost! <strong>No one else can restore your account if you lose your backup.</strong>",
     "wallet_move": "This backup file can also be used to move your local wallet to different computers or different browsers. In order to restore your local wallet using this backup <strong>you will also need your password!</strong>",
     "wallet_lose_warning": "<strong>IMPORTANT: If you lose your local wallet or your pass phrase you will be unable to access any of your funds again. Make sure you store the backup somewhere safe, and memorize or write down your password!</strong>",
+    "export_bin_agree_text":"I understand that clicking the button will generate a backup file with the suffix. bin. This backup file is encrypted with a wallet password. It contains all the private keys in the wallet. It can restore wallets, or migrate wallets between different browsers or computers.",
+    "download_bin_agree_text":"I understand that this backup file should be kept in reliable mailboxes, cloud disks, U disks or other places where it is not easy to be stolen or lost.",
     "tips_deposit": "Make a deposit",
     "link_deposit": "Deposits",
     "tips_dashboard": "See your dashboard",
@@ -1334,6 +1406,8 @@
     "step_1": "Create a wallet",
     "step_2": "Create a backup",
     "step_3": "Getting Started",
+    "step_4": "Begin to use",
+    "next_step": "Next step",
     "congrat": "Congratulations, you're ready!",
     "tips_explore": "Now that you've successfully created an account and downloaded the backup, it's time to get started. Click on one of the links below to start exploring.",
     "tips_header": "You can also find these same links in the top menu, and in the drop-down menu next to your account name.",
@@ -1374,7 +1448,12 @@
     "understand_3": " I understand that I will lose access to my funds if I lose my password",
     "bts_rules": "The first rule of Seer is: Do not lose your password.<br/>The second rule of Seer is: Do not lose your password.<br />The third rule of Seer is: We cannot recover your password.<br />The fourth rule: If you can remember the password, it's not secure.<br />The fifth rule: Use only randomly-generated passwords.<br />The sixth rule: Do not tell anyone your password.<br />The seventh rule: Always back up your password.",
     "ok_done": "OK, take me to the dashboard",
-    "local_switch": "Local wallet detected matching the given password, switching to local wallet mode"
+    "local_switch": "Local wallet detected matching the given password, switching to local wallet mode",
+    "agree_restore":"I understand that backup files will not be uploaded to the server, only processed in the local Google browser, so that you can get account privileges.",
+    "no_account":"No account?",
+    "to_register":"To register",
+    "placeholder_chose_bin":"Choose your bin document",
+    "placeholder_enter_password":"Input your wallet password"
   },
   "borrow": {
     "title": "%(asset_symbol)s Margin",
@@ -1649,14 +1728,27 @@
       "not_created": "You don't have a house",
       "name":"name",
       "owner":"owner",
-      "update": "Update house"
+      "update": "Update house",
+      "creator_rank":"Creator ranking",
+      "oracle_rank":"Oracle ranking",
+      "my_oracle":"My prediction slip",
+      "my_joined":"Prediction I joined",
+      "my_created":"Prediction I created",
+      "rank":"Ranking",
+      "account":"Account name",
+      "reputation":"Reputation",
+      "reward":"Reward(SEER)",
+      "volume":"Volume"
     },
     "oracle": {
       "create": "Create oracle",
       "my": "My oracle",
+      "ta": "Oracle of TA",
+      "explain":"About oracle",
       "title": "Oracle",
       "description": "Description",
       "guaranty": "Guaranty",
+      "oracle_guaranty":"Oracle guaranty",
       "locked_guaranty": "locked guaranty",
       "reputation": "Reputation",
       "script": "Script",
@@ -1664,13 +1756,20 @@
       "not_created": "Yout don't have an oracle",
       "update": "Update oracle",
       "input": "Oracle input",
-      "balance": "(means withdraw if amount is minus,otherwise positive),current balance:"
+      "balance": "(means withdraw if amount is minus,otherwise positive),current balance:",
+      "remind" : "Remind",
+      "remind_awards_gt" : "Oracle reward is more than",
+      "remind_update":"Update",
+      "remind_end_time_lt":"Ending time is less than",
+      "need_oracle_input_room":"Prediction that needs the input of result"
     },
     "room": {
       "title": "Room",
       "create": "Create room",
+      "create_now":"Create room now",
       "participate": "Participate",
       "label": "Label",
+      "click_label_remove":"Double click the label to delete",
       "status": "Staus",
       "open": "Open",
       "close": "Close",
@@ -1692,9 +1791,12 @@
       "reward_per_oracle": "Reward per oracle",
       "remove": "Remove",
       "input": "Input",
+      "submit_result": "Submit the result",
       "input_duration_secs": "Input duration minutes",
       "update": "Update room",
+      "open_room":"Open the room",
       "room_id":"Room number",
+      "recommend":"Recommend",
       "view": "View",
       "detail":"Details",
       "reputation": "Reputation",
@@ -1717,7 +1819,42 @@
       "pool_explain": "Current balance: ",
       "update_pool": "Add balance to pool",
       "pvp_owner_percent":"PVP owner profit percent(%)",
-      "owner_pay_fee_percent":"PVP owner pay fee percent(%)"
+      "owner_pay_fee_percent":"PVP owner pay fee percent(%)",
+      "guaranty_threshold":"Guaranty threshold of oracle",
+      "end_time":"Ending time",
+      "open_detail":"Check the details",
+      "input_or_select_label":"Please select or input label",
+      "label_use_input_value":"---Use input value---",
+      "placeholder_amount":"Please enter the amount",
+      "total_bets":"Total amount",
+      "room_detail":"Room details",
+      "join_detail":"Participation details",
+      "room_creator":"Room creator",
+      "room_status":"Market status",
+      "room_status_opening":"Opening",
+      "room_status_closed":"Closed",
+      "room_status_finished":"Finished",
+      "join_number":"Number of participants",
+      "join_volume":"Number of volume",
+      "join_amount":"Number of amount",
+      "join_result":"Result",
+      "room_broadcast":"Latest broadcast",
+      "general_option":"Quickly create prediction room",
+      "super_option":"Create advanced prediction room",
+      "room_option_desc":"Description of the prediction",
+      "add_option_group":"Add selection",
+      "remove_option_group":"Delete selection",
+      "input_option_group_title":"Please input the title of the prediction",
+      "msg_group_title_empty":"Title of advanced prediction room %(index)s can't be empty，please check it！",
+      "msg_group_title_repeat":"Title of advanced prediction room“%(title)s” repeated many times，please check it！",
+      "msg_group_all_created":"Totally %(count)s prediction rooms have been created！",
+      "income_list":"Total income list",
+      "in_join_count":"Total participation times",
+      "win_count":"Total winning times",
+      "in_join_amount":"Total participation amount",
+      "win_amount":"Total winning amount",
+      "in_join_need_reputation":"Reputation that required to participate",
+      "in_join_need_guaranty":"Guaranty that required to participate"
     }
   },
   "erc20": {
@@ -1726,8 +1863,11 @@
     "current_account": "Current account：",
     "bind_eth": "Bind ether address：",
     "btn_generate": "Generate",
+    "bind_omni": "Bind omni address：",
     "transfer_out_note": "Convert Seer main net tokens to ethereum ERC20 tokens. The conversion will be processed automatically within one minute. Usually it will take a few minutes to reach your ethereum address.",
     "transfer_out_to": "To：",
+    "transfer_out_omninote": "The gateway deposit and withdraw automatically，the confirmation time is determined according to the speed of Omni network",
+    "placeholder_out_omniaddress": "Please enter the Omni address",
     "placeholder_out_address": "Please enter the ETH address",
     "transfer_out_amount": "Amount：",
     "placeholder_out_amount": "Please enter the amount of %(unit)s",
@@ -1745,11 +1885,19 @@
     "error_master": "ERC20 Gateway account exception",
     "success_info": "Submit successful",
     "qrcode":"ETH address",
+    "omniqrcode": "Omni address",
     "button_generate_QR": "Click to show QR code",
     "transfer_opc_in_title": "OPC In(ERC20)",
     "transfer_opc_out_title": "OPC Out(ERC20)",
+    "transfer_pfc_in_title": "Transfer in PFC(ERC20)",
+    "transfer_pfc_out_title": "Transfer out PFC(ERC20)",
+    "transfer_usdt_in_title": "Transfer in USDT(Omni)",
+    "transfer_usdt_out_title": "Transfer out USDT(Omni)",
     "to_require": "To is required",
-    "note_opc": "Conversion from ethereum ERC20 tokens to Seer main net tokens is now available. Click the “Generate” button, an ethereum address will be assigned automatically. Send your OPC token from your ERC20 compatible ethereum wallet to this address, the system will automatically transfer equivalent number of OPC tokens to your Seer account. "
+    "note_opc": "Conversion from ethereum ERC20 tokens to Seer main net tokens is now available. Click the “Generate” button, an ethereum address will be assigned automatically. Send your OPC token from your ERC20 compatible ethereum wallet to this address, the system will automatically transfer equivalent number of OPC tokens to your Seer account. ",
+    "note_pfc": "Conversion from ethereum ERC20 tokens to Seer main net tokens is now available. Click the “Generate” button, an ethereum address will be assigned automatically. Send your PFC token from your ERC20 compatible ethereum wallet to this address, the system will automatically transfer equivalent number of PFC tokens to your Seer account.",
+    "note_usdt": "Conversion from Omni USDT tokens to Seer main net tokens is now available. Click the “Generate” button, an Omni address will be assigned automatically. Send your USDT token from your  compatible Omni wallet to this address, the system will automatically transfer equivalent number of USDT tokens to your Seer account."
+
   },
   "bts": {
     "title": "Gateway",

@@ -344,7 +344,7 @@ class HeaderNav extends React.Component {
         //     </div>
         // ) : null;
 
-        let tradeUrl = this.props.lastMarket ? `/market/${this.props.lastMarket}` : "/market/OPC_SEER";
+        let tradeUrl = this.props.lastMarket ? `/market/${this.props.lastMarket}` : "/market/PFC_SEER";
 
         // Account selector: Only active inside the exchange
         let account_display_name, accountsList;

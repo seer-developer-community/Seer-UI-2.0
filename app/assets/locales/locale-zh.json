@@ -656,7 +656,7 @@
         "seer_room_pool": "{issuer}给房间{room}资金池添加{amount}",
         "seer_house_create": "{issuer}以{guaranty}保证金创建平台",
         "seer_house_update": "{issuer}更新平台{house}",
-        "asset_create_market": "{issuer}创建了｛asset_id}的第{sequence}个交易对｛asset_id}/{target}"
+        "asset_create_market": "{issuer}创建了{asset_id}的第{sequence}个交易对{asset_id}/{target}"
     },
     "proposal": {
         "transfer": "将 {amount} 从账户 {from} 转账到 {to}",
@@ -1824,7 +1824,12 @@
             "in_join_amount":"总参与金额",
             "win_amount":"总收益金额",
             "in_join_need_reputation":"参与所需声誉",
-            "in_join_need_guaranty":"参与所需保证金"
+            "in_join_need_guaranty":"参与所需保证金",
+            "sort_by_latest_joined":"最新参与",
+            "sort_by_volume":"参与总量",
+            "sort_by_joined_number":"参与人数",
+            "sort_by_end_time":"结束时间",
+            "sort_by_creator_weight":"创建者权重"
         }
     },
   "erc20": {

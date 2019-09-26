@@ -42,7 +42,7 @@ class TransactionOperation extends React.Component {
         return (
             <div className="flex-align-middle tx_operation" style={{height:48,background:"#F8F8FA",padding:4,marginTop:25}}>
               <div style={{display:"inline-block",width: 40,height: 40}}>
-                <AccountImage accountObject={op[1].from || op[1].issuer} size={{height: 40, width: 40}}/>
+                <AccountImage accountObject={op[1].from || op[1].issuer || op[1].seller || op[1].account || op[1].registrar || op[1].fee_paying_account} size={{height: 40, width: 40}}/>
               </div>
               <table>
                 <tbody>

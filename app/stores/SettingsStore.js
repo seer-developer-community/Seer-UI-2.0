@@ -161,10 +161,10 @@ class SettingsStore {
             // Default markets setup
             let topMarkets = {
                 markets_cea4fdf4: [ // BTS MAIN NET
-                    "OPC", "PFC", "SCP"
+                    "OPC", "PFC", "SCP","SEER"
                 ],
                 markets_39f5e2ed: [ // TESTNET
-                    "OPC", "PFC", "SCP"
+                    "OPC", "PFC", "SCP","SEER"
                 ]
             };
 
