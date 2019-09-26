@@ -627,8 +627,8 @@ class AccountDashboard extends React.Component {
                     { this.state.oracle ?
                         <tr>
                             <td><Translate content="seer.oracle.oracle_guaranty" /></td>
-                            <td>{this.state.oracle.guaranty}</td>
-                            <td>{this.state.oracle.locked_guaranty}</td>
+                            <td><FormattedAsset amount={this.state.oracle.guaranty} asset="1.3.0" decimalOffset={5} /></td>
+                            <td><FormattedAsset amount={this.state.oracle.locked_guaranty} asset="1.3.0" decimalOffset={5} /></td>
                             <td>
                               <Link to={"/account/" + this.props.account.get("id")+ "/update-oracle/" + this.state.oracle.id} className="button tiny fillet"><Translate content="account.witness.collateral.cancel"/></Link>
                             </td>
