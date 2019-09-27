@@ -202,7 +202,7 @@ class AccountWitness extends React.Component {
 
     generateKeys(){
           WalletUnlockActions.unlock().then(e=>{
-            let brainKey = WalletDb.getBrainKey();
+            let brainKey = WalletDb.getRandomBrainKey();
             let private_key = PrivateKey.fromSeed(brainKey);
             let wif = private_key.toWif();
             let publicKey = private_key.toPublicKey().toPublicKeyString();

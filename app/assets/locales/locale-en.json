@@ -59,8 +59,8 @@
     "account_value": "Account value",
     "gateway":"gateway",
         "prediction":"Prediction Market",
-        "wallet_manage":"Wallet Management",
-        "account_manage":"Account Management"
+        "wallet_manage":"Wallet",
+        "account_manage":"Account"
   },
   "browser_notification_messages": {
     "money_received_title": "Transfer from %(from)s",
@@ -1854,7 +1854,12 @@
       "in_join_amount":"Total participation amount",
       "win_amount":"Total winning amount",
       "in_join_need_reputation":"Reputation that required to participate",
-      "in_join_need_guaranty":"Guaranty that required to participate"
+      "in_join_need_guaranty":"Guaranty that required to participate",
+      "sort_by_latest_joined":"New",
+      "sort_by_volume":"Vol.",
+      "sort_by_joined_number":"Hot",
+      "sort_by_end_time":"Deadline",
+      "sort_by_creator_weight":"Decentralization"
     }
   },
   "erc20": {
