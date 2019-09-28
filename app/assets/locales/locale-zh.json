@@ -1758,7 +1758,7 @@
             "pool": "资产池",
             "awards": "奖金倍数",
             "result_owner_percent": "创建者权重",
-            "reward_per_oracle": "每个预言机奖励",
+            "reward_per_oraclesettle": "每个预言机奖励",
             "remove": "删除",
             "input": "输入结果",
             "submit_result": "提交结果",
