@@ -330,7 +330,7 @@ class CreateAccount extends React.Component {
 
                         <tr>
                             <td><Translate content="wallet.tips_dashboard" />:</td>
-                            <td><Link to="/dashboard"><Translate content="header.dashboard" /></Link></td>
+                            <td><Link to={`/account/${this.state.accountName}/dashboard`}><Translate content="header.dashboard" /></Link></td>
                         </tr>
 
                         <tr>
@@ -340,7 +340,7 @@ class CreateAccount extends React.Component {
                         
                         <tr>
                             <td><Translate content="wallet.tips_transfer" />:</td>
-                            <td><Link to="/transfer"><Translate content="wallet.link_transfer" /></Link></td>
+                            <td><Link to={`/account/${this.state.accountName}/erc20-gateway`}><Translate content="wallet.link_transfer" /></Link></td>
                         </tr>
 
                         <tr>

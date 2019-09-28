@@ -29,6 +29,8 @@ let dictJson, AesWorker;
 if (__ELECTRON__) {
     AesWorker = require("worker-loader?inline!workers/AesWorker");
     dictJson = require("json-loader!common/dictionary_en.json");
+}else{
+    dictJson = require("json-loader!common/dictionary_en.json");
 }
 
 /** Represents a single wallet and related indexedDb database operations. */
@@ -45,7 +47,7 @@ class WalletDb extends BaseStore {
         // for now many methods need to be exported...
         this._export(
             "checkNextGeneratedKey","getWallet","onLock","isLocked","decryptTcomb_PrivateKey","getPrivateKey","process_transaction","transaction_update","transaction_update_keys","getBrainKey","getBrainKeyPrivate","onCreateWallet","validatePassword","changePassword","generateNextKey","incrementBrainKeySequence","saveKeys","saveKey","setWalletModified","setBackupDate","setBrainkeyBackupDate","_updateWallet","loadDbData",
-            "importKeysWorker", "resetBrainKeySequence", "decrementBrainKeySequence", "generateKeyFromPassword"
+            "importKeysWorker", "resetBrainKeySequence", "decrementBrainKeySequence", "generateKeyFromPassword","getRandomBrainKey"
         );
         this.generatingKey = false;
     }
@@ -193,6 +195,10 @@ class WalletDb extends BaseStore {
     getBrainKeyPrivate(brainkey_plaintext = this.getBrainKey()) {
         if( ! brainkey_plaintext) throw new Error("missing brainkey")
         return PrivateKey.fromSeed( key.normalize_brainKey(brainkey_plaintext) )
+    }
+
+    getRandomBrainKey(){
+        return key.suggest_brain_key(dictJson.en)
     }
 
     onCreateWallet(
