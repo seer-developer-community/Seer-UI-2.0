@@ -138,7 +138,9 @@ const routes = (
 
         <Route path="invoice/:data" component={Invoice} />
         <Route path="market/:marketID" component={ExchangeContainer} />
-        <Route path="settings" component={SettingsContainer} />
+        <Route path="settings" component={SettingsContainer}>
+            <IndexRedirect to="general"/>
+        </Route>
         <Route path="settings/:tab" component={SettingsContainer} />
         <Redirect from="block/:height" to="/explorer/block/:height" />
         <Route path="create-account" component={LoginSelector}>

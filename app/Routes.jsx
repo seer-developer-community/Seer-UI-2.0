@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Route, IndexRoute, Redirect } from "react-router/es";
+import { Route, IndexRoute,IndexRedirect, Redirect } from "react-router/es";
 import willTransitionTo from "./routerTransition";
 import App from "./App";
 import AccountStore from "./stores/AccountStore";
@@ -155,7 +155,9 @@ const routes = (
         }}/>
         <Route path="settings" getComponent={(location, cb) => {
             System.import("components/Settings/SettingsContainer").then(loadRoute(cb)).catch(errorLoading);
-        }}/>
+        }}>
+            <IndexRedirect to="general"/>
+        </Route>
         <Route path="settings/:tab" getComponent={(location, cb) => {
             System.import("components/Settings/SettingsContainer").then(loadRoute(cb)).catch(errorLoading);
         }}/>
