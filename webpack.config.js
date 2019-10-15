@@ -9,7 +9,7 @@ require("es6-promise").polyfill();
 var root_dir = path.resolve(__dirname);
 
 var Version = new Date().getTime();
-Version = "1570608727980";
+
 module.exports = function(env) {
     // if (!env.profile) {
     //     console.log("env:", env);
@@ -138,8 +138,8 @@ module.exports = function(env) {
         output: {
             publicPath: env.prod ? "" : "/",
             path: outputPath,
-            filename: "[name]."+Version+".js",
-           // filename: "[name].js",
+            //filename: "[name]."+Version+".js",
+            filename: "[name].js",
             pathinfo: !env.prod,
             sourceMapFilename: "[name].js.map"
         },
