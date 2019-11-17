@@ -364,7 +364,7 @@ class OrderBook extends React.Component {
                         component="tbody"
                         transitionName="newrow"
                       >
-                        {bidRows}
+                         {askRows.reverse()}
                       </TransitionWrapper>
                     </table>
                   </div>
@@ -377,7 +377,7 @@ class OrderBook extends React.Component {
                         component="tbody"
                         transitionName="newrow"
                       >
-                        {askRows}
+                          {bidRows}
                       </TransitionWrapper>
                     </table>
                   </div>

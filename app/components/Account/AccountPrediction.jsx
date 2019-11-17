@@ -281,6 +281,7 @@ class AccountPrediction extends React.Component {
       let createdRows = this.state.myCreatedPredictions.map(room=>{
         let isMyRoom = isMyAccount && (room.owner === account.get("id"));
         let localUTCTime = new Date().getTime() + new Date().getTimezoneOffset() * 60000;
+
         return(
           <tr key={room.id}>
             <td>{room.id}</td>
@@ -315,9 +316,9 @@ class AccountPrediction extends React.Component {
                   new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 > localUTCTime ||
                   new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 < localUTCTime &&
                     new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 + 7 * 24 * 3600000 > localUTCTime &&
-                  (!room.owner_result || room.owner_result.length === 0) &&
-                  (!room.committee_result || room.committee_result.length === 0) &&
-                  (!room.oracle_sets || room.oracle_sets.length === 0))) ?
+                  (!room.running_option.owner_result || room.running_option.owner_result.length === 0) &&
+                  (!room.running_option.committee_result || room.running_option.committee_result.length === 0) &&
+                  (!room.running_option.oracle_sets || room.running_option.oracle_sets.length === 0))) ?
                   <span>
                       {
                         isMyRoom
@@ -339,7 +340,8 @@ class AccountPrediction extends React.Component {
               {
                 isMyRoom && (room.status == "opening" || room.status == "inputing") &&
                 new Date(room.option.stop).getTime() + room.option.input_duration_secs * 1000 < localUTCTime &&
-                ((room.owner_result && room.owner_result.length !== 0) || (room.committee_result && room.committee_result.length !==0)  || (room.oracle_sets && room.oracle_sets.length !== 0)) ?
+                ((room.running_option.owner_result && room.running_option.owner_result.length !== 0) || (room.running_option.committee_result && room.running_option.committee_result.length !==0)
+                || (room.running_option.oracle_sets && room.running_option.oracle_sets.length !== 0)) ?
                   <button className="button tiny outline fillet" onClick={this.finalRoom.bind(this, room)}>
                     <Translate content="seer.room.final"/>
                   </button>

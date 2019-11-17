@@ -235,15 +235,18 @@ class HouseList extends React.Component {
           let start = r.description.indexOf(prefix);
           let end = r.description.indexOf(suffix);
           if(start !== -1 && end !== -1){
-              let head = r.description.match(new RegExp("(?<=\\(@#-)\\S+(?=-#@\\))", "g"))[0];
-              let groupId = head.match(new RegExp("[^\\(\\)]+(?=\\))","g"))[0];
-              //let title = head.replace("("+groupId+")","").trim();
-              if(_.has(groupIdsIndex,"g-" + groupId)){
-                rooms[groupIdsIndex["g-" + groupId]].subRooms.push(r);
-              }else{
-                groupIdsIndex["g-" + groupId] = i;
-                r.subRooms = [];
-                newRooms.push(r);
+              let head = r.description.match(new RegExp("(?<=\\(@#-)\\S+(?=-#@\\))", "g"));
+              if(head && head.length > 0){
+                  head = head[0];
+                  let groupId = head.match(new RegExp("[^\\(\\)]+(?=\\))","g"))[0];
+                  //let title = head.replace("("+groupId+")","").trim();
+                  if(_.has(groupIdsIndex,"g-" + groupId)){
+                      rooms[groupIdsIndex["g-" + groupId]].subRooms.push(r);
+                  }else{
+                      groupIdsIndex["g-" + groupId] = i;
+                      r.subRooms = [];
+                      newRooms.push(r);
+                  }
               }
           }else{
             newRooms.push(r);
