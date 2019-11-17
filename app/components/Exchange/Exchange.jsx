@@ -1116,6 +1116,7 @@ class Exchange extends React.Component {
                 marketReady={marketReady}
                 wrapperClass={`order-${buySellTop ? 3 : 1} xlarge-order-${buySellTop ? 4 : 1}`}
                 currentAccount={this.props.currentAccount.get("id")}
+                marketStats={marketStats}
             />
         );
 
