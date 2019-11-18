@@ -1248,7 +1248,8 @@
         "search": "请输入交易对查询",
         "order_value": "委单价值",
         "depth_chart":"深度图",
-        "cancel_order":"撤单"
+        "cancel_order":"撤单",
+        "current_exchange":"现价交易"
     },
     "fees": {
         "title": "费率表"

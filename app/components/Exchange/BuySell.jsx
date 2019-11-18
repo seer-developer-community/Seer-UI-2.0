@@ -224,11 +224,7 @@ class BuySell extends React.Component {
 
         return (
             <div className={this.props.className} style={{height:"342px"}}>
-                <div className="exchange-bordered buy-sell-container" style={{height:"100%"}}>
-                    <div style={{background:"#f7f7f7",height:"37px",lineHeight:"37px",fontSize:"14px",color:"#333",fontWeight:"bold",paddingLeft:12}}>
-                      {buttonText} <AssetName dataPlace="top" name={quote.get("symbol")} />
-                    </div>
-
+                <div className="buy-sell-container" style={{height:"100%"}}>
                     <div style={{padding:"12px"}}>
                     <table style={{fontSize:"14px",width:"100%",color:"#666"}}>
                       <tr height="28px">
@@ -314,8 +310,6 @@ class BuySell extends React.Component {
                     </table>
                     </div>
                   {marketFee}
-
-
 
                 </div>
                 <SimpleDepositWithdraw

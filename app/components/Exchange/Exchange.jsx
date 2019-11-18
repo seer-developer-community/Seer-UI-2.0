@@ -1124,7 +1124,7 @@ class Exchange extends React.Component {
 
 
         let chart = (
-            <div className="exchange-bordered" style={{height:"536px"}} >
+            <div >
                 {!showDepthChart ? (
                     <div className="grid-block shrink no-overflow" id="market-charts">
                         {/* Price history chart */}
@@ -1210,7 +1210,7 @@ class Exchange extends React.Component {
                     <Layout>
                         <Layout>
                             <Layout>
-                                <Header style={{background:"#f5f5f5",lineHeight:"normal"}}>
+                                <Header className="exchange-header">
                                     {!this.props.marketReady ? <LoadingIndicator /> : null}
                                     <ExchangeHeader
                                         account={this.props.currentAccount}
@@ -1232,11 +1232,20 @@ class Exchange extends React.Component {
                                         {orderBook}
                                     </Sider>
                                     <Layout>
-                                        <Content>{chart}</Content>
-                                        <Footer>
+                                        <Content style={{height:470,margin:"0 12px",background:"#fff"}}>
                                             <div>
+                                              {chart}
+                                            </div>
+                                        </Content>
+                                        <Footer style={{padding:"12px"}}>
+                                            <div className="exchange-panel">
+                                              <div className="exchange-panel-title">
+                                                <Translate content="exchange.current_exchange"/>
+                                              </div>
+                                              <div className="exchange-panel-content exchange-form">
                                                 {buyForm}
                                                 {sellForm}
+                                              </div>
                                             </div>
                                         </Footer>
                                     </Layout>

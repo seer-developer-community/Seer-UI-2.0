@@ -116,7 +116,7 @@ export default class ExchangeHeader extends React.Component {
         return (
             <div>
                 <Row>
-                    <Col span={4}>
+                    <Col span={2}>
                         {!hasPrediction ? (
                             <div>
                                 <Link to={`/asset/${quoteSymbol}`} className="asset-prefix" style={{fontSize:18,fontWeight:"bold"}}><AssetName name={quoteSymbol} replace={true}/></Link>
@@ -129,27 +129,21 @@ export default class ExchangeHeader extends React.Component {
                             </a>
                         )}
                     </Col>
-                    <Col span={4}>
-                        <Link onClick={() => { this._addMarket(this.props.quoteAsset.get("symbol"), this.props.baseAsset.get("symbol")); }}
-                              data-intro={translator.translate("walkthrough.favourite_button")}>
-                            {
-                                starredMarkets.has(marketID) ? <svg className="icon" aria-hidden="true" style={{width:"16px",height:"16px"}}>
-                                    <use xlinkHref="#icon-shoucang-checked"></use>
-                                </svg>:
-                                    <i className="iconfont icon-shoucang" style={{color:"#CCC"}}></i>
-                            }
-                        </Link>
+                  <Col span={1}>
+                    <Link onClick={() => { this._addMarket(this.props.quoteAsset.get("symbol"), this.props.baseAsset.get("symbol")); }}
+                          data-intro={translator.translate("walkthrough.favourite_button")}>
+                      {
+                        starredMarkets.has(marketID) ? <svg className="icon" aria-hidden="true" style={{width:"16px",height:"16px"}}>
+                            <use xlinkHref="#icon-shoucang-checked"></use>
+                          </svg>:
+                          <i className="iconfont icon-shoucang" style={{color:"#CCC"}}></i>
+                      }
+                    </Link>
+                  </Col>
+                    <Col span={2} className="current-price right">
+                      {!marketReady ? 0 : last_price}
                     </Col>
-                    <Col span={4}>
-                        <Translate style={labelStyle} content="exchange.latest" />
-                    </Col>
-                    <Col span={4}>
-                        <Translate style={labelStyle} content="account.hour_24" />
-                    </Col>
-                    <Col span={4}>
-                        <Translate style={labelStyle} content="exchange.volume_24" onClick={this.changeVolumeBase.bind(this)} className="clickable"/>
-                    </Col>
-                    <Col span={4}>
+                    <Col span={10}>
                         <div style={{textAlign:"right"}}>
                               <span className="clickable" onClick={this.props.onToggleCharts} style={{fontSize:14,color:"#449E7B",fontWeight:"bold"}}>
                             {!showDepthChart ?
@@ -163,33 +157,47 @@ export default class ExchangeHeader extends React.Component {
                               </span>
                         </div>
                     </Col>
+
+                    <Col span={3} className="right">
+                        <Translate style={labelStyle} content="exchange.latest" />
+                    </Col>
+                    <Col span={3} className="right">
+                        <Translate style={labelStyle} content="account.hour_24" />
+                    </Col>
+                    <Col span={3} className="right">
+                        <Translate style={labelStyle} content="exchange.volume_24" onClick={this.changeVolumeBase.bind(this)} className="clickable"/>
+                    </Col>
                 </Row>
                 <Row>
-                    <Col span={4}>
+                    <Col span={2}>
                         <div className="label-actions">
                             <span style={{fontSize:14,color:"#666"}}>TRADING PAIR</span>
                             {/*<Translate component="span" style={{padding: "5px 0 0 5px",fontSize:14,color:"#666"}} className="stat-text" content="exchange.trading_pair" />*/}
                         </div>
                     </Col>
-                    <Col span={4}>
-                        <Link onClick={() => {
-                            MarketsActions.switchMarket();
-                        }}
-                              to={`/market/${baseSymbol}_${quoteSymbol}`}
-                              data-intro={translator.translate("walkthrough.switch_button")}>
-                            <i className="iconfont icon-qiehuan" style={{color:"#CCC"}}></i>
-                        </Link>
+                    <Col span={1}>
+                      <Link onClick={() => {
+                        MarketsActions.switchMarket();
+                      }}
+                            to={`/market/${baseSymbol}_${quoteSymbol}`}
+                            data-intro={translator.translate("walkthrough.switch_button")}>
+                        <i className="iconfont icon-qiehuan" style={{color:"#CCC"}}></i>
+                      </Link>
                     </Col>
-                    <Col span={4}>
+                    <Col span={2} className="right">
+                      <span style={{fontSize:"12px",color:"#999"}}> ￥0.31</span>
+                    </Col>
+                    <Col span={10}>
+                    </Col>
+                    <Col span={3} className="right">
                         <span style={valStyle}> {!marketReady ? 0 : last_price} <AssetName name={baseSymbol} /></span>
                     </Col>
-                    <Col span={4}>
+                    <Col span={3} className="right">
                         <span style={{...valStyle,color:"#4EA382"}}> {marketReady ? dayChangeWithSign : 0}%</span>
                     </Col>
-                    <Col span={4}>
+                    <Col span={3} className="right">
                         <span style={valStyle} onClick={this.changeVolumeBase.bind(this)} className="clickable"> {!marketReady ? 0 : day_volume} <AssetName name={volume24hAsset.get("symbol")} /></span>
                     </Col>
-                    <Col span={4}>col-12</Col>
                 </Row>
                 {/*<div className="grid-block shrink no-padding overflow-visible">*/}
                 
