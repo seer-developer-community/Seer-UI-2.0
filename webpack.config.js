@@ -3,6 +3,7 @@ var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var Clean = require("clean-webpack-plugin");
 var git = require("git-rev-sync");
+var AntdScssThemePlugin = require('antd-scss-theme-plugin');
 require("es6-promise").polyfill();
 
 // BASE APP DIR
@@ -124,6 +125,8 @@ module.exports = function(env) {
         plugins.push(new webpack.NoEmitOnErrorsPlugin());
     }
 
+    plugins.push(new AntdScssThemePlugin(path.resolve(root_dir, "app/assets/stylesheets/ant_design_theme.scss")));
+
     var config = {
         entry: {
             // vendor: ["react", "react-dom", "highcharts/highstock", "bitsharesjs", "lodash"],
@@ -180,6 +183,10 @@ module.exports = function(env) {
                 {
                     test: /\.scss$/,
                     use: scssLoaders
+                },
+                {
+                    test: /\.less$/,
+                    loaders: ['style-loader', 'css-loader', AntdScssThemePlugin.themify('less-loader')]
                 },
                 {
                     test: /\.png$/,

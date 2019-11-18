@@ -10,6 +10,7 @@ import TransitionWrapper from "../Utility/TransitionWrapper";
 import AssetName from "../Utility/AssetName";
 import { StickyTable } from "react-sticky-table";
 import Icon from "../Icon/Icon";
+import { Select } from 'antd';
 import "react-sticky-table/dist/react-sticky-table.css";
 
 class OrderBookRowHorizontal extends React.Component {
@@ -234,42 +235,55 @@ class OrderBook extends React.Component {
         const dayChangeWithSign = (dayChange > 0) ? "+" + dayChange : dayChange;
 
         return (
-            <div className={classnames(this.props.wrapperClass, "grid-block orderbook no-padding small-vertical align-spaced no-overflow")}>
-              <div className={classnames("middle-content", this.state.flip ? "order-2" : "order-1")}>
-                <div className="exchange-bordered" style={{marginLeft:0}}>
-                  <div style={{background:"#f7f7f7",height:"37px",lineHeight:"37px",fontSize:"14px",color:"#333",fontWeight:"bold",paddingLeft:12}}>
-                    <Translate content="exchange.bids_and_asks" />
-                  </div>
-                  <div className="order-book">
-                      <div className="order-book-title">
-                          <div><Translate content="exchange.price" /></div>
-                          <div><AssetName dataPlace="top" name={baseSymbol} /></div>
-                          <div><AssetName dataPlace="top" name={quoteSymbol} /></div>
-                          <div><Translate content="exchange.total" />(<AssetName dataPlace="top" name={baseSymbol} />)</div>
-                      </div>
-                        <TransitionWrapper
-                          ref="bidTransition"
-                          className="orderbook clickable"
-                          component="div"
-                          transitionName="newrow">
-                          {askRows.reverse()}
-                        </TransitionWrapper>
-                        <div className="order-book-current-price">
-                          <div>{last_price}</div>
-                          <div>➔</div>
-                          <div>¥0.31</div>
-                          <div>{dayChangeWithSign}%</div>
-                        </div>
-                        <TransitionWrapper
-                          ref="askTransition"
-                          className="orderbook clickable"
-                          component="div"
-                          transitionName="newrow">
-                          {bidRows}
-                        </TransitionWrapper>
-                  </div>
+            <div className="order-book">
+                <div className="order-book-head">
+                    <Translate component="div" content="exchange.bids_and_asks" />
+                    <div>
+                        <svg className="icon selected" aria-hidden="true">
+                            <use xlinkHref="#icon-pankou-quanxianshi"></use>
+                        </svg>
+                        <svg className="icon" aria-hidden="true">
+                            <use xlinkHref="#icon-pankou-maipan1"></use>
+                        </svg>
+                        <svg className="icon" aria-hidden="true">
+                            <use xlinkHref="#icon-pankou-maipan"></use>
+                        </svg>
+                    </div>
+                    <Select defaultValue="lucy">
+                        <Select.Option value="6">6位小数</Select.Option>
+                        <Select.Option value="5">5位小数</Select.Option>
+                        <Select.Option value="4">4位小数</Select.Option>
+                        <Select.Option value="3">3位小数</Select.Option>
+                        <Select.Option value="2">2位小数</Select.Option>
+                        <Select.Option value="1">1位小数</Select.Option>
+                    </Select>
                 </div>
-              </div>
+                <div className="order-book-title">
+                    <div><Translate content="exchange.price" /></div>
+                    <div><AssetName dataPlace="top" name={baseSymbol} /></div>
+                    <div><AssetName dataPlace="top" name={quoteSymbol} /></div>
+                    <div><Translate content="exchange.total" />(<AssetName dataPlace="top" name={baseSymbol} />)</div>
+                </div>
+                <TransitionWrapper
+                    ref="bidTransition"
+                    className="orderbook clickable"
+                    component="div"
+                    transitionName="newrow">
+                    {askRows.reverse()}
+                </TransitionWrapper>
+                <div className="order-book-current-price">
+                    <div>{last_price}</div>
+                    <div>➔</div>
+                    <div>¥0.31</div>
+                    <div>{dayChangeWithSign}%</div>
+                </div>
+                <TransitionWrapper
+                    ref="askTransition"
+                    className="orderbook clickable"
+                    component="div"
+                    transitionName="newrow">
+                    {bidRows}
+                </TransitionWrapper>
             </div>
         );
     }

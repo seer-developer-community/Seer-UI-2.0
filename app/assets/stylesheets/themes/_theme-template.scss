@@ -96,7 +96,7 @@ $input-border
     }
 
     #content-wrapper {
-        @include color($primary-text-color, #f2f2f2);
+        @include color($primary-text-color, #f0f0f0);
     }
 
     hr {
