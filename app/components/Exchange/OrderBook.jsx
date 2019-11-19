@@ -249,7 +249,7 @@ class OrderBook extends React.Component {
                             <use xlinkHref="#icon-pankou-maipan"></use>
                         </svg>
                     </div>
-                    <Select defaultValue="lucy">
+                    <Select defaultValue="5">
                         <Select.Option value="6">6位小数</Select.Option>
                         <Select.Option value="5">5位小数</Select.Option>
                         <Select.Option value="4">4位小数</Select.Option>

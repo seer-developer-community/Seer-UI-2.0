@@ -1135,6 +1135,7 @@ class Exchange extends React.Component {
                             quote={quote}
                             baseSymbol={baseSymbol}
                             quoteSymbol={quoteSymbol}
+                            width={812}
                             height={height}
                             leftOrderBook={leftOrderBook}
                             marketReady={marketReady}
@@ -1166,6 +1167,7 @@ class Exchange extends React.Component {
                                 });
                             }}
                             onChangeChartHeight={this.onChangeChartHeight.bind(this)}
+                            //chartWidth={chartWidth}
                             chartHeight={chartHeight}
                             onToggleVolume={() => {SettingsActions.changeViewSetting({showVolumeChart: !showVolumeChart});}}
                             onToggleChartClamp={() => {SettingsActions.changeViewSetting({enableChartClamp: !enableChartClamp});}}
