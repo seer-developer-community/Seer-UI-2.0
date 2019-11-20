@@ -941,10 +941,6 @@ $input-border
         background-color: lighten($light-panel-bg-color, 12%) ;
     }
 
-    .bucket-option:hover {
-        background-color: $panel-bg-color;
-    }
-
     .buy-sell-box {
         background-color: lighten($light-panel-bg-color, 12%);
 
@@ -1431,10 +1427,6 @@ $input-border
         background-color: $header-color;
     }
 
-    .market-stats .stat .value {
-        color: $primary-text-color;
-    }
-
     li.stat.input {
         &:hover {background-color: lighten($panel-bg-color, 4%);}
     }
@@ -1517,22 +1509,6 @@ $input-border
     //.table > tbody > tr:nth-of-type(even) {
     //    background-color: lighten($bg-color, 4%);
     //}
-    //bottom stats
-    .bucket-option {
-
-      font-size: 12px;
-      color:#666;
-      background: #EFEFEF;
-      border: none;
-
-        &:hover {
-          background: #bfbfbf;
-        }
-
-        &.active-bucket {
-          background: #bfbfbf;
-        }
-    }
 
     .indicators, li.stat.clickable{
         color: $secondary-text-color;

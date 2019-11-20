@@ -55,7 +55,7 @@ class MarketsStore {
         this.activeMarket = null;
         this.quoteAsset = null;
         this.pendingCounter = 0;
-        this.buckets = [15,60,300,3600,86400];
+        this.buckets = [1,5,15,30,60,300,3600,86400];
         this.bucketSize = this._getBucketSize();
         this.priceHistory = [];
         this.lowestCallPrice = null;

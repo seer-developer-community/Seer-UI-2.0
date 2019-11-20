@@ -517,7 +517,7 @@ export default class Wrapper extends React.Component {
 		let bucketOptions = buckets.filter(bucket => {
 			return bucket > 60 * 4;
 		}).map(bucket => {
-			return <div key={bucket} className={cnames("label bucket-option", {"active-bucket": bucketSize === bucket})} onClick={this.props.changeBucketSize.bind(this, bucket)}>{bucketText(bucket)}</div>;
+			return <li key={bucket} className={cnames("bucket-option", {"active-bucket": bucketSize === bucket})} onClick={this.props.changeBucketSize.bind(this, bucket)}>{bucketText(bucket)}</li>;
 		});
 
 		let oneHour = 3600, oneDay = oneHour * 24;
@@ -629,23 +629,22 @@ export default class Wrapper extends React.Component {
 
         return (
             <div className="no-margin no-padding" style={{overflow: "visible", width: "100%"}}>
-                {chart}
-                <div style={{paddingBottom: 10}}>
-                  <ul className="market-stats stats bottom-stats">
+                <div className="chart-tools-bar">
+                  <ul className="market-stats stats">
                     {/*<ul style={{justifyContent: "center"}} className="market-stats stats bottom-stats">*/}
                         {/* Chart controls */}
-                            <li className="stat" data-intro={translator.translate("walkthrough.chart_tool_zoom")}>
-                                <span>
-                                    <span style={{color:"#666"}}><Translate content="exchange.zoom" />:</span>
-                                    <span>{zoomOptions}</span>
-                                </span>
-                            </li>
+                            {/*<li className="stat" data-intro={translator.translate("walkthrough.chart_tool_zoom")}>*/}
+                                {/*<span>*/}
+                                    {/*<span style={{color:"#666"}}><Translate content="exchange.zoom" />:</span>*/}
+                                    {/*<span>{zoomOptions}</span>*/}
+                                {/*</span>*/}
+                            {/*</li>*/}
                             <li className="stat" data-intro={translator.translate("walkthrough.chart_tool_duration")}>
-                                <span>
-                                    <span style={{color:"#666"}}><Translate content="exchange.time" />:</span>
-                                    <span>{bucketOptions}</span>
-                                </span>
+                                {/*<Translate content="exchange.time" />*/}
+                                Time
                             </li>
+
+                            {bucketOptions}
 
                             <li className="stat input custom-dropdown" data-intro={translator.translate("walkthrough.chart_tool_indicators")}>
                                 <div className="v-align indicators clickable" onClick={this._toggleDropdown.bind(this, "indicators")}>
@@ -688,6 +687,7 @@ export default class Wrapper extends React.Component {
                             </li>
                     </ul>
                 </div>
+                {chart}
             </div>
         );
     }

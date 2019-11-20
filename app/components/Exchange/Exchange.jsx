@@ -1147,7 +1147,8 @@ class Exchange extends React.Component {
                             tools={tools}
                             showVolumeChart={showVolumeChart}
                             enableChartClamp={enableChartClamp}
-                            buckets={buckets} bucketSize={bucketSize}
+                            buckets={buckets}
+                            bucketSize={bucketSize}
                             currentPeriod={this.state.currentPeriod}
                             changeBucketSize={this._changeBucketSize.bind(this)}
                             changeZoomPeriod={this._changeZoomPeriod.bind(this)}

@@ -47,6 +47,55 @@
             flex: 1;
         }
     }
+
+
+    #market-charts {
+
+        > div.Stockcharts__wrapper {
+            overflow: hidden;
+        }
+        > div > div.tabs {
+            margin-bottom: 0.25rem;
+
+            .tab-item {
+                padding-top: 0.1rem;
+            }
+        }
+
+        .chart-tools-bar{
+            width: 100%;
+            height: 40px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            border-bottom: 1px solid #e7e7e7;
+            padding: 0 6px 0 4px;
+
+            ul.market-stats{
+
+                li{
+                    display: inline-block;
+                    padding: 0 10px;
+                    font-size: 12px;
+                    color:#666;
+
+
+                    &.bucket-option {
+                        line-height: 1;
+                        cursor: pointer;
+                        text-transform: none !important;
+                        border-radius: 0;
+                        user-select: none;
+
+                        &.active-bucket {
+                            text-transform: uppercase;
+                        }
+                    }
+
+                }
+            }
+        }
+    }
 }
 
 .market-layout {
@@ -309,19 +358,6 @@ form.order-form {
     padding: 10px;
 }
 
-#market-charts {
-    padding-left: 10px;
-    > div.Stockcharts__wrapper {
-        overflow: hidden;
-    }
-    > div > div.tabs {
-        margin-bottom: 0.25rem;
-
-        .tab-item {
-            padding-top: 0.1rem;
-        }
-    }
-}
 
 .left-order-book {
     width: 100%;
@@ -465,39 +501,6 @@ a.order-cancel {
     margin: 0;
 }
 
-.stats {
-    overflow: visible;
-}
-
-.market-stats {
-    > li {
-        display: inline-block;
-        padding-right: 0.5rem;
-    }
-}
-
-div.market-stats-container {
-    // border-bottom: 1px solid $border-color;
-    justify-content: space-between;
-}
-
-ul.market-stats {
-    font-size: 0.75rem;
-    display: flex;
-    flex-wrap: wrap;
-}
-.market-stats .stat {
-    text-align: left;
-    font-size: 0.75rem;
-    overflow: hidden;
-}
-
-.market-stats .stat .value {
-    font-size: 0.75rem;
-    color: #000;
-    letter-spacing: normal;
-}
-
 .label-actions .icon {
     position: relative;
     top: 4px;
@@ -513,10 +516,6 @@ ul.market-stats {
     /*border-right: 1px solid $border-color;*/
     min-height: 42px;
     margin-left:25px;
-}
-
-.bottom-stats li {
-    // border-right: 1px solid $border-color;
 }
 
 .stats .stat {
@@ -548,18 +547,6 @@ ul.market-stats {
     padding-right: 0.5rem;
 }
 
-div.bucket-option {
-    line-height: 1;
-    cursor: pointer;
-    text-transform: none !important;
-    margin-right: 3px;
-    border-radius: 0;
-    user-select: none;
-}
-
-.active-bucket {
-    text-transform: uppercase;
-}
 
 .buy-sell-row {
     margin-bottom: 10px;
