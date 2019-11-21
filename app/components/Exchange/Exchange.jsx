@@ -3,7 +3,10 @@ import {PropTypes} from "react";
 import MarketsActions from "actions/MarketsActions";
 import { MyOpenOrders } from "./MyOpenOrders";
 import OrderBook from "./OrderBook";
+import MyMarketHistory from "./MyMarketHistory";
 import MarketHistory from "./MarketHistory";
+import MarketHistorySimple from "./MarketHistorySimple";
+import MyOpenOrderAndHistory from "./MyOpenOrderAndHistory";
 import EmbedMyMarkets from "./EmbedMyMarkets";
 import BuySell from "./BuySell";
 import utils from "common/utils";
@@ -1000,7 +1003,7 @@ class Exchange extends React.Component {
         }
 
         let orderMultiplier = leftOrderBook ? 2 : 1;
-        const minChartHeight = 500;
+        const minChartHeight = 430;
         const height = Math.max(
             this.state.height > 1100 ? chartHeight : chartHeight - 125,
             minChartHeight
@@ -1240,8 +1243,8 @@ class Exchange extends React.Component {
                                               {chart}
                                             </div>
                                         </Content>
-                                        <Footer style={{padding:"12px"}}>
-                                            <div className="exchange-panel">
+                                        <Footer style={{padding:"12px 12px 0 12px"}}>
+                                            <div className="exchange-panel" style={{height:"293px",background:"#fff"}}>
                                               <div className="exchange-panel-title">
                                                 <Translate content="exchange.current_exchange"/>
                                               </div>
@@ -1254,8 +1257,11 @@ class Exchange extends React.Component {
                                     </Layout>
                                 </Layout>
                             </Layout>
-                            <Sider width={280}>
-                                <div className="exchange-bordered" style={{height:"536px",marginRight:0}}>
+                            <Sider width={280} style={{background:"#f0f0f0"}}>
+                                <div className="right-side-header">
+                                    &nbsp;
+                                </div>
+                                <div className="market-list">
                                     <EmbedMyMarkets
                                         className="left-order-book no-padding no-overflow"
                                         headerStyle={{paddingTop: 0}}
@@ -1278,7 +1284,22 @@ class Exchange extends React.Component {
                                         current={`${quoteSymbol}_${baseSymbol}`}
                                     />
                                 </div>
-                                <div style={{height:"342px",marginRight:0}} className="grid-block vertical shrink exchange-bordered">
+
+                                <div className="market-history">
+                                    <MarketHistorySimple
+                                        headerStyle={{paddingTop: 0}}
+                                        history={activeMarketHistory}
+                                        currentAccount={currentAccount}
+                                        myHistory={currentAccount.get("history")}
+                                        base={base}
+                                        quote={quote}
+                                        baseSymbol={baseSymbol}
+                                        quoteSymbol={quoteSymbol}
+                                        notMyAccount={notMyAccount}
+                                    />
+                                </div>
+
+                                <div style={{height:"342px",marginRight:0,display:"none"}} className="grid-block vertical shrink exchange-bordered">
                                     <div style={{background:"#f7f7f7",height:"37px",lineHeight:"37px",fontSize:"14px",color:"#333",fontWeight:"bold",paddingLeft:12}}>
                                         <Translate content="exchange.depth_chart"/>
                                     </div>
@@ -1312,50 +1333,89 @@ class Exchange extends React.Component {
                                 </div>
                             </Sider>
                         </Layout>
-                        <Footer>
+                        <Footer style={{padding:"12px 0 0 0"}}>
 
-                            {marketLimitOrders.size > 0 && base && quote ? (
-                                <div>
-                                    <MyOpenOrders
-                                        smallScreen={this.props.smallScreen}
-                                        className={cnames(
-                                            {disabled: notMyAccount},
-                                            !smallScreen && !leftOrderBook ? "medium-12 xlarge-12" : "",
-                                            `small-12 medium-12 no-padding align-spaced ps-container middle-content order-${buySellTop ? 6 : 6}`
-                                        )}
-                                        key="open_orders"
-                                        orders={marketLimitOrders}
-                                        settleOrders={marketSettleOrders}
-                                        currentAccount={currentAccount}
-                                        base={base}
-                                        quote={quote}
-                                        baseSymbol={baseSymbol}
-                                        quoteSymbol={quoteSymbol}
-                                        activeTab={this.props.viewSettings.get("ordersTab")}
-                                        onCancel={this._cancelLimitOrder.bind(this)}
-                                        flipMyOrders={this.props.viewSettings.get("flipMyOrders")}
-                                        feedPrice={this.props.feedPrice}
-                                    />
-                                </div>
-                            ) : null}
+                            <MyOpenOrderAndHistory
+                                smallScreen={this.props.smallScreen}
+                                key="open_orders"
+                                orders={marketLimitOrders}
+                                settleOrders={marketSettleOrders}
+                                currentAccount={currentAccount}
+                                base={base}
+                                quote={quote}
+                                baseSymbol={baseSymbol}
+                                quoteSymbol={quoteSymbol}
+                                activeTab={this.props.viewSettings.get("ordersTab")}
+                                onCancel={this._cancelLimitOrder.bind(this)}
+                                flipMyOrders={this.props.viewSettings.get("flipMyOrders")}
+                                feedPrice={this.props.feedPrice}
+                                headerStyle={{paddingTop: 0}}
+                                history={activeMarketHistory}
+                                myHistory={currentAccount.get("history")}
+                                notMyAccount={notMyAccount}
+                            />
 
-                            <div>
-                                <MarketHistory
-                                    className={cnames(
-                                        !smallScreen && !leftOrderBook ? "medium-12 xlarge-12" : "",
-                                        "no-padding no-overflow middle-content small-12 medium-12 order-5 xlarge-order-3"
-                                    )}
-                                    headerStyle={{paddingTop: 0}}
-                                    history={activeMarketHistory}
-                                    currentAccount={currentAccount}
-                                    myHistory={currentAccount.get("history")}
-                                    base={base}
-                                    quote={quote}
-                                    baseSymbol={baseSymbol}
-                                    quoteSymbol={quoteSymbol}
-                                    notMyAccount={notMyAccount}
-                                />
-                            </div>
+
+                            {/*{marketLimitOrders.size > 0 && base && quote ? (*/}
+                                {/*<div>*/}
+                                    {/*<MyOpenOrders*/}
+                                        {/*smallScreen={this.props.smallScreen}*/}
+                                        {/*className={cnames(*/}
+                                            {/*{disabled: notMyAccount},*/}
+                                            {/*!smallScreen && !leftOrderBook ? "medium-12 xlarge-12" : "",*/}
+                                            {/*`small-12 medium-12 no-padding align-spaced ps-container middle-content order-${buySellTop ? 6 : 6}`*/}
+                                        {/*)}*/}
+                                        {/*key="open_orders"*/}
+                                        {/*orders={marketLimitOrders}*/}
+                                        {/*settleOrders={marketSettleOrders}*/}
+                                        {/*currentAccount={currentAccount}*/}
+                                        {/*base={base}*/}
+                                        {/*quote={quote}*/}
+                                        {/*baseSymbol={baseSymbol}*/}
+                                        {/*quoteSymbol={quoteSymbol}*/}
+                                        {/*activeTab={this.props.viewSettings.get("ordersTab")}*/}
+                                        {/*onCancel={this._cancelLimitOrder.bind(this)}*/}
+                                        {/*flipMyOrders={this.props.viewSettings.get("flipMyOrders")}*/}
+                                        {/*feedPrice={this.props.feedPrice}*/}
+                                    {/*/>*/}
+                                {/*</div>*/}
+                            {/*) : null}*/}
+                            
+                            {/*<div>*/}
+                                {/*<MyMarketHistory*/}
+                                    {/*className={cnames(*/}
+                                        {/*!smallScreen && !leftOrderBook ? "medium-12 xlarge-12" : "",*/}
+                                        {/*"no-padding no-overflow middle-content small-12 medium-12 order-5 xlarge-order-3"*/}
+                                    {/*)}*/}
+                                    {/*headerStyle={{paddingTop: 0}}*/}
+                                    {/*history={activeMarketHistory}*/}
+                                    {/*currentAccount={currentAccount}*/}
+                                    {/*myHistory={currentAccount.get("history")}*/}
+                                    {/*base={base}*/}
+                                    {/*quote={quote}*/}
+                                    {/*baseSymbol={baseSymbol}*/}
+                                    {/*quoteSymbol={quoteSymbol}*/}
+                                    {/*notMyAccount={notMyAccount}*/}
+                                {/*/>*/}
+                            {/*</div>*/}
+                            
+                            {/*<div>*/}
+                                {/*<MarketHistory*/}
+                                    {/*className={cnames(*/}
+                                        {/*!smallScreen && !leftOrderBook ? "medium-12 xlarge-12" : "",*/}
+                                        {/*"no-padding no-overflow middle-content small-12 medium-12 order-5 xlarge-order-3"*/}
+                                    {/*)}*/}
+                                    {/*headerStyle={{paddingTop: 0}}*/}
+                                    {/*history={activeMarketHistory}*/}
+                                    {/*currentAccount={currentAccount}*/}
+                                    {/*myHistory={currentAccount.get("history")}*/}
+                                    {/*base={base}*/}
+                                    {/*quote={quote}*/}
+                                    {/*baseSymbol={baseSymbol}*/}
+                                    {/*quoteSymbol={quoteSymbol}*/}
+                                    {/*notMyAccount={notMyAccount}*/}
+                                {/*/>*/}
+                            {/*</div>*/}
 
 
                         </Footer>

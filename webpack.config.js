@@ -141,7 +141,7 @@ module.exports = function(env) {
         output: {
             publicPath: env.prod ? "" : "/",
             path: outputPath,
-          //filename: "[name]."+Version+".js",
+            //filename: "[name]."+Version+".js",
             filename: "[name].js",
             pathinfo: !env.prod,
             sourceMapFilename: "[name].js.map"

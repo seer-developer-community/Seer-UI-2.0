@@ -223,7 +223,7 @@ class BuySell extends React.Component {
         }
 
         return (
-            <div className={this.props.className} style={{height:"342px"}}>
+            <div className={this.props.className} style={{}}>
                 <div className="buy-sell-container" style={{height:"100%"}}>
                     <div style={{padding:"12px"}}>
                     <table style={{fontSize:"14px",width:"100%",color:"#666"}}>
@@ -270,7 +270,7 @@ class BuySell extends React.Component {
                           </div>
                         </td>
                       </tr>
-                      <tr height="40px">
+                      <tr height="40px" style={{display:"none"}}>
                         <td width="81px"><Translate content="transfer.fee" /></td>
                         <td>
                           <div className="grid-block buy-sell-row" style={{border:"1px solid #e7e7e7",width:"100%",height:30,lineHeight:"30px",overflow:"hidden",marginBottom:0,padding:"0 10px"}}>
@@ -290,7 +290,7 @@ class BuySell extends React.Component {
                           </div>
                         </td>
                       </tr>
-                      <tr height="40px">
+                      <tr height="40px" style={{display:"none"}}>
                         <td width="81px">{isBid ? <Translate content="exchange.lowest_ask" /> : <Translate content="exchange.highest_bid" />}</td>
                         <td>
                           {currentPrice ? (

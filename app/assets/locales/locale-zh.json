@@ -4,7 +4,8 @@
             "date": {
                 "short_custom": "%e %b '%y",
                 "market_history": "%m-%e %H:%M:%S",
-                "market_history_us": "%m/%e %H:%M:%S"
+                "market_history_us": "%m/%e %H:%M:%S",
+                "short_market_history": "%H:%M:%S"
             }
         }
     },
@@ -1249,7 +1250,12 @@
         "order_value": "委单价值",
         "depth_chart":"深度图",
         "cancel_order":"撤单",
-        "current_exchange":"现价交易"
+        "current_exchange":"现价交易",
+        "market_history":{
+            "price": "价格",
+            "amount": "数量",
+            "date": "时间"
+        }
     },
     "fees": {
         "title": "费率表"
