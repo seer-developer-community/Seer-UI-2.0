@@ -46,6 +46,66 @@
 
         >div{
             flex: 1;
+
+            .divider{
+                height: 100%;
+                width: 2px;
+                background: red;
+                order:2.5;
+            }
+        }
+
+        .ant-slider.ant-slider-with-marks{
+            margin-bottom: 0;
+
+            .ant-slider-dot{
+                width: 10px;
+                height: 10px;
+                top: -3px;
+                background-color:#e8e8e8;
+            }
+            .ant-tooltip-inner{
+                font-size: 12px;
+                padding: 2px 3px;
+                min-width: 0;
+                min-height: 0;
+            }
+        }
+
+        .buy-form{
+            .ant-slider{
+               .ant-slider-track{
+                   background-color:#4EA382;
+               }
+               .ant-slider-dot-active{
+                   background-color:#4EA382;
+                   border-color: #4EA382;
+               }
+               .ant-slider-handle{
+                   border-color: #4EA382;
+               }
+               .ant-tooltip-inner,.ant-tooltip-arrow::before{
+                   background-color:#4EA382;
+               }
+            }
+        }
+
+        .sell-form{
+            .ant-slider{
+                .ant-slider-track{
+                    background-color:#EC5857;
+                }
+                .ant-slider-dot-active{
+                    background-color:#EC5857;
+                    border-color: #EC5857;
+                }
+                .ant-slider-handle{
+                    border-color: #EC5857;
+                }
+                .ant-tooltip-inner,.ant-tooltip-arrow::before{
+                    background-color:#EC5857;
+                }
+            }
         }
     }
 

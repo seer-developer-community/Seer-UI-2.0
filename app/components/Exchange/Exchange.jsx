@@ -124,7 +124,6 @@ class Exchange extends React.Component {
             buyDiff: false,
             sellDiff: false,
             indicators,
-            buySellTop: ws.get("buySellTop", true),
             buyFeeAssetIdx: ws.get("buyFeeAssetIdx", 0),
             sellFeeAssetIdx: ws.get("sellFeeAssetIdx", 0),
             indicatorSettings,
@@ -751,16 +750,6 @@ class Exchange extends React.Component {
         });
     }
 
-    _toggleBuySellPosition() {
-        this.setState({
-            buySellTop: !this.state.buySellTop
-        });
-
-        SettingsActions.changeViewSetting({
-            buySellTop: !this.state.buySellTop
-        });
-    }
-
     _setReceive(state, isBid) {
         if (state.price.isValid() && state.for_sale.hasAmount()) {
             state.to_receive = state.for_sale.times(state.price);
@@ -895,7 +884,7 @@ class Exchange extends React.Component {
             flatBids, flatAsks, flatCalls, flatSettles} = marketData;
 
         let {bid, ask, leftOrderBook, showDepthChart, tools, chartHeight,
-            buyDiff, sellDiff, indicators, indicatorSettings, width, buySellTop} = this.state;
+            buyDiff, sellDiff, indicators, indicatorSettings, width} = this.state;
         const {isFrozen, frozenAsset} = this.isMarketFrozen();
 
         let base = null, quote = null, accountBalance = null, quoteBalance = null,
@@ -1049,7 +1038,6 @@ class Exchange extends React.Component {
                 onChangeFeeAsset={this.onChangeFeeAsset.bind(this, "buy")}
                 isPredictionMarket={base.getIn(["bitasset", "is_prediction_market"])}
                 onFlip={this.state._flipBuySell ? null : this._flipBuySell.bind(this)}
-                onTogglePosition={!this.state._toggleBuySellPosition ? this._toggleBuySellPosition.bind(this) : null}
             />
         );
 
@@ -1093,7 +1081,6 @@ class Exchange extends React.Component {
                 onChangeFeeAsset={this.onChangeFeeAsset.bind(this, "sell")}
                 isPredictionMarket={quote.getIn(["bitasset", "is_prediction_market"])}
                 onFlip={!this.state._flipBuySell ? this._flipBuySell.bind(this) : null}
-                onTogglePosition={!this.state._toggleBuySellPosition ? this._toggleBuySellPosition.bind(this) : null}
             />
         );
 
@@ -1250,6 +1237,7 @@ class Exchange extends React.Component {
                                               </div>
                                               <div className="exchange-panel-content exchange-form">
                                                 {buyForm}
+                                                  <div className="divider"></div>
                                                 {sellForm}
                                               </div>
                                             </div>

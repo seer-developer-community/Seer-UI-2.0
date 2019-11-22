@@ -14,6 +14,7 @@ import {Asset} from "common/MarketClasses";
 import ExchangeInput from "./ExchangeInput";
 import assetUtils from "common/asset_utils";
 import Icon from "../Icon/Icon";
+import { Slider } from 'antd';
 
 class BuySell extends React.Component {
 
@@ -67,6 +68,10 @@ class BuySell extends React.Component {
     _onBuy(e) {
         e.preventDefault();
         this.refs.bridge_modal.show();
+    }
+
+    _sliderFormatter(value) {
+        return `${value}%`;
     }
 
     render() {
@@ -222,6 +227,12 @@ class BuySell extends React.Component {
             dataIntro =translator.translate("walkthrough.sell_form");
         }
 
+        const marks = {
+            0:"", 25:"",50:"", 70:"", 100:""
+        };
+
+
+
         return (
             <div className={this.props.className} style={{}}>
                 <div className="buy-sell-container" style={{height:"100%"}}>
@@ -270,6 +281,11 @@ class BuySell extends React.Component {
                           </div>
                         </td>
                       </tr>
+                        <tr>
+                            <td colSpan="2">
+                                <Slider marks={marks} tipFormatter={this._sliderFormatter} defaultValue={0} getTooltipPopupContainer={trigger => trigger.parentNode}/>
+                            </td>
+                        </tr>
                       <tr height="40px" style={{display:"none"}}>
                         <td width="81px"><Translate content="transfer.fee" /></td>
                         <td>
