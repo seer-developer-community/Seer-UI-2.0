@@ -74,6 +74,25 @@ class BuySell extends React.Component {
         return `${value}%`;
     }
 
+    _onSliderChange(balanceAmount,value){
+      let price = this.props.price || 0;
+      let balance = balanceAmount.getAmount({real: true});
+
+      if(!price > 0 || !balance > 0){
+        return;
+      }
+
+      let maxAmount = balance / price;
+      let amount = maxAmount * (value / 100);
+       if(this.props.amountChange){
+         this.props.amountChange({
+           target:{
+             value:`${amount}`
+           }
+         })
+       }
+    }
+
     render() {
         let {type, quote, base, amountChange, fee, isPredictionMarket,
             priceChange, onSubmit, balance, totalChange,
@@ -82,9 +101,9 @@ class BuySell extends React.Component {
         let amount, price, total;
         let caret = this.props.isOpen ? <span>&#9660;</span> : <span>&#9650;</span>;
 
-        if (this.props.amount) amount = this.props.amount;
-        if (this.props.price) price = this.props.price;
-        if (this.props.total) total = this.props.total;
+        amount = this.props.amount || "";
+        price = this.props.price || "";
+        total = this.props.total || "";
 
         let balanceAmount = new Asset({amount: balance ? balance.get("balance") : 0, precision: balancePrecision, asset_id: this.props.balanceId});
 
@@ -173,12 +192,13 @@ class BuySell extends React.Component {
         // }
         const isBid = type === "bid";
         let marketFee = isBid && quoteMarketFee ? quoteMarketFee : !isBid && baseMarketFee ? baseMarketFee : null;
-        let hasBalance = isBid ? balanceAmount.getAmount({real: true}) >= parseFloat(total) : balanceAmount.getAmount({real: true}) >= parseFloat(amount);
+        let hasBalance = isBid ? balanceAmount.getAmount({real: true}) >= parseFloat(total || 0) : balanceAmount.getAmount({real: true}) >= parseFloat(amount || 0);
 
         let buttonText = isPredictionMarket ? counterpart.translate("exchange.short") : isBid ? counterpart.translate("exchange.buy") : counterpart.translate("exchange.sell");
         let forceSellText = isBid ? counterpart.translate("exchange.buy") : counterpart.translate("exchange.sell");
 
         let noBalance = isPredictionMarket ? false : !(balanceAmount.getAmount() > 0 && hasBalance);
+
         let invalidPrice = !(price > 0);
         let invalidAmount = !(amount >0);
 
@@ -219,11 +239,11 @@ class BuySell extends React.Component {
 
         let dataIntro = null;
 
-        if (type == "bid") {
+        if (type === "bid") {
             dataIntro =translator.translate("walkthrough.buy_form");
         }
 
-        if (type == "ask") {
+        if (type === "ask") {
             dataIntro =translator.translate("walkthrough.sell_form");
         }
 
@@ -231,7 +251,7 @@ class BuySell extends React.Component {
             0:"", 25:"",50:"", 70:"", 100:""
         };
 
-
+        let sliderDisable = !hasBalance || invalidPrice;
 
         return (
             <div className={this.props.className} style={{}}>
@@ -239,15 +259,18 @@ class BuySell extends React.Component {
                     <div style={{padding:"12px"}}>
                     <table style={{fontSize:"14px",width:"100%",color:"#666"}}>
                       <tr height="28px">
-                        <td width="81px"><Translate content="exchange.balance" /></td>
-                        <td>
-                            <span style={{borderBottom: "#A09F9F 1px dotted", cursor: "pointer"}} onClick={this._addBalance.bind(this, balanceToAdd)}>
-                                      {utils.format_number(balanceAmount.getAmount({real: true}), balancePrecision)} <AssetName name={balanceSymbol} />
+                        <td colSpan={2} style={{textAlign:"right"}}>
+                            <AssetName name={balanceSymbol} />
+                            <Translate content="transfer.balances" /> : &nbsp;
+                            <span className="balances" onClick={this._addBalance.bind(this, balanceToAdd)}>
+                                      {utils.format_number(balanceAmount.getAmount({real: true}), balancePrecision)}
                                   </span>
                         </td>
                       </tr>
                       <tr height="40px">
-                        <td width="81px"><Translate content="exchange.price" /></td>
+                        <td width="60px">
+                          <Translate content={isBid ? "exchange.exchange_form.buy_price" : "exchange.exchange_form.sell_price"} />
+                        </td>
                         <td>
                             <div className="grid-block buy-sell-row" style={{border:"1px solid #e7e7e7",width:"100%",height:30,lineHeight:"30px",overflow:"hidden",marginBottom:0,padding:"0 10px"}}>
                               <ExchangeInput id={`${type}Price`} value={price} onChange={priceChange} autoComplete="off" placeholder="0.0" style={{border:"none",height:"28px",margin:0,padding:0,fontSize:"12px"}}/>
@@ -260,7 +283,9 @@ class BuySell extends React.Component {
                         </td>
                       </tr>
                       <tr height="40px">
-                        <td width="81px"><Translate content="transfer.amount" /></td>
+                        <td width="60px">
+                          <Translate content={isBid ? "exchange.exchange_form.buy_amount" : "exchange.exchange_form.sell_amount"} />
+                        </td>
                         <td>
                           <div className="grid-block buy-sell-row" style={{border:"1px solid #e7e7e7",width:"100%",height:30,lineHeight:"30px",overflow:"hidden",marginBottom:0,padding:"0 10px"}}>
                             <ExchangeInput id={`${type}Amount`} value={amount} onChange={amountChange} autoComplete="off" placeholder="0.0" style={{border:"none",height:"28px",margin:0,padding:0,fontSize:"12px"}}/>
@@ -270,7 +295,7 @@ class BuySell extends React.Component {
                           </div>
                         </td>
                       </tr>
-                      <tr height="40px">
+                      <tr height="40px" style={{display:"none"}}>
                         <td width="81px"><Translate content="exchange.total" /></td>
                         <td>
                           <div className="grid-block buy-sell-row" style={{border:"1px solid #e7e7e7",width:"100%",height:30,lineHeight:"30px",overflow:"hidden",marginBottom:0,padding:"0 10px"}}>
@@ -283,9 +308,24 @@ class BuySell extends React.Component {
                       </tr>
                         <tr>
                             <td colSpan="2">
-                                <Slider marks={marks} tipFormatter={this._sliderFormatter} defaultValue={0} getTooltipPopupContainer={trigger => trigger.parentNode}/>
+                              <div style={{paddingBottom:9,paddingTop:10}}>
+                                <Slider marks={marks} tipFormatter={this._sliderFormatter}
+                                        defaultValue={0}
+                                        disabled={sliderDisable}
+                                        getTooltipPopupContainer={trigger => trigger.parentNode}
+                                        onChange={this._onSliderChange.bind(this,balanceAmount)}/>
+                              </div>
                             </td>
                         </tr>
+                      <tr height="28px">
+                        <td width="60px"><Translate content="exchange.exchange_form.total" /></td>
+                        <td>
+                          <div className="flex-align-middle">
+                            {amount <= 0 ? 0 : (total || 0)}&nbsp;
+                            <AssetName dataPlace="right" name={base.get("symbol")} />
+                          </div>
+                        </td>
+                      </tr>
                       <tr height="40px" style={{display:"none"}}>
                         <td width="81px"><Translate content="transfer.fee" /></td>
                         <td>
@@ -325,7 +365,7 @@ class BuySell extends React.Component {
                       </tr>
                     </table>
                     </div>
-                  {marketFee}
+                  {/*{marketFee}*/}
 
                 </div>
                 <SimpleDepositWithdraw

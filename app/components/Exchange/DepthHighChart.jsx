@@ -396,8 +396,9 @@ class DepthHighChart extends React.Component {
 			};
 		}
 
+		let depthCharts = null;
 		if (this.props.noFrame) {
-			return (
+      depthCharts = (
 				<div className="grid-content no-overflow no-padding">
 						{!flatBids.length && !flatAsks.length && !flatCalls.length ? <span className="no-data"><Translate content="exchange.no_data" /></span> : null}
 						{this.props.noText ? null : <p className="bid-total">{utils.format_number(totalBids, base.get("precision"))} {baseSymbol}</p>}
@@ -406,7 +407,7 @@ class DepthHighChart extends React.Component {
 				</div>
 			);
 		} else {
-			return (
+      depthCharts = (
 				<div className="grid-content no-overflow no-padding middle-content">
 					<div className="exchange-bordered" style={{margin: 10}}>
 						<div className="exchange-content-header">
@@ -419,6 +420,20 @@ class DepthHighChart extends React.Component {
 				</div>
 			);
 		}
+
+		return (
+			<div className="no-margin no-padding" style={{overflow: "visible", width: "100%"}}>
+				<div className="chart-tools-bar">
+					<ul className="market-stats stats">
+						<li className="charts-switch">
+							<Translate component="button" content="exchange.basic_chart" onClick={this.props.onChangeChartsType.bind("basic")}/>
+							<Translate component="button" content="exchange.depth_chart"  className="checked" onClick={this.props.onChangeChartsType.bind("depth")}/>
+						</li>
+					</ul>
+				</div>
+				{depthCharts}
+			</div>
+		);
 	}
 }
 

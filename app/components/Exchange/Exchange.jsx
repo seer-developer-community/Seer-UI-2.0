@@ -134,7 +134,8 @@ class Exchange extends React.Component {
             height: window.innerHeight,
             width: window.innerWidth,
             chartHeight: ws.get("chartHeight", 425),
-            currentPeriod: ws.get("currentPeriod", 3600* 24 * 30 * 3) // 3 months
+            //currentPeriod: ws.get("currentPeriod", 3600* 24 * 30 * 3) // 3 months
+            currentPeriod: 3600 * 24 * 3 // 1 w
         };
     }
 
@@ -426,7 +427,7 @@ class Exchange extends React.Component {
             setting[marketID] = !inverted;
             SettingsActions.changeMarketDirection(setting);
         }
-        console.log("order:", JSON.stringify(order.toObject()));
+
         return MarketsActions.createLimitOrder2(order).then((result) => {
             if (result.error) {
                 if (result.error.message !== "wallet locked")
@@ -838,6 +839,7 @@ class Exchange extends React.Component {
         }
 
         current.toReceiveText = e.target.value;
+
         this._setPriceText(current, type === "bid");
         this.forceUpdate();
     }
@@ -993,10 +995,11 @@ class Exchange extends React.Component {
 
         let orderMultiplier = leftOrderBook ? 2 : 1;
         const minChartHeight = 430;
-        const height = Math.max(
-            this.state.height > 1100 ? chartHeight : chartHeight - 125,
-            minChartHeight
-        );
+        // const height = Math.max(
+        //     this.state.height > 1100 ? chartHeight : chartHeight - 125,
+        //     minChartHeight
+        // );
+        const height = minChartHeight;
 
         let buyForm = isFrozen ? null : (
             <BuySell
@@ -1008,9 +1011,8 @@ class Exchange extends React.Component {
                 isOpen={this.state.buySellOpen}
                 onToggleOpen={this._toggleOpenBuySell.bind(this)}
                 className={cnames(
-                    "small-12 no-padding",
-                    {disabled: notMyAccount},
-                    this.state.flipBuySell ? `order-${buySellTop ? 2 : 5 * orderMultiplier} sell-form` : `order-${buySellTop ? 1 : 4 * orderMultiplier} buy-form`
+                    "small-12 no-padding buy-form",
+                    {disabled: notMyAccount}
                 )}
                 type="bid"
                 amount={bid.toReceiveText}
@@ -1051,9 +1053,8 @@ class Exchange extends React.Component {
                 isOpen={this.state.buySellOpen}
                 onToggleOpen={this._toggleOpenBuySell.bind(this)}
                 className={cnames(
-                    "small-12 no-padding",
-                    {disabled: notMyAccount},
-                    this.state.flipBuySell ? `order-${buySellTop ? 1 : 4 * orderMultiplier} buy-form` : `order-${buySellTop ? 2 : 5 * orderMultiplier} sell-form`
+                    "small-12 no-padding sell-form",
+                    {disabled: notMyAccount}
                 )}
                 type="ask"
                 amount={ask.forSaleText}
@@ -1106,7 +1107,6 @@ class Exchange extends React.Component {
                 moveOrderBook={this._moveOrderBook.bind(this)}
                 flipOrderBook={this.props.viewSettings.get("flipOrderBook")}
                 marketReady={marketReady}
-                wrapperClass={`order-${buySellTop ? 3 : 1} xlarge-order-${buySellTop ? 4 : 1}`}
                 currentAccount={this.props.currentAccount.get("id")}
                 marketStats={marketStats}
             />
@@ -1116,7 +1116,7 @@ class Exchange extends React.Component {
         let chart = (
             <div >
                 {!showDepthChart ? (
-                    <div className="grid-block shrink no-overflow" id="market-charts">
+                    <div className="grid-block shrink no-overflow market-charts">
                         {/* Price history chart */}
                         <PriceChartD3
                             priceData={this.props.priceData}
@@ -1163,9 +1163,10 @@ class Exchange extends React.Component {
                             onToggleVolume={() => {SettingsActions.changeViewSetting({showVolumeChart: !showVolumeChart});}}
                             onToggleChartClamp={() => {SettingsActions.changeViewSetting({enableChartClamp: !enableChartClamp});}}
                             onChangeIndicatorSetting={this._changeIndicatorSetting.bind(this)}
+                            onChangeChartsType={this._toggleCharts.bind(this)}
                         />
                     </div>) : (
-                    <div className="grid-block vertical no-padding shrink" >
+                    <div className="grid-block vertical no-padding shrink market-charts" >
                         <DepthHighChart
                             marketReady={marketReady}
                             orders={marketLimitOrders}
@@ -1192,6 +1193,7 @@ class Exchange extends React.Component {
                             verticalOrderbook={leftOrderBook}
                             theme={this.props.settings.get("themes")}
                             centerRef={this.refs.center}
+                            onChangeChartsType={this._toggleCharts.bind(this)}
                         />
                     </div>)}
             </div>
@@ -1220,11 +1222,11 @@ class Exchange extends React.Component {
                                         showVolumeChart={showVolumeChart}
                                     />
                                 </Header>
-                                <Layout>
-                                    <Sider width={354}>
+                                <Layout style={{overflow:"hidden"}}>
+                                    <Sider width={354} style={{background:"#fff",height:776}}>
                                         {orderBook}
                                     </Sider>
-                                    <Layout>
+                                    <Layout style={{overflow:"hidden"}}>
                                         <Content style={{height:470,margin:"0 12px",background:"#fff"}}>
                                             <div>
                                               {chart}
@@ -1287,38 +1289,38 @@ class Exchange extends React.Component {
                                     />
                                 </div>
 
-                                <div style={{height:"342px",marginRight:0,display:"none"}} className="grid-block vertical shrink exchange-bordered">
-                                    <div style={{background:"#f7f7f7",height:"37px",lineHeight:"37px",fontSize:"14px",color:"#333",fontWeight:"bold",paddingLeft:12}}>
-                                        <Translate content="exchange.depth_chart"/>
-                                    </div>
-                                    <div style={{padding:6}}>
-                                        <DepthHighChart
-                                            marketReady={marketReady}
-                                            orders={marketLimitOrders}
-                                            showCallLimit={showCallLimit}
-                                            call_orders={marketCallOrders}
-                                            flat_asks={flatAsks}
-                                            flat_bids={flatBids}
-                                            flat_calls={ showCallLimit ? flatCalls : []}
-                                            flat_settles={this.props.settings.get("showSettles") && flatSettles}
-                                            settles={marketSettleOrders}
-                                            invertedCalls={invertedCalls}
-                                            totalBids={totals.bid}
-                                            totalAsks={totals.ask}
-                                            base={base}
-                                            quote={quote}
-                                            height={300}
-                                            onClick={this._depthChartClick.bind(this, base, quote)}
-                                            settlementPrice={(!hasPrediction && feedPrice) && feedPrice.toReal()}
-                                            spread={spread}
-                                            LCP={showCallLimit ? lowestCallPrice : null}
-                                            leftOrderBook={leftOrderBook}
-                                            hasPrediction={hasPrediction}
-                                            noText={true}
-                                            theme={this.props.settings.get("themes")}
-                                        />
-                                    </div>
-                                </div>
+                                {/*<div style={{height:"342px",marginRight:0,display:"none"}} className="grid-block vertical shrink exchange-bordered">*/}
+                                    {/*<div style={{background:"#f7f7f7",height:"37px",lineHeight:"37px",fontSize:"14px",color:"#333",fontWeight:"bold",paddingLeft:12}}>*/}
+                                        {/*<Translate content="exchange.depth_chart"/>*/}
+                                    {/*</div>*/}
+                                    {/*<div style={{padding:6}}>*/}
+                                        {/*<DepthHighChart*/}
+                                            {/*marketReady={marketReady}*/}
+                                            {/*orders={marketLimitOrders}*/}
+                                            {/*showCallLimit={showCallLimit}*/}
+                                            {/*call_orders={marketCallOrders}*/}
+                                            {/*flat_asks={flatAsks}*/}
+                                            {/*flat_bids={flatBids}*/}
+                                            {/*flat_calls={ showCallLimit ? flatCalls : []}*/}
+                                            {/*flat_settles={this.props.settings.get("showSettles") && flatSettles}*/}
+                                            {/*settles={marketSettleOrders}*/}
+                                            {/*invertedCalls={invertedCalls}*/}
+                                            {/*totalBids={totals.bid}*/}
+                                            {/*totalAsks={totals.ask}*/}
+                                            {/*base={base}*/}
+                                            {/*quote={quote}*/}
+                                            {/*height={300}*/}
+                                            {/*onClick={this._depthChartClick.bind(this, base, quote)}*/}
+                                            {/*settlementPrice={(!hasPrediction && feedPrice) && feedPrice.toReal()}*/}
+                                            {/*spread={spread}*/}
+                                            {/*LCP={showCallLimit ? lowestCallPrice : null}*/}
+                                            {/*leftOrderBook={leftOrderBook}*/}
+                                            {/*hasPrediction={hasPrediction}*/}
+                                            {/*noText={true}*/}
+                                            {/*theme={this.props.settings.get("themes")}*/}
+                                        {/*/>*/}
+                                    {/*</div>*/}
+                                {/*</div>*/}
                             </Sider>
                         </Layout>
                         <Footer style={{padding:"12px 0 0 0"}}>

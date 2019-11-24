@@ -24,6 +24,8 @@
     }
 
     .exchange-panel{
+        display: flex;
+        flex-direction: column;
 
         .exchange-panel-title{
             height: 38px;
@@ -37,21 +39,27 @@
 
         .exchange-panel-content{
             background: #fff;
+            flex: 1;
         }
     }
 
     .exchange-form{
         display: flex;
         flex-direction: row;
+        font-size: 14px;
+        color: #999;
 
         >div{
-            flex: 1;
+            &:not(.divider) {
+                flex: 1;
+            }
 
-            .divider{
-                height: 100%;
-                width: 2px;
-                background: red;
-                order:2.5;
+            &.divider{
+                width: 1px;
+                background: #E7E7E7;
+                flex: initial;
+                align-self: stretch;
+                margin: 13px 6px;
             }
         }
 
@@ -88,6 +96,11 @@
                    background-color:#4EA382;
                }
             }
+
+            .balances{
+                color:#4EA382;
+                cursor: pointer;
+            }
         }
 
         .sell-form{
@@ -106,11 +119,35 @@
                     background-color:#EC5857;
                 }
             }
+
+            .balances{
+                color:#EC5857;
+                cursor: pointer;
+            }
+        }
+
+        .buy-sell-row{
+            background: #f9f9f9;
+            border:1px solid #E7E7E7;
+
+            input{
+                background: none;
+
+                &:focus,&:hover,&:active{
+                    background: none;
+                }
+            }
+        }
+
+        button{
+            height: 40px;
+            border-radius: 4px;
+            font-size: 14px;
         }
     }
 
 
-    #market-charts {
+    .market-charts {
 
         > div.Stockcharts__wrapper {
             overflow: hidden;
@@ -128,18 +165,23 @@
             height: 40px;
             display: flex;
             flex-direction: row;
-            align-items: center;
+            align-items: stretch;
             border-bottom: 1px solid #e7e7e7;
             padding: 0 6px 0 4px;
 
             ul.market-stats{
+                display: flex;
+                flex-direction: row;
+                align-items: stretch;
+                width: 100%;
 
                 li{
-                    display: inline-block;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
                     padding: 0 10px;
                     font-size: 12px;
                     color:#666;
-
 
                     &.bucket-option {
                         line-height: 1;
@@ -153,6 +195,30 @@
                         }
                     }
 
+                    &.has-separator{
+                        border-left: 1px solid #E7E7E7;
+                    }
+
+                    &.charts-switch{
+                        flex: 1;
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: flex-end;
+
+                        button{
+                            background: #fff;
+                            border: 1px solid #E7E7E7;
+                            color: #999;
+                            margin-left: 6px;
+                            outline: none;
+
+                            &.checked,&:hover{
+                                border-color: #439C79;
+                                color: #439C79;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -182,10 +248,10 @@
                 height: 33px;
 
                 th {
-                    text-align: center;
                     font-size: 12px;
                     color: #999;
                     font-weight: normal;
+                    text-align: center;
                 }
             }
         }
@@ -200,14 +266,22 @@
                 td {
                     color: #666;
                     text-align: right;
-                    padding-right: 8px;
+                    padding-right: 12px;
 
                     &.orderHistoryAsk {
-                        color: #EC5857;
+                        span {
+                            color: #EC5857 !important;
+                            opacity: 1;
+                            font-family:inherit;
+                        }
                     }
 
                     &.orderHistoryBid {
-                        color: #4EA382;
+                        span {
+                            color: #4EA382 !important;
+                            opacity: 1;
+                            font-family:inherit;
+                        }
                     }
                 }
             }
@@ -274,14 +348,22 @@
         align-items: center;
         padding: 0 13px 0 17px;
 
-
-        .icon{
-            width: 20px;
-            height: 20px;
-            padding: 2px;
+        button {
+            width: 22px;
+            height: 22px;
             border: 1px solid #fff;
+            background: #fff;
+            padding: 0;
+            margin: 0;
+            outline: none;
 
-            &.selected,&:hover{
+            .icon {
+                width: 20px;
+                height: 20px;
+                padding: 2px;
+            }
+
+            &.selected, &:hover {
                 border: 1px solid #45A17E;
             }
         }
@@ -290,7 +372,7 @@
             flex: 1;
             margin-left: 10px;
 
-            >svg{
+            >button{
              margin-right: 5px;
             }
         }

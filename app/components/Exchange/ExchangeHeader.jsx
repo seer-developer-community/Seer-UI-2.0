@@ -144,7 +144,7 @@ export default class ExchangeHeader extends React.Component {
                       {!marketReady ? 0 : last_price}
                     </Col>
                     <Col span={10}>
-                        <div style={{textAlign:"right"}}>
+                        <div style={{textAlign:"right",display:"none"}}>
                               <span className="clickable" onClick={this.props.onToggleCharts} style={{fontSize:14,color:"#449E7B",fontWeight:"bold"}}>
                             {!showDepthChart ?
                                 <Translate

@@ -2846,6 +2846,17 @@ $input-border
   }
 }
 
+.dropdown_triangle{
+  display: inline-block;
+  width: 0px;
+  height: 0px;
+  border-width:5px;
+  border-color: #999 transparent transparent transparent;
+  border-style: solid;
+  position: relative;
+  top: 2.5px;
+}
+
 #unlock_wallet_modal2 .close-button {
     color: $bs-blue;
 }

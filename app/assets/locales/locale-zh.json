@@ -1249,12 +1249,20 @@
         "search": "请输入交易对查询",
         "order_value": "委单价值",
         "depth_chart":"深度图",
+        "basic_chart":"基本版",
         "cancel_order":"撤单",
         "current_exchange":"现价交易",
         "market_history":{
             "price": "价格",
             "amount": "数量",
             "date": "时间"
+        },
+        "exchange_form":{
+            "buy_price":"买入价",
+            "sell_price":"卖出价",
+            "buy_amount":"买入量",
+            "sell_amount":"卖出量",
+            "total":"交易额"
         }
     },
     "fees": {

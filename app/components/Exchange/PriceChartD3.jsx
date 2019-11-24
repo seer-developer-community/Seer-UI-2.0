@@ -27,7 +27,7 @@ class CandleStickChartWithZoomPan extends React.Component {
         super();
 
         const timeFormatter = timeFormat("%Y-%m-%d %H:%M");
-        const {volumeFormat, priceFormat} = this._getFormats(props);
+        const {volumeFormat, priceFormat,dateFormat} = this._getFormats(props);
         this.state = {
             enableTrendLine: false,
             enableFib: false,
@@ -35,7 +35,8 @@ class CandleStickChartWithZoomPan extends React.Component {
             timeFormatter,
             volumeFormat,
             priceFormat,
-            margin: {left: 75, right: 75, top:20, bottom: 30},
+            dateFormat,
+            margin: {left: 15, right: 75, top:20, bottom: 30},
             calculators: this._getCalculators(props)
         };
 
@@ -57,7 +58,8 @@ class CandleStickChartWithZoomPan extends React.Component {
         const volumePrecision = props.quote.get("precision");
         const priceFormat = format(`.${props.latest && props.latest.full && props.latest.full >= 0.8 ? 2 : Math.min(6, pricePrecision)}f`);
         const volumeFormat = format(`.${Math.min(3, volumePrecision)}s`);
-        return {priceFormat, volumeFormat};
+        const dateFormat = timeFormat("%m-%d %H:%M");
+        return {priceFormat, volumeFormat, dateFormat};
     }
 
     onTrendLineComplete() {
@@ -169,8 +171,8 @@ class CandleStickChartWithZoomPan extends React.Component {
 
     _renderVolumeChart(chartMultiplier) {
         const { height, indicators } = this.props;
-        const { timeFormatter, volumeFormat, calculators } = this.state;
-        const { axisLineColor, volumeColor, indicatorLineColor } = this._getThemeColors();
+        const { timeFormatter, volumeFormat,dateFormat, calculators } = this.state;
+        const { positiveColor, negativeColor,axisLineColor, volumeColor, indicatorLineColor } = this._getThemeColors();
 
         return <Chart id={2}
             yExtents={[d => d.volume, calculators.smaVolume.accessor()]}
@@ -178,8 +180,8 @@ class CandleStickChartWithZoomPan extends React.Component {
             origin={(w, h) => [0, h - (chartMultiplier * height * 0.2)]}
         >
 
-            {indicators.macd ? null : <XAxis tickStroke={axisLineColor} stroke={axisLineColor} axisAt="bottom" orient="bottom" opacity={0.5}/>}
-            <YAxis tickFormat={volumeFormat} tickStroke={axisLineColor} stroke={axisLineColor} axisAt="left" orient="left" ticks={4}/>
+            {indicators.macd ? null : <XAxis tickFormat={dateFormat} tickStroke={axisLineColor} stroke={axisLineColor} axisAt="bottom" orient="bottom" opacity={0.5}/>}
+            <YAxis tickFormat={volumeFormat} tickStroke={axisLineColor} stroke={axisLineColor} axisAt="right" orient="right" ticks={4}/>
 
             {indicators.macd ? null : <MouseCoordinateX id={1}
                 rectWidth={125}
@@ -188,32 +190,33 @@ class CandleStickChartWithZoomPan extends React.Component {
                 displayFormat={timeFormatter}
             />}
 
-            <MouseCoordinateY id={1}
-                rectWidth={65}
-                at="left"
-                orient="left"
-                displayFormat={volumeFormat} />
+            {/*<MouseCoordinateY id={1}*/}
+                {/*rectWidth={65}*/}
+                {/*at="left"*/}
+                {/*orient="left"*/}
+                {/*displayFormat={volumeFormat} />*/}
             <MouseCoordinateY id={0}
                 rectWidth={65}
                 at="right"
                 orient="right"
                 displayFormat={volumeFormat} />
 
-            <BarSeries yAccessor={d => d.volume} fill={volumeColor} />
-            {indicators.smaVolume ? <AreaSeries yAccessor={calculators.smaVolume.accessor()} stroke={calculators.smaVolume.stroke()} fill={calculators.smaVolume.fill()} /> : null}
+            <BarSeries yAccessor={d => d.volume} fill={d => d.close > d.open ? positiveColor : negativeColor}
+                       opacity={1}/>
+            {indicators.smaVolume ? <LineSeries yAccessor={calculators.smaVolume.accessor()} stroke={"#FFB22B"} fill={calculators.smaVolume.fill()} /> : null}
 
             {indicators.smaVolume ? <CurrentCoordinate yAccessor={calculators.smaVolume.accessor()} fill={calculators.smaVolume.stroke()} /> : null}
             <CurrentCoordinate yAccessor={d => d.volume} fill={volumeColor} />
 
-            <EdgeIndicator lineStroke={indicatorLineColor} rectWidth={65} itemType="first" orient="left" edgeAt="left"
-                yAccessor={d => d.volume} displayFormat={volumeFormat} fill="#0F0F0F"/>
-            <EdgeIndicator lineStroke={indicatorLineColor} rectWidth={65} itemType="last" orient="right" edgeAt="right"
-                yAccessor={d => d.volume} displayFormat={volumeFormat} fill="#0F0F0F"/>
+            {/*<EdgeIndicator lineStroke={indicatorLineColor} rectWidth={65} itemType="first" orient="left" edgeAt="left"*/}
+                {/*yAccessor={d => d.volume} displayFormat={volumeFormat} fill="#0F0F0F"/>*/}
+            {/*<EdgeIndicator lineStroke={indicatorLineColor} rectWidth={65} itemType="last" orient="right" edgeAt="right"*/}
+                {/*yAccessor={d => d.volume} displayFormat={volumeFormat} fill="#0F0F0F"/>*/}
 
-            {indicators.smaVolume ? <EdgeIndicator lineStroke={indicatorLineColor} rectWidth={65} itemType="first" orient="left" edgeAt="left"
-                yAccessor={calculators.smaVolume.accessor()} displayFormat={volumeFormat} fill={calculators.smaVolume.fill()}/> : null}
-            {indicators.smaVolume ? <EdgeIndicator lineStroke={indicatorLineColor} rectWidth={65} itemType="last" orient="right" edgeAt="right"
-                yAccessor={calculators.smaVolume.accessor()} displayFormat={volumeFormat} fill={calculators.smaVolume.fill()}/> : null}
+            {/*{indicators.smaVolume ? <EdgeIndicator lineStroke={indicatorLineColor} rectWidth={65} itemType="first" orient="left" edgeAt="left"*/}
+                {/*yAccessor={calculators.smaVolume.accessor()} displayFormat={volumeFormat} fill={calculators.smaVolume.fill()}/> : null}*/}
+            {/*{indicators.smaVolume ? <EdgeIndicator lineStroke={indicatorLineColor} rectWidth={65} itemType="last" orient="right" edgeAt="right"*/}
+                {/*yAccessor={calculators.smaVolume.accessor()} displayFormat={volumeFormat} fill={calculators.smaVolume.fill()}/> : null}*/}
         </Chart>;
     }
 
@@ -232,8 +235,8 @@ class CandleStickChartWithZoomPan extends React.Component {
             id={1}
             height={height * ((chartMultiplier ? 1 : 0.883) - (0.20 * chartMultiplier))}
             yExtents={[d => [d.high, d.low], calculators.ema1.accessor(), calculators.ema2.accessor(), calculators.sma.accessor()]}
-            padding={{ top: 10, bottom: 20 }}
-        >
+            padding={{ top: 10, bottom: 20 }}>
+
             {indicators.macd || showVolumeChart ? null :
                 <XAxis tickStroke={axisLineColor} stroke={axisLineColor} axisAt="bottom" orient="bottom" opacity={0.5}/>}
             <YAxis axisAt="right" orient="right" {...yGrid} ticks={5} tickStroke={axisLineColor} stroke={axisLineColor} />
@@ -246,11 +249,11 @@ class CandleStickChartWithZoomPan extends React.Component {
                 displayFormat={timeFormatter}
             />}
 
-            <MouseCoordinateY id={1}
-                rectWidth={65}
-                at="left"
-                orient="left"
-                displayFormat={priceFormat} />
+            {/*<MouseCoordinateY id={1}*/}
+                {/*rectWidth={65}*/}
+                {/*at="left"*/}
+                {/*orient="left"*/}
+                {/*displayFormat={priceFormat} />*/}
 
             <MouseCoordinateY id={0}
                 rectWidth={65}
@@ -261,8 +264,8 @@ class CandleStickChartWithZoomPan extends React.Component {
             <CandlestickSeries
                 wickStroke={d => d.close > d.open ? positiveColor : negativeColor}
                 fill={d => d.close > d.open ? positiveColor : negativeColor}
-                stroke={d => Math.abs(d.close - d.open) <= (last.high / 200) ? (strokeColor || "#000") : "#000"}
-                opacity={0.8}
+                stroke={d => d.close > d.open ? positiveColor : negativeColor}
+                opacity={1}
             />
             {indicators.bb ? <BollingerSeries calculator={calculators.bb} /> : null}
 
@@ -274,23 +277,23 @@ class CandleStickChartWithZoomPan extends React.Component {
             {indicators.ema1 ? <CurrentCoordinate yAccessor={calculators.ema1.accessor()} fill={calculators.ema1.stroke()} /> : null}
             {indicators.ema2 ? <CurrentCoordinate yAccessor={calculators.ema2.accessor()} fill={calculators.ema2.stroke()} /> : null}
 
-            <EdgeIndicator lineStroke={indicatorLineColor} rectWidth={65} itemType="last" orient="right" edgeAt="right"
-                yAccessor={d => d.close} displayFormat={priceFormat} fill={d => d.close > d.open ? positiveColor : negativeColor}
-            />
-            <EdgeIndicator lineStroke={indicatorLineColor} rectWidth={65} itemType="first" orient="left" edgeAt="left"
-                yAccessor={d => d.close} displayFormat={priceFormat} fill={d => d.close > d.open ? positiveColor : negativeColor}
-            />
+            {/*<EdgeIndicator lineStroke={indicatorLineColor} rectWidth={65} itemType="last" orient="right" edgeAt="right"*/}
+                {/*yAccessor={d => d.close} displayFormat={priceFormat} fill={d => d.close > d.open ? positiveColor : negativeColor}*/}
+            {/*/>*/}
+            {/*<EdgeIndicator lineStroke={indicatorLineColor} rectWidth={65} itemType="first" orient="left" edgeAt="left"*/}
+                {/*yAccessor={d => d.close} displayFormat={priceFormat} fill={d => d.close > d.open ? positiveColor : negativeColor}*/}
+            {/*/>*/}
 
             <OHLCTooltip
                 xDisplayFormat={timeFormatter}
                 volumeFormat={volumeFormat}
                 ohlcFormat={priceFormat}
-                origin={[-40, -10]}
+                origin={[-3,-10]}
             />
 
             {maCalcs.length ?
             <MovingAverageTooltip
-                origin={[-40, 0]}
+                origin={[0, 0]}
                 calculators={maCalcs}
             /> : null}
 
@@ -346,9 +349,10 @@ class CandleStickChartWithZoomPan extends React.Component {
             return a.date > filterDate;
         });
         const last = filteredData[filteredData.length - 1] || {high: 1};
+
         return (
             <ChartCanvas
-                ratio={ratio} width={width - 20} height={height}
+                ratio={ratio} width={width} height={height}
                 seriesName="PriceChart"
                 margin={margin}
                 clamp={enableChartClamp}
@@ -569,7 +573,7 @@ export default class Wrapper extends React.Component {
 		});
 
 		/* Tools dropdown */
-		const settingsOptions = ["volume", "height", "clamp_chart"].map(i => {
+		const settingsOptions = ["volume"/*, "height"*/, "clamp_chart"].map(i => {
 			let content;
 			switch (i) {
 				case "height": {
@@ -646,9 +650,10 @@ export default class Wrapper extends React.Component {
 
                             {bucketOptions}
 
-                            <li className="stat input custom-dropdown" data-intro={translator.translate("walkthrough.chart_tool_indicators")}>
+                            <li className="stat input custom-dropdown has-separator" data-intro={translator.translate("walkthrough.chart_tool_indicators")}>
                                 <div className="v-align indicators clickable" onClick={this._toggleDropdown.bind(this, "indicators")}>
-                                    <Translate content="exchange.chart_options.title" />
+                                    <Translate content="exchange.chart_options.title" />&nbsp;
+                                    <span className="dropdown_triangle"></span>
                                 </div>
                                 {dropdowns.indicators ?
                                 <div className="custom-dropdown-content" onClick={this._stopPropagation}>
@@ -662,9 +667,10 @@ export default class Wrapper extends React.Component {
                                 </div> : null}
                             </li>
 
-                            <li className="stat input custom-dropdown">
+                            <li className="stat input custom-dropdown has-separator">
                                 <div className="v-align indicators clickable" onClick={this._toggleDropdown.bind(this, "tools")}>
-                                    <Translate content="exchange.chart_options.tools" />
+                                    <Translate content="exchange.chart_options.tools" />&nbsp;
+                                    <span className="dropdown_triangle"></span>
                                 </div>
                                 {dropdowns.tools ?
                                 <div className="custom-dropdown-content"  onClick={this._stopPropagation}>
@@ -674,8 +680,8 @@ export default class Wrapper extends React.Component {
                                 </div> : null}
                             </li>
 
-                           <li className="stat input custom-dropdown">
-                                <div className="indicators clickable" onClick={this._toggleDropdown.bind(this, "settings")}>
+                           <li className="stat input custom-dropdown has-separator">
+                                <div className="clickable" onClick={this._toggleDropdown.bind(this, "settings")}>
                                     <Icon className="icon-14px settings-cog" name="cog"/>
                                 </div>
                                 {dropdowns.settings ?
@@ -684,6 +690,10 @@ export default class Wrapper extends React.Component {
                                         {settingsOptions}
                                     </ul>
                                 </div> : null}
+                            </li>
+                            <li className="has-separator charts-switch">
+                              <Translate component="button" content="exchange.basic_chart" className="checked" onClick={this.props.onChangeChartsType.bind("basic")}/>
+                              <Translate component="button" content="exchange.depth_chart" onClick={this.props.onChangeChartsType.bind("depth")}/>
                             </li>
                     </ul>
                 </div>

@@ -46,22 +46,23 @@ class MyOpenOrderAndHistory extends React.Component {
         let myHistoryClass = cnames(hc, {inactive: activeTab === "history"});
 
         return (
-            <div style={{background:"#fff"}}>
-                <div className="exchange-bordered small-12" style={{height: 266,padding:0,margin:0}}>
-                  <div className="flex-align-middle" style={{background:"#f7f7f7",height:"37px",lineHeight:"37px"}}>
-                    <div className={cnames(myHistoryClass, {disabled: isNullAccount})} onClick={this._changeTab.bind(this, "openOrder")} >
-                      <Translate content="exchange.my_history" style={{fontSize:"14px",fontWeight:"bold"}}/>
-                    </div>
-                    <div className={historyClass} onClick={this._changeTab.bind(this, "history")}>
-                      <Translate content="exchange.history" style={{fontSize:"14px",fontWeight:"bold"}} />
-                    </div>
-                  </div>
+            <div className="exchange-panel">
+              <div className="exchange-panel-title flex-align-middle">
+                <div className={cnames(myHistoryClass, {disabled: isNullAccount})} onClick={this._changeTab.bind(this, "openOrder")} >
+                  <Translate content="exchange.my_history" style={{fontSize:"14px",fontWeight:"bold"}}/>
+                </div>
+                <div className={historyClass} onClick={this._changeTab.bind(this, "history")}>
+                  <Translate content="exchange.history" style={{fontSize:"14px",fontWeight:"bold"}} />
+                </div>
+              </div>
+              <div className="exchange-panel-content" style={{height: 266,padding:0,margin:0}}>
+
                     
                     {
                         activeTab === "history" ? 
                             <MyMarketHistory {...this.props}/> : <MyOpenOrders  {...this.props}/>
                     }
-                </div>
+              </div>
             </div>
         );
     }

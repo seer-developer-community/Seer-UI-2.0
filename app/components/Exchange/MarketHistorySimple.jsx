@@ -74,7 +74,8 @@ class MarketHistory extends React.Component {
                 return (
                     <tr key={"history_" + keyIndex}>
                         <td className={parsed_order.className} width="33.333333%">
-                            {parsed_order.pays}
+                          <PriceText preFormattedPrice={parsed_order} />
+                            {/*{parsed_order.pays}*/}
                         </td>
                         <td width="33.333333%">{parsed_order.receives}</td>
                         <td className="tooltip" data-tip={new Date(order.time)} width="33.333333%">

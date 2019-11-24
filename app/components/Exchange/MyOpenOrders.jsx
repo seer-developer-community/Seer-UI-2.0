@@ -324,8 +324,7 @@ class MyOpenOrders extends React.Component {
         let openSettlementWidth = baseIsBitAsset || quoteIsBitAsset ? "inherit" : "none";
 
         return (
-            <div 
-                style={{marginBottom: "15px"}}
+            <div
                 key="open_orders"
                 className={this.props.className}
             >
