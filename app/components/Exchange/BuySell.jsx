@@ -251,7 +251,8 @@ class BuySell extends React.Component {
             0:"", 25:"",50:"", 70:"", 100:""
         };
 
-        let sliderDisable = !hasBalance || invalidPrice;
+
+        let sliderDisable = parseFloat(amount || 0) > balanceAmount.getAmount({real: true}) || invalidPrice;
 
         return (
             <div className={this.props.className} style={{}}>

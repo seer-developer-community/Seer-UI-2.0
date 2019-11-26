@@ -635,7 +635,8 @@ class MarketsStore {
         }
 
         // max buckets returned is 200, if we get less, fill in the gaps starting at the first data point
-        let priceLength = prices.length;
+        let priceLength = prices.length
+
         if (priceLength > 0 && priceLength < 200) {
             let now = new Date().getTime();
             // let firstDate = prices[0].date;

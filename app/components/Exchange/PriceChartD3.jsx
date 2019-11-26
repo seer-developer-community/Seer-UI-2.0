@@ -3,7 +3,7 @@ import { format } from "d3-format";
 import { timeFormat } from "d3-time-format";
 import Translate from "react-translate-component";
 import { ChartCanvas, Chart, series, scale, coordinates, tooltip, axes,
-    indicator, helper, interactive } from "react-stockcharts/es";
+    indicator, helper,utils as chartUtils, interactive } from "react-stockcharts/es";
 
 const { CandlestickSeries, BarSeries, LineSeries, AreaSeries, BollingerSeries,
      MACDSeries } = series;
@@ -35,7 +35,6 @@ class CandleStickChartWithZoomPan extends React.Component {
             timeFormatter,
             volumeFormat,
             priceFormat,
-            dateFormat,
             margin: {left: 15, right: 75, top:20, bottom: 30},
             calculators: this._getCalculators(props)
         };
@@ -58,8 +57,7 @@ class CandleStickChartWithZoomPan extends React.Component {
         const volumePrecision = props.quote.get("precision");
         const priceFormat = format(`.${props.latest && props.latest.full && props.latest.full >= 0.8 ? 2 : Math.min(6, pricePrecision)}f`);
         const volumeFormat = format(`.${Math.min(3, volumePrecision)}s`);
-        const dateFormat = timeFormat("%m-%d %H:%M");
-        return {priceFormat, volumeFormat, dateFormat};
+        return {priceFormat, volumeFormat};
     }
 
     onTrendLineComplete() {
@@ -170,8 +168,8 @@ class CandleStickChartWithZoomPan extends React.Component {
     }
 
     _renderVolumeChart(chartMultiplier) {
-        const { height, indicators } = this.props;
-        const { timeFormatter, volumeFormat,dateFormat, calculators } = this.state;
+        const { height, indicators,priceData } = this.props;
+        const { timeFormatter, volumeFormat, calculators } = this.state;
         const { positiveColor, negativeColor,axisLineColor, volumeColor, indicatorLineColor } = this._getThemeColors();
 
         return <Chart id={2}
@@ -180,7 +178,7 @@ class CandleStickChartWithZoomPan extends React.Component {
             origin={(w, h) => [0, h - (chartMultiplier * height * 0.2)]}
         >
 
-            {indicators.macd ? null : <XAxis tickFormat={dateFormat} tickStroke={axisLineColor} stroke={axisLineColor} axisAt="bottom" orient="bottom" opacity={0.5}/>}
+            {indicators.macd ? null : <XAxis  tickFormat={d=> timeFormat('%m-%d %H:%M')(priceData[d].date)} tickStroke={axisLineColor} stroke={axisLineColor} axisAt="bottom" orient="bottom" opacity={0.5}/>}
             <YAxis tickFormat={volumeFormat} tickStroke={axisLineColor} stroke={axisLineColor} axisAt="right" orient="right" ticks={4}/>
 
             {indicators.macd ? null : <MouseCoordinateX id={1}
@@ -322,6 +320,7 @@ class CandleStickChartWithZoomPan extends React.Component {
         const { width, priceData, height, ratio, theme, zoom,
             indicators, showVolumeChart, enableChartClamp } = this.props;
         const { timeFormatter, enableFib, enableTrendLine, margin, calculators } = this.state;
+        const { priceData: initialData } = this.props;
         const themeColors = colors[theme];
         const { axisLineColor, indicatorLineColor} = themeColors;
         let chartMultiplier = showVolumeChart ? 1 : 0; // Used to adjust the height of the charts and their positioning
@@ -350,18 +349,31 @@ class CandleStickChartWithZoomPan extends React.Component {
         });
         const last = filteredData[filteredData.length - 1] || {high: 1};
 
+        const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(d => d.date);
+        const { data, xScale, xAccessor, displayXAccessor} = xScaleProvider(initialData);
+        const start = xAccessor(chartUtils.last(data));
+        const end = xAccessor(data[Math.max(0, data.length - 150)]);
+        const xExtents = [start, end];
+
         return (
             <ChartCanvas
                 ratio={ratio} width={width} height={height}
                 seriesName="PriceChart"
                 margin={margin}
                 clamp={enableChartClamp}
-                data={filteredData} calculator={calc}
-                xAccessor={d => d.date} xScaleProvider={discontinuousTimeScaleProvider}
-                xExtents={[filteredData[0].date, filteredData[filteredData.length - 1].date]}
+                //org ->data={filteredData}
+                data={data}
+                xScale={xScale}
+                xAccessor={xAccessor}
+                displayXAccessor={displayXAccessor}
+                xExtents={xExtents}
+                calculator={calc}
+                //org ->xAccessor={d => d.date} xScaleProvider={discontinuousTimeScaleProvider}
+                //org ->xExtents={[filteredData[0].date, filteredData[filteredData.length - 1].date]}
                 type="hybrid"
                 className="ps-child no-overflow Stockcharts__wrapper ps-must-propagate"
                 drawMode={enableTrendLine || enableFib}>
+
             >
                 {showVolumeChart ? this._renderVolumeChart(chartMultiplier)
                  : <span></span>}

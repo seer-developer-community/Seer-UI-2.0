@@ -135,7 +135,7 @@ class Exchange extends React.Component {
             width: window.innerWidth,
             chartHeight: ws.get("chartHeight", 425),
             //currentPeriod: ws.get("currentPeriod", 3600* 24 * 30 * 3) // 3 months
-            currentPeriod: 3600 * 24 * 3 // 1 w
+            currentPeriod: "all"// 3600 * 24 * 3 // 1 w
         };
     }
 
