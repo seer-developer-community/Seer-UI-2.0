@@ -88,7 +88,7 @@ class MarketsActions {
     subscribeMarket(base, quote, bucketSize) {
         clearBatchTimeouts();
         let subID = quote.get("id") + "_" + base.get("id");
-        currentMarket = base.get("id") + "_" + quote.get("id");;
+        currentMarket = base.get("id") + "_" + quote.get("id");
 
         let {isMarketAsset, marketAsset, inverted} = marketUtils.isMarketAsset(quote, base);
 
