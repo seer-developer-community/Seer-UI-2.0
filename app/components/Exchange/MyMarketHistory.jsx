@@ -81,15 +81,22 @@ class MarketHistory extends React.Component {
                 }
 
                 let parsed_order = market_utils.parse_order_history(order, paysAsset, receivesAsset, isAsk, flipped);
+                let direction = isAsk ? counterpart.translate("exchange.sell") : counterpart.translate("exchange.buy");
                 const block_num = trx.get("block_num");
                 return (
                     <tr key={"my_history_" + keyIndex}>
-                        <td className={parsed_order.className}>
+                        <BlockDate width="16.66666%" component="td" block_number={block_num} tooltip />
+                        <td width="16.66666%">
+                            <AssetName dataPlace="top" name={quoteSymbol} />/<AssetName dataPlace="top" name={baseSymbol} />
+                        </td>
+                        <td className={parsed_order.className} width="16.66666%">
+                            <span className="price-integer">{direction}</span>
+                        </td>
+                        <td className={parsed_order.className} width="16.66666%">
                             <PriceText preFormattedPrice={parsed_order} />
                         </td>
-                        <td>{parsed_order.receives}</td>
-                        <td>{parsed_order.pays}</td>
-                        <BlockDate component="td" block_number={block_num} tooltip />
+                        <td width="16.66666%">{parsed_order.receives}</td>
+                        <td width="16.66666%">{parsed_order.pays}</td>
                     </tr>
                 );
             }).toArray();
@@ -103,10 +110,12 @@ class MarketHistory extends React.Component {
                         <table className="table fixed-table market-right-padding market-order-table"> {/*text-right*/}
                             <thead>
                                 <tr>
-                                    <th width="25%"><Translate content="exchange.price" /></th>
-                                    <th width="25%"><span><AssetName dataPlace="top" name={quoteSymbol} /></span></th>
-                                    <th width="25%"><span><AssetName dataPlace="top" name={baseSymbol} /></span></th>
-                                    <th width="25%"><Translate content="explorer.block.date" /></th>
+                                  <th style={{width: "16.66666%",textAlign:  "left"}}><Translate className="header-sub-title" content="exchange.market_history.date" /></th>
+                                  <th style={{width: "16.66666%",textAlign:  "left"}}><Translate className="header-sub-title" content="exchange.market" /></th>
+                                  <th style={{width: "16.66666%",textAlign:  "left"}}><Translate className="header-sub-title" content="exchange.direction" /></th>
+                                  <th style={{width: "16.66666%",textAlign:  "left"}}><Translate className="header-sub-title" content="exchange.price" /></th>
+                                  <th style={{width: "16.66666%",textAlign:  "left"}}><Translate className="header-sub-title" content="exchange.order_amount" />({baseSymbol ? <AssetName dataPlace="top" name={quoteSymbol} /> : null})</th>
+                                  <th style={{width: "16.66666%",textAlign:  "left"}}><Translate className="header-sub-title" content="exchange.total" />({baseSymbol ? <AssetName dataPlace="top" name={baseSymbol} /> : null})</th>
                                 </tr>
                             </thead>
                         </table>

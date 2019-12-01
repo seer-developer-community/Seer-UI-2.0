@@ -28,11 +28,13 @@ class TableHeader extends React.Component {
         return !dashboard ? (
             <thead>
                 <tr>
-                    <th style={{width: "22.5%",textAlign: this.props.leftAlign ? "left" : ""}}><Translate className="header-sub-title" content="exchange.price" /></th>
-                    <th style={{width: "22.5%",textAlign: this.props.leftAlign ? "left" : ""}}>{baseSymbol ? <span className="header-sub-title"><AssetName dataPlace="top" name={quoteSymbol} /></span> : null}</th>
-                    <th style={{width: "22.5%",textAlign: this.props.leftAlign ? "left" : ""}}>{baseSymbol ? <span className="header-sub-title"><AssetName dataPlace="top" name={baseSymbol} /></span> : null}</th>
-                    <th style={{width: "22.5%",textAlign: this.props.leftAlign ? "left" : ""}}><Translate className="header-sub-title" content="transaction.expiration" /></th>
-                    <th style={{width: "10%"}} />
+                    <th style={{width: "15%",textAlign: this.props.leftAlign ? "left" : ""}}><Translate className="header-sub-title" content="exchange.market_history.date" /></th>
+                    <th style={{width: "15%",textAlign: this.props.leftAlign ? "left" : ""}}><Translate className="header-sub-title" content="exchange.market" /></th>
+                    <th style={{width: "15%",textAlign: this.props.leftAlign ? "left" : ""}}><Translate className="header-sub-title" content="exchange.direction" /></th>
+                    <th style={{width: "15%",textAlign: this.props.leftAlign ? "left" : ""}}><Translate className="header-sub-title" content="exchange.price" /></th>
+                    <th style={{width: "15%",textAlign: this.props.leftAlign ? "left" : ""}}><Translate className="header-sub-title" content="exchange.order_amount" />({baseSymbol ? <AssetName dataPlace="top" name={quoteSymbol} /> : null})</th>
+                    <th style={{width: "15%",textAlign: this.props.leftAlign ? "left" : ""}}><Translate className="header-sub-title" content="exchange.total" />({baseSymbol ? <AssetName dataPlace="top" name={baseSymbol} /> : null})</th>
+                    <th style={{width: "10%",textAlign:"center"}}><Translate className="header-sub-title" content="account.perm.action" /></th>
                 </tr>
             </thead>
         ) : (
@@ -69,10 +71,11 @@ class OrderRow extends React.Component {
     }
 
     render() {
-        let {base, quote, order, showSymbols, dashboard, isMyAccount, settings} = this.props;
+        let {base, quote, order, showSymbols, dashboard, isMyAccount, settings,baseSymbol, quoteSymbol} = this.props;
         const isBid = order.isBid();
         const isCall = order.isCall();
         let tdClass = isCall ? "orderHistoryCall" : isBid ? "orderHistoryBid" : "orderHistoryAsk";
+        let direction = isCall ? "orderHistoryCall" : isBid ? counterpart.translate("exchange.buy") : counterpart.translate("exchange.sell");
 
         let priceSymbol = showSymbols ? <span>{` ${base.get("symbol")}/${quote.get("symbol")}`}</span> : null;
         let valueSymbol = showSymbols ? " " + base.get("symbol") : null;
@@ -81,20 +84,28 @@ class OrderRow extends React.Component {
         let quoteColor = !isBid ? "value negative" : "value positive";
         let baseColor = isBid ? "value negative" : "value positive";
 
+        console.log(order);
+
         return !dashboard ? (
             <tr key={order.id}>
-                <td className={tdClass} width="22.5%">
+                <td width="15%" className="tooltip" data-tip={new Date(order.expiration)}>
+                    {counterpart.localize(new Date(order.expiration), {type: "date", format: "market_history"})}
+                </td>
+                <td width="15%">
+                    <AssetName dataPlace="top" name={quoteSymbol} />/<AssetName dataPlace="top" name={baseSymbol} />
+                </td>
+                <td className={tdClass} width="15%">
+                  <span className="price-integer">{direction}</span>
+                </td>
+                <td className={tdClass} width="15%">
                     <PriceText price={order.getPrice()} base={base} quote={quote} />
                     {priceSymbol}
                 </td>
-                <td width="22.5%">{utils.format_number(order[!isBid ? "amountForSale" : "amountToReceive"]().getAmount({real: true}), quote.get("precision"))} {amountSymbol}</td>
-                <td width="22.5%">{utils.format_number(order[!isBid ? "amountToReceive" : "amountForSale"]().getAmount({real: true}), base.get("precision"))} {valueSymbol}</td>
-                <td  width="22.5%" className="tooltip" data-tip={new Date(order.expiration)}>
-                    {counterpart.localize(new Date(order.expiration), {type: "date", format: "market_history"})}
-                </td>
+                <td width="15%">{utils.format_number(order[!isBid ? "amountForSale" : "amountToReceive"]().getAmount({real: true}), quote.get("precision"))} {amountSymbol}</td>
+                <td width="15%">{utils.format_number(order[!isBid ? "amountToReceive" : "amountForSale"]().getAmount({real: true}), base.get("precision"))} {valueSymbol}</td>
                 <td  width="10%" className="text-center">
                     {isCall ? null :
-                            <button className="button tiny outline-dark fillet" onClick={this.props.onCancel}>
+                            <button className="button tiny outline fillet" onClick={this.props.onCancel}>
                               <Translate content="exchange.cancel_order"/>
                             </button>}
                 </td>
@@ -274,7 +285,7 @@ class MyOpenOrders extends React.Component {
                 return b.getPrice() - a.getPrice();
             }).map(order => {
                 let price = order.getPrice();
-                return <OrderRow price={price} key={order.id} order={order} base={base} quote={quote} onCancel={this.props.onCancel.bind(this, order.id)}/>;
+                return <OrderRow price={price} key={order.id} order={order} base={base} quote={quote} baseSymbol={baseSymbol} quoteSymbol={quoteSymbol} onCancel={this.props.onCancel.bind(this, order.id)}/>;
             });
     
             let asks = orders.filter(a => {
@@ -283,7 +294,7 @@ class MyOpenOrders extends React.Component {
                 return a.getPrice() - b.getPrice();
             }).map(order => {
                 let price = order.getPrice();
-                return <OrderRow price={price} key={order.id} order={order} base={base} quote={quote} onCancel={this.props.onCancel.bind(this, order.id)}/>;
+                return <OrderRow price={price} key={order.id} order={order} base={base} quote={quote} baseSymbol={baseSymbol} quoteSymbol={quoteSymbol} onCancel={this.props.onCancel.bind(this, order.id)}/>;
             });
     
             let rows = [];

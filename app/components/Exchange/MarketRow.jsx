@@ -111,10 +111,11 @@ class MarketRow extends React.Component {
             case "change":
                 let change = utils.format_number(stats && stats.change ? stats.change : 0, 2);
                 let changeClass = change === "0.00" ? "" : change > 0 ? "change-up" : "change-down";
+                let symbol  = change === "0.00" ? "" : change > 0 ? "+" : "-";
 
                 return (
                     <td onClick={this._onClick.bind(this, marketID)} className={"text-right " + changeClass} key={column.index}>
-                        {change + "%"}
+                      {symbol}{change + "%"}
                     </td>
                 );
 
@@ -132,10 +133,11 @@ class MarketRow extends React.Component {
 
             case "price":
                 let finalPrice = stats && stats.price ?
-                    stats.price.toReal() :
-                    stats && stats.close && (stats.close.quote.amount && stats.close.base.amount) ?
-                    utils.get_asset_price(stats.close.quote.amount, quote, stats.close.base.amount, base, true) :
-                    utils.get_asset_price(price.quote.amount, quote, price.base.amount, base, true);
+                    stats.price.toReal() :0;
+                  //  stats && stats.close && (stats.close.quote.amount && stats.close.base.amount) ?
+                  //  utils.get_asset_price(stats.close.quote.amount, quote, stats.close.base.amount, base, true) :
+                  //  utils.get_asset_price(price.quote.amount, quote, price.base.amount, base, true);
+
 
                 let highPrecisionAssets = ["BTC", "OPEN.BTC", "TRADE.BTC", "GOLD", "SILVER"];
                 let precision = 6;

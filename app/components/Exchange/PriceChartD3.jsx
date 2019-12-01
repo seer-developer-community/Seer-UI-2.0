@@ -199,8 +199,7 @@ class CandleStickChartWithZoomPan extends React.Component {
                 orient="right"
                 displayFormat={volumeFormat} />
 
-            <BarSeries yAccessor={d => d.volume} fill={d => d.close > d.open ? positiveColor : negativeColor}
-                       opacity={1}/>
+            <BarSeries yAccessor={d => d.volume} fill={d => d.close > d.open ? positiveColor : negativeColor} opacity={1}/>
             {indicators.smaVolume ? <LineSeries yAccessor={calculators.smaVolume.accessor()} stroke={"#FFB22B"} fill={calculators.smaVolume.fill()} /> : null}
 
             {indicators.smaVolume ? <CurrentCoordinate yAccessor={calculators.smaVolume.accessor()} fill={calculators.smaVolume.stroke()} /> : null}

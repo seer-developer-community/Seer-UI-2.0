@@ -1424,7 +1424,7 @@ $input-border
 
     tr.activeMarket, tr.activeMarket:hover {
         color: #4C85D8;
-        background-color: $header-color;
+        background-color: #F5F5F5;
     }
 
     li.stat.input {
@@ -2234,43 +2234,6 @@ $input-border
       }
   }
 
-  table.dashboard-table.market-table-mini{
-    >thead > tr {
-      height:24px;
-      max-height: 24px;
-
-      >th {
-        padding: 0 8px;
-        margin: 0;
-        font-size: 12px;
-        font-weight: normal !important;
-        color: #333!important;
-      }
-    }
-
-    >tbody{
-      >tr{
-        height:24px;
-        max-height: 24px;
-
-        >td{
-          color:#666;
-          font-size: 12px;
-
-          svg.icon{
-            width:16px!important;
-            height:16px!important;
-          }
-
-          &:first-child{
-            width: 24px!important;
-            padding: 0;
-          }
-        }
-      }
-    }
-  }
-
   table.market-order-table{
     tr{
       border-bottom: 1px solid #F5F5F5;
@@ -2434,6 +2397,37 @@ $input-border
     }
     .icon {
       display: inline;
+    }
+  }
+
+  &.sort-mini{
+    .icon{
+      width: 12px;
+      height: 12px;
+    }
+
+    &.asc {
+      path.asc {
+        fill: #666;
+      }
+      path.desc {
+        fill: #999;
+      }
+      .icon {
+        display: inline;
+      }
+    }
+
+    &.desc {
+      path.asc {
+        fill: #999;
+      }
+      path.desc {
+        fill: #666;
+      }
+      .icon {
+        display: inline;
+      }
     }
   }
 }

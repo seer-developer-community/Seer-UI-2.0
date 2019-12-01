@@ -49,10 +49,10 @@ class MyOpenOrderAndHistory extends React.Component {
             <div className="exchange-panel">
               <div className="exchange-panel-title flex-align-middle">
                 <div className={cnames(myHistoryClass, {disabled: isNullAccount})} onClick={this._changeTab.bind(this, "openOrder")} >
-                  <Translate content="exchange.my_history" style={{fontSize:"14px",fontWeight:"bold"}}/>
+                  <Translate content="exchange.my_orders" style={{fontSize:"14px",fontWeight:"bold"}}/>
                 </div>
                 <div className={historyClass} onClick={this._changeTab.bind(this, "history")}>
-                  <Translate content="exchange.history" style={{fontSize:"14px",fontWeight:"bold"}} />
+                  <Translate content="exchange.my_orders_history" style={{fontSize:"14px",fontWeight:"bold"}} />
                 </div>
               </div>
               <div className="exchange-panel-content" style={{height: 266,padding:0,margin:0}}>

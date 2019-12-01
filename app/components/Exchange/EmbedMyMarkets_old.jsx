@@ -22,7 +22,6 @@ import {Tabs, Tab} from "../Utility/Tabs";
 import counterpart from "counterpart";
 import LoadingIndicator from "../LoadingIndicator";
 import {ChainValidation} from "seerjs/es";
-import { Tag } from 'antd';
 import { websiteAPIs } from "../../api/apiConfig";
 import IntlStore from "../../stores/IntlStore";
 
@@ -150,7 +149,7 @@ class MarketGroup extends React.Component {
                 return <th key={header.name} className="clickable" onClick={this._changeSort.bind(this, "volume")}><Translate content="exchange.vol_short" /></th>;
 
             case "price":
-                return <th key={header.name} style={{textAlign:"center"}}><Translate content="exchange.price" /></th>;
+                return <th key={header.name}><Translate content="exchange.price" /></th>;
 
             case "quoteSupply":
                 return <th key={header.name}><Translate content="exchange.quote_supply" /></th>;
@@ -230,19 +229,6 @@ class MarketGroup extends React.Component {
                         return 0;
                     }
 
-                case "price":
-                    if (aStats && bStats) {
-                        let price1 = bStats.price ? bStats.price.base.getAmount({real: true}) : 0;
-                        let price2 = aStats.price ? aStats.price.base.getAmount({real: true}) : 0;
-                        if (inverseSort) {
-                            return price1 - price2;
-                        } else {
-                            return price2 - price1;
-                        }
-                    } else {
-                        return 0;
-                    }
-
                 case "change":
                     if (aStats && bStats) {
                         if (inverseSort) {
@@ -259,24 +245,11 @@ class MarketGroup extends React.Component {
         let caret = open ? <span>&#9660;</span> : <span>&#9650;</span>;
 
         return (
-            <div>
+            <div style={{padding: "10px 8px 10px 8px"}}>
                 {open ? (
-                <table>
+                <table className="table table-hover text-right dashboard-table even-bg market-table-mini">
                     <thead>
-                        <tr>
-                          <th className={"clickable sort-container sort-mini" + (this.state.sortBy === "name" ? " " + (this.state.inverseSort ? "desc" : "asc") : "")} onClick={this._changeSort.bind(this, "name")} colSpan={2}>
-                            <Translate content="account.currency_type"/>
-                            <Icon size="14px" name="sort"/>
-                          </th>
-                          <th className={"clickable sort-container sort-mini" + (this.state.sortBy === "price" ? " " + (this.state.inverseSort ? "desc" : "asc") : "")} onClick={this._changeSort.bind(this, "price")}>
-                            <Translate content="exchange.price" />
-                            <Icon size="14px" name="sort"/>
-                          </th>
-                          <th className={"clickable sort-container sort-mini" + (this.state.sortBy === "change" ? " " + (this.state.inverseSort ? "desc" : "asc") : "")} onClick={this._changeSort.bind(this, "change")}>
-                            <Translate content="exchange.change" />
-                            <Icon size="14px" name="sort"/>
-                          </th>
-                        </tr>
+                        <tr>{headers}</tr>
                     </thead>
                     {marketRows && marketRows.length ?
                         <tbody>{marketRows}</tbody> : null
@@ -709,15 +682,12 @@ class MyMarkets extends React.Component {
             listStyle.height = listHeight;
         }
 
-        let placeholder = counterpart.translate("markets.search").toUpperCase();
         return (
             <div style={{width:"100%"}}>
 
                 <div className={this.props.className} style={this.props.style}>
+
                     <ul className="mymarkets-tabs">
-                      <li>
-                        <Translate content="exchange.optional"/>
-                      </li>
                         {preferredBases.map((base, index) => {
                             if (!base) return null;
                             return (
@@ -741,14 +711,9 @@ class MyMarkets extends React.Component {
                             </li>) : null}
                     </ul>
 
-                  <div className="market-search">
-                    <i className="iconfont icon-sousuo"></i>
-                    <input placeholder={placeholder} type="text" value={this.state.myMarketFilter} onChange={this.handleSearchUpdate}  />
-                  </div>
-
                     <div
                         style={listStyle}
-                        className="table-container grid-block vertical"
+                        className="table-container grid-block vertical mymarkets-list"
                         ref="favorites">
                         {assetsLoading ? <div style={{position: "absolute", paddingTop: "3rem", textAlign: "center", width: "100%"}}><LoadingIndicator type="three-bounce" /></div> : null}
                         {preferredBases.filter(a => {return a === preferredBases.get(activeMarketTab);}).map((base, index) => {
@@ -799,8 +764,61 @@ class MyMarkets extends React.Component {
 
 
         return (
-            <div className="embed-my-market">
-              {this.renderList.bind(this)()}
+            <div style={{width:"100%"}}>
+                <Tabs
+                    setting="accountTab"
+                    className="account-tabs thin-border"
+                    defaultActiveTab={1}
+                    segmented={false}
+                    tabsClass="account-overview small title-bold no-padding bordered-header content-block"
+                    style={{width:"100%",fontSize:14}}
+                    onChangeTab={this._changeTab.bind(this)}>
+                    <Tab title="exchange.market_name">
+                        <div>
+                            <div style={{display:"flex",justifyContent:"center",alignItems: "center",marginTop:12}}>
+                                <div className="input-search fillet-small" style={{width:136,maxWidth: 136}} >
+                                    <svg className="icon" aria-hidden="true">
+                                        <use xlinkHref="#icon-sousuo"></use>
+                                    </svg>
+                                    <input placeholder={placeholder} type="text" value={this.state.myMarketFilter} onChange={this.handleSearchUpdate}  />
+                                </div>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <div className="agree-auxiliaries flex-align-middle">
+                                    <input className="cbox" id="ck_agree" type="checkbox" checked={this.props.onlyStars} onChange={() => {MarketsActions.toggleStars();}}/>
+                                    <label className="checkbox-mask" htmlFor="ck_agree" style={{width:"18px",height:"18px"}}></label>
+                                    <Translate content="exchange.show_star_1" style={{display:"inline",fontSize:"12px",color:"#666"}}/>
+                                </div>
+                            </div>
+
+
+                            <div className={this.props.className} style={this.props.style}>
+                                {this.renderList.bind(this)()}
+                            </div>
+                        </div>
+                    </Tab>
+
+                    <Tab title="exchange.more">
+                        <div>
+                            <div style={{display:"flex",justifyContent:"center",alignItems: "center",marginTop:12}}>
+                                <div className="input-search fillet-small" style={{width:90,maxWidth: 90,padding:"0 8px"}} >
+                                    <input placeholder={quotePlaceholder} type="text" value={this.state.findBaseInput} onChange={e=>{this._onInputBaseAsset.bind(this)(e.target.value); }} />
+                                </div>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <div className="input-search fillet-small" style={{width:128,maxWidth: 128}} >
+                                    <svg className="icon" aria-hidden="true">
+                                        <use xlinkHref="#icon-sousuo"></use>
+                                    </svg>
+                                    <input placeholder={placeholder} type="text" value={this.state.inputValue} onChange={this._onInputName.bind(this)}  />
+                                </div>
+                            </div>
+
+                            <div className={this.props.className} style={this.props.style}>
+                                {this.renderList.bind(this)()}
+                            </div>
+                        </div>
+                    </Tab>
+                </Tabs>
+
             </div>
         );
     }

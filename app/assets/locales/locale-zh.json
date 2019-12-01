@@ -1218,6 +1218,7 @@
         "my_bids": "我的买单",
         "my_asks": "我的卖单",
         "my_orders": "我的委单",
+        "my_orders_history": "历史委单",
         "settle_orders": "清算单",
         "asks": "卖单",
         "bids": "买单",
@@ -1252,6 +1253,9 @@
         "basic_chart":"基本版",
         "cancel_order":"撤单",
         "current_exchange":"现价交易",
+        "optional":"自选",
+        "direction":"方向",
+        "order_amount":"委托量",
         "market_history":{
             "price": "价格",
             "amount": "数量",
