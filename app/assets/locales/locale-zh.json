@@ -306,7 +306,8 @@
             "error_precision": "该资产的精度与 %(asset)s 不同",
             "error_invalid": "该资产不能使用",
             "market": "优先市场交易对",
-            "precision_warning": "警告：创建后该数值将无法更改。",
+            "name_warning": "资产创建后资产代码将无法更改",
+            "precision_warning": "创建后该数值将无法更改",
             "visible": "在搜索与市场中隐藏资产",
             "cer_warning_1": "警告！",
             "cer_warning_2": "请确保手续费汇率高于市场价，否则其他人将可以从市场买入你的资产后通过手续费兑换操作进行套利。手续费汇率应当根据资产的市场交易价格时常进行更新。",
@@ -1256,6 +1257,7 @@
         "optional":"自选",
         "direction":"方向",
         "order_amount":"委托量",
+        "asset_conversion":"资产折合",
         "market_history":{
             "price": "价格",
             "amount": "数量",

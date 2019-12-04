@@ -73,6 +73,9 @@ class Account extends React.Component {
                     },
                     {
                         name:"/account/" + account_name + "/" + "assets",
+                        subURL:[
+                            "account/" + account_name + "/create-asset",
+                        ],
                         text:"account.menus.asset_mangage",
                         icon:"#icon-zichanguanli"
                     },

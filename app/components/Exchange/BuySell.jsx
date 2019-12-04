@@ -74,7 +74,7 @@ class BuySell extends React.Component {
         return `${value}%`;
     }
 
-    _onSliderChange(balanceAmount,value){
+    _onSliderChange(isBid,balanceAmount,value){
       let price = this.props.price || 0;
       let balance = balanceAmount.getAmount({real: true});
 
@@ -82,8 +82,16 @@ class BuySell extends React.Component {
         return;
       }
 
-      let maxAmount = balance / price;
-      let amount = maxAmount * (value / 100);
+      //let maxAmount = balance / price;
+      let amount = 0;
+
+      if(isBid){
+          let maxAmount = this.toFixed(balance,4) / price;
+          amount = maxAmount * (value / 100);
+      }else{
+          amount = balance * (value / 100);
+      }
+
        if(this.props.amountChange){
          this.props.amountChange({
            target:{
@@ -91,6 +99,12 @@ class BuySell extends React.Component {
            }
          })
        }
+    }
+
+
+    toFixed(num, fixed) {
+        var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?');
+        return parseFloat(num.toString().match(re)[0]);
     }
 
     render() {
@@ -251,8 +265,13 @@ class BuySell extends React.Component {
             0:"", 25:"",50:"", 70:"", 100:""
         };
 
+        let sliderDisable = false;
+        if(!isBid){
+            sliderDisable = parseFloat(amount || 0) > balanceAmount.getAmount({real: true}) || invalidPrice;
+        }else{
+            sliderDisable = total > balanceAmount.getAmount({real: true}) || invalidPrice;
+        }
 
-        let sliderDisable = parseFloat(amount || 0) > balanceAmount.getAmount({real: true}) || invalidPrice;
 
         return (
             <div className={this.props.className} style={{}}>
@@ -314,7 +333,7 @@ class BuySell extends React.Component {
                                         defaultValue={0}
                                         disabled={sliderDisable}
                                         getTooltipPopupContainer={trigger => trigger.parentNode}
-                                        onChange={this._onSliderChange.bind(this,balanceAmount)}/>
+                                        onChange={this._onSliderChange.bind(this,isBid,balanceAmount)}/>
                               </div>
                             </td>
                         </tr>

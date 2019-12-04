@@ -6,9 +6,11 @@ import MarketsActions from "actions/MarketsActions";
 import SettingsActions from "actions/SettingsActions";
 import PriceStatWithLabel from "./PriceStatWithLabel";
 import Translate from "react-translate-component";
+import Immutable from "immutable";
 import counterpart from "counterpart";
 import {ChainStore} from "seerjs/es";
 import ExchangeHeaderCollateral from "./ExchangeHeaderCollateral";
+import TotalBalanceValue from "../Utility/TotalBalanceValue";
 import utils from "../../lib/common/utils";
 import { Row, Col } from 'antd';
 
@@ -185,7 +187,12 @@ export default class ExchangeHeader extends React.Component {
                       </Link>
                     </Col>
                     <Col span={2} className="right">
-                      <span style={{fontSize:"12px",color:"#999"}}> ￥0.31</span>
+                      <span style={{fontSize:"12px",color:"#999"}}>
+                          <TotalBalanceValue.AssetAmountValue
+                              amount={{asset_id: quoteAsset.get("id"), amount: last_price * Math.pow(10,quoteAsset.get("precision"))}}
+                              toAsset="1.3.5"
+                          />
+                      </span>
                     </Col>
                     <Col span={10}>
                     </Col>

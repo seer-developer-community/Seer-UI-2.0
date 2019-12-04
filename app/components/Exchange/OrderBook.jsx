@@ -9,7 +9,9 @@ import AssetName from "../Utility/AssetName";
 import { StickyTable } from "react-sticky-table";
 import { Select } from 'antd';
 import cnames from "classnames";
+import TotalBalanceValue from "../Utility/TotalBalanceValue";
 import "react-sticky-table/dist/react-sticky-table.css";
+
 
 class OrderBookRowHorizontal extends React.Component {
 
@@ -181,12 +183,74 @@ class OrderBook extends React.Component {
             let bids = combinedBids;
             let asks = combinedAsks;
 
+            let newBidMap = {};
+
+            bids.map((order)=>{
+                let price = order.getPrice();
+                let pricekey =  "" + price.toFixed(this.state.decimalPlace);
+
+                if(!newBidMap[pricekey]){
+                    newBidMap[pricekey] = [order];
+                }else{
+                    newBidMap[pricekey].push(order);
+                }
+            });
+
+            let newBids = [];
+
+            for(let key in newBidMap){
+                let a = newBidMap[key];
+                let order;
+                a.map(o=>{
+                    if(!order){
+                        order = o;
+                    }else{
+                        order._for_sale.amount += o._for_sale.amount
+                        order._to_receive.amount += o._to_receive.amount
+                    }
+                });
+                newBids.push(order);
+            }
+
+            ////////////////////////
+            let newAskMap = {};
+
+            asks.map((order)=>{
+                let price = order.getPrice();
+                let pricekey =  "" + price.toFixed(this.state.decimalPlace);
+
+                if(!newAskMap[pricekey]){
+                    newAskMap[pricekey] = [order];
+                }else{
+                    newAskMap[pricekey].push(order);
+                }
+            });
+
+            let newAsks = [];
+
+            for(let key in newAskMap){
+                let a = newAskMap[key];
+                let order;
+                a.map(o=>{
+                    if(!order){
+                        order = o;
+                    }else{
+                        order._for_sale.amount += o._for_sale.amount
+                        order._to_receive.amount += o._to_receive.amount
+                    }
+                });
+                newAsks.push(order);
+            }
+
+            bids = newBids;
+            asks = newAsks;
+
             if (this.state.currentView === "all") {
-                bids = _.take(combinedBids,bidRowCount);
-                asks = _.take(combinedAsks,askRowCount);
+                bids = _.take(bids,bidRowCount);
+                asks = _.take(asks,askRowCount);
             }else{
-                bids = _.take(combinedBids,onlyRowCount);
-                asks = _.take(combinedAsks,onlyRowCount);
+                bids = _.take(bids,onlyRowCount);
+                asks = _.take(asks,onlyRowCount);
             }
 
             let maxAmountOrder = _.maxBy([...bids,...asks], o=>{
@@ -231,6 +295,9 @@ class OrderBook extends React.Component {
                     />);
             });
         }
+
+
+
 
         let last_price = utils.price_text(latest ? latest.full : 0, quote, base);
         const dayChange = marketStats.get("change");
@@ -287,7 +354,12 @@ class OrderBook extends React.Component {
                 <div className="order-book-current-price">
                     <div>{last_price}</div>
                     <div>➔</div>
-                    <div>¥0.31</div>
+                    <div>
+                        <TotalBalanceValue.AssetAmountValue
+                            amount={{asset_id: quote.get("id"), amount: last_price * Math.pow(10,quote.get("precision"))}}
+                            toAsset="1.3.5"
+                        />
+                    </div>
                     <div>{dayChangeWithSign}%</div>
                 </div>
               {

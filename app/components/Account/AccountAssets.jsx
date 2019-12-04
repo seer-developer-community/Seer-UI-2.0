@@ -245,7 +245,12 @@ class AccountAssets extends React.Component {
             <div className="grid-content app-tables no-padding" ref="appTables">
                   <div className="content-block small-12" style={{paddingTop:"34px"}}>
                     <Translate content={ isMyAccount ? "account.user_issued_assets.issued_assets" : "account.user_issued_assets.ta_issued_assets"} component="h5" style={{fontWeight:"bold"}}/>
-
+                      <br/>
+                      <Link to={`/account/${account_name}/create-asset/`}>
+                          <div style={{display: "inline-block", marginBottom: "1rem",paddingLeft:"32px",paddingRight:"32px"}} className="button">
+                              <Translate content="header.create_asset" />
+                          </div>
+                      </Link>
                     <table className="table dashboard-table table-hover" style={{marginTop:"1em"}}>
                       <thead>
                       <tr>
@@ -260,6 +265,7 @@ class AccountAssets extends React.Component {
                       {myAssets}
                       </tbody>
                     </table>
+
 
                     <BaseModal id="issue_asset" overlay={true}>
                         <br/>

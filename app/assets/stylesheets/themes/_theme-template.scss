@@ -1532,6 +1532,32 @@ $input-border
         }
     }
 
+    .mymarkets-tabs {
+      width: 100%;
+      list-style: none;
+      margin-left: 8px;
+      margin-top: 8px;
+
+      > li {
+        padding: 1px 4px;
+        font-size: 12px;
+        display: inline-block;
+        margin: 0 6px;
+
+        &.mymarkets-tab{
+          cursor: pointer;
+          background-color: #F5F5F5;
+          border-radius: 2px;
+          color: #333;
+
+          &.active{
+            background-color: #439D7A;
+            color: #fff;
+          }
+        }
+      }
+    }
+
     .mymarkets-list {
         border-top: 2px solid $panel-bg-color;
     }
@@ -2278,6 +2304,24 @@ $input-border
         }
       }
     }
+  }
+
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 300px;
+    border-radius: 10px; /*这个属性设置使填充进度条时的图形为圆角*/
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #479F7D;
+  }
+
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 10px;
+    background: #f3f3f3;
   }
 }
 

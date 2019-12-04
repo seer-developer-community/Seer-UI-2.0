@@ -90,7 +90,7 @@ const onAccountManagerEnter = function(nextState, replaceState, callback){
 
 const routes = (
     <Route path="/" component={App} onEnter={willTransitionTo}>
-        <IndexRoute component={HousesIndex}/>
+        <IndexRedirect to="market/SCP_SEER"/>
 
         <Route path="/auth/:data" component={Auth}/>
         <Route path="/dashboard" component={DashboardContainer}/>

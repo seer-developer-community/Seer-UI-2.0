@@ -221,7 +221,7 @@ TotalValue = BindToChainState(TotalValue, {keep_updating: true});
 
 class ValueStoreWrapper extends React.Component {
     render() {
-        let preferredUnit = this.props.settings.get("unit") || "1.3.0";
+        let preferredUnit = this.props.toAsset || this.props.settings.get("unit") || "1.3.0";
 
         return <TotalValue {...this.props} toAsset={preferredUnit}/>;
     }
@@ -252,7 +252,7 @@ class TotalBalanceValue extends React.Component {
     };
 
     render() {
-        let {balances, collateral, debt, openOrders, inHeader} = this.props;
+        let {balances, collateral, debt, openOrders, inHeader,toAsset} = this.props;
         let assets = List();
         let amounts = [];
 
@@ -281,10 +281,53 @@ class TotalBalanceValue extends React.Component {
             }
         }
 
-        return <ValueStoreWrapper label={this.props.label} hide_asset={this.props.hide_asset} noTip={this.props.noTip} inHeader={inHeader} balances={amounts} openOrders={openOrders} debt={debt} collateral={collateral} fromAssets={assets}/>;
+        return <ValueStoreWrapper label={this.props.label} hide_asset={this.props.hide_asset} noTip={this.props.noTip}
+                                  inHeader={inHeader} balances={amounts} openOrders={openOrders}
+                                  debt={debt} collateral={collateral} fromAssets={assets}
+                                  toAsset={toAsset}/>;
     }
 }
 TotalBalanceValue = BindToChainState(TotalBalanceValue, {keep_updating: true});
+
+
+class AssetAmountValue extends React.Component {
+
+    static defaultProps = {
+        collateral: {},
+        debt: {},
+        openOrders: {}
+    };
+
+    render() {
+        let {collateral, debt, openOrders, inHeader,toAsset,amount} = this.props;
+        let assets = List();
+        let amounts = [amount];
+
+        for (let asset in collateral) {
+            if (!assets.has(asset)) {
+                assets = assets.push(asset);
+            }
+        }
+
+        for (let asset in debt) {
+            if (!assets.has(asset)) {
+                assets = assets.push(asset);
+            }
+        }
+
+        for (let asset in openOrders) {
+            if (!assets.has(asset)) {
+                assets = assets.push(asset);
+            }
+        }
+
+        return <ValueStoreWrapper label={this.props.label} hide_asset={this.props.hide_asset} noTip={this.props.noTip}
+                                  inHeader={inHeader} balances={amounts} openOrders={openOrders}
+                                  debt={debt} collateral={collateral} fromAssets={assets}
+                                  toAsset={toAsset}/>;
+    }
+}
+AssetAmountValue = BindToChainState(AssetAmountValue, {keep_updating: true});
 
 class AccountWrapper extends React.Component {
 
@@ -366,4 +409,6 @@ class AccountWrapper extends React.Component {
 AccountWrapper = BindToChainState(AccountWrapper, {keep_updating: true});
 
 TotalBalanceValue.AccountWrapper = AccountWrapper;
+TotalBalanceValue.AssetAmountValue = AssetAmountValue;
+
 export default TotalBalanceValue;

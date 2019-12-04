@@ -3,24 +3,36 @@ import { format } from "d3-format";
 import { timeFormat } from "d3-time-format";
 import Translate from "react-translate-component";
 import { ChartCanvas, Chart, series, scale, coordinates, tooltip, axes,
-    indicator, helper,utils as chartUtils, interactive } from "react-stockcharts/es";
+    indicator, helper, interactive } from "react-stockcharts/es";
 
-const { CandlestickSeries, BarSeries, LineSeries, AreaSeries, BollingerSeries,
-     MACDSeries } = series;
-const { XAxis, YAxis } = axes;
-const { fitWidth } = helper;
-const { discontinuousTimeScaleProvider } = scale;
-const { EdgeIndicator } = coordinates;
-const { ema, sma, macd, bollingerBand } = indicator;
-const { CrossHairCursor, MouseCoordinateX, MouseCoordinateY, CurrentCoordinate } = coordinates;
-const { FibonacciRetracement, TrendLine } = interactive;
-const { OHLCTooltip, MovingAverageTooltip, BollingerBandTooltip, MACDTooltip } = tooltip;
+import {
+    CandlestickSeries, BarSeries, LineSeries, AreaSeries, BollingerSeries,
+    MACDSeries,
+} from "react-stockcharts/lib/series";
+import { XAxis, YAxis } from "react-stockcharts/lib/axes";
+import { fitWidth } from "react-stockcharts/lib/helper";
+import { discontinuousTimeScaleProvider } from "react-stockcharts/lib/scale";
+import { CrossHairCursor, EdgeIndicator, MouseCoordinateY, MouseCoordinateX,CurrentCoordinate } from "react-stockcharts/lib/coordinates";
+import { ema, sma, macd, bollingerBand  } from "react-stockcharts/lib/indicator";
+import { FibonacciRetracement, TrendLine  } from "react-stockcharts/lib/interactive";
+import { OHLCTooltip, MovingAverageTooltip, BollingerBandTooltip, MACDTooltip  } from "react-stockcharts/lib/tooltip";
+import { last as chartsLast } from "react-stockcharts/lib/utils";
 import colors from "assets/colors";
 import { cloneDeep } from "lodash";
 import utils from "common/utils";
 import cnames from "classnames";
 import counterpart from "counterpart";
 import Icon from "../Icon/Icon";
+
+const macdAppearance = {
+    stroke: {
+        macd: "#4EA382",
+        signal: "#FA5251",
+    },
+    fill: {
+        divergence: "#4682B4"
+    },
+};
 
 class CandleStickChartWithZoomPan extends React.Component {
     constructor(props) {
@@ -127,26 +139,32 @@ class CandleStickChartWithZoomPan extends React.Component {
         const calculators = {};
 
         calculators.sma = sma()
-            .windowSize(parseInt(indicatorSettings["sma"], 10))
-            .sourcePath("close")
+            .options({
+                windowSize: parseInt(indicatorSettings["sma"], 10),
+                sourcePath : "close"
+            })
             .stroke("#1f77b4")
             .fill("#1f77b4")
             .merge((d, c) => {d.sma = c;})
             .accessor(d => d.sma);
 
         calculators.ema1 = ema()
-            .windowSize(parseInt(indicatorSettings["ema1"], 10))
+            .options({
+                windowSize: parseInt(indicatorSettings["ema1"], 10)
+            })
             .merge((d, c) => {d.ema1 = c;})
             .accessor(d => d.ema1);
 
         calculators.ema2 = ema()
-            .windowSize(parseInt(indicatorSettings["ema2"], 10))
+            .options({ windowSize: parseInt(indicatorSettings["ema2"], 10) })
             .merge((d, c) => {d.ema2 = c;})
             .accessor(d => d.ema2);
 
         calculators.smaVolume = sma()
-            .windowSize(parseInt(indicatorSettings["smaVolume"], 10))
-            .sourcePath("volume")
+            .options({
+                windowSize: parseInt(indicatorSettings["smaVolume"], 10),
+                sourcePath : "volume"
+            })
             .merge((d, c) => {d.smaVolume = c;})
             .stroke("#1f77b4")
             .fill("#1f77b4")
@@ -157,10 +175,11 @@ class CandleStickChartWithZoomPan extends React.Component {
             .accessor(d => d.bb);
 
         calculators.macd = macd()
-            .fast(12)
-            .slow(26)
-            .signal(9)
-            .stroke({macd: negativeColor, signal: positiveColor})
+            .options({
+                fast: 12,
+                slow: 26,
+                signal: 9
+            })
             .merge((d, c) => {d.macd = c;})
             .accessor(d => d.macd);
 
@@ -199,9 +218,8 @@ class CandleStickChartWithZoomPan extends React.Component {
                 orient="right"
                 displayFormat={volumeFormat} />
 
-            <BarSeries yAccessor={d => d.volume} fill={d => d.close > d.open ? positiveColor : negativeColor} opacity={1}/>
+            <BarSeries yAccessor={d => d.volume} fill={d => d.close > d.open ? positiveColor : negativeColor} opacity={1} stroke/>
             {indicators.smaVolume ? <LineSeries yAccessor={calculators.smaVolume.accessor()} stroke={"#FFB22B"} fill={calculators.smaVolume.fill()} /> : null}
-
             {indicators.smaVolume ? <CurrentCoordinate yAccessor={calculators.smaVolume.accessor()} fill={calculators.smaVolume.stroke()} /> : null}
             <CurrentCoordinate yAccessor={d => d.volume} fill={volumeColor} />
 
@@ -230,7 +248,7 @@ class CandleStickChartWithZoomPan extends React.Component {
 
         return <Chart
             id={1}
-            height={height * ((chartMultiplier ? 1 : 0.883) - (0.20 * chartMultiplier))}
+            height={height * ((chartMultiplier ? 1 : 0.883) - (0.20 * chartMultiplier)) - 50}
             yExtents={[d => [d.high, d.low], calculators.ema1.accessor(), calculators.ema2.accessor(), calculators.sma.accessor()]}
             padding={{ top: 10, bottom: 20 }}>
 
@@ -264,7 +282,13 @@ class CandleStickChartWithZoomPan extends React.Component {
                 stroke={d => d.close > d.open ? positiveColor : negativeColor}
                 opacity={1}
             />
-            {indicators.bb ? <BollingerSeries calculator={calculators.bb} /> : null}
+            {indicators.bb ? <BollingerSeries calculator={calculators.bb} yAccessor={d => d.bb}
+                                              fill={"#00ff00"}
+                                              stroke={{
+                top: "#964B00",
+                middle: "#000000",
+                bottom: "#964B00",
+            }}/> : null}
 
             {indicators.sma ? <LineSeries yAccessor={calculators.sma.accessor()} stroke={calculators.sma.stroke()}/> : null}
             {indicators.ema1 ? <LineSeries yAccessor={calculators.ema1.accessor()} stroke={calculators.ema1.stroke()}/> : null}
@@ -292,9 +316,11 @@ class CandleStickChartWithZoomPan extends React.Component {
             <MovingAverageTooltip
                 origin={[0, 0]}
                 calculators={maCalcs}
+                options={[]}
             /> : null}
 
-            {indicators.bb ? <BollingerBandTooltip origin={[-40, 40]} calculator={calculators.bb} /> : null}
+            {indicators.bb ? <BollingerBandTooltip origin={[-40, 40]} yAccessor={d => d.bb}
+                                                   options={calculators.bb.options()} /> : null}
 
             <TrendLine ref="enableTrendLine"
                 enabled={enableTrendLine}
@@ -350,7 +376,7 @@ class CandleStickChartWithZoomPan extends React.Component {
 
         const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(d => d.date);
         const { data, xScale, xAccessor, displayXAccessor} = xScaleProvider(initialData);
-        const start = xAccessor(chartUtils.last(data));
+        const start = xAccessor(chartsLast(data));
         const end = xAccessor(data[Math.max(0, data.length - 150)]);
         const xExtents = [start, end];
 
@@ -373,7 +399,6 @@ class CandleStickChartWithZoomPan extends React.Component {
                 className="ps-child no-overflow Stockcharts__wrapper ps-must-propagate"
                 drawMode={enableTrendLine || enableFib}>
 
-            >
                 {showVolumeChart ? this._renderVolumeChart(chartMultiplier)
                  : <span></span>}
 
@@ -400,8 +425,10 @@ class CandleStickChartWithZoomPan extends React.Component {
                         displayFormat={format(".2f")}
                     />
 
-                    <MACDSeries calculator={calculators.macd} />
-                    <MACDTooltip origin={[-40, 35]} calculator={calculators.macd}/>
+                    <MACDSeries yAccessor={d => d.macd} {...macdAppearance}/>
+                    <MACDTooltip origin={[-40, 35]} calculator={calculators.macd} yAccessor={d => d.macd}
+                                 options={calculators.macd.options()}
+                                 appearance={macdAppearance}/>
                 </Chart> : <span></span> /* Need to return an empty element here, null triggers an error */}
 
                 <CrossHairCursor stroke={indicatorLineColor}/>

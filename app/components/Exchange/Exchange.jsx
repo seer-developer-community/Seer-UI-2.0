@@ -5,6 +5,7 @@ import { MyOpenOrders } from "./MyOpenOrders";
 import OrderBook from "./OrderBook";
 import MyMarketHistory from "./MyMarketHistory";
 import MarketHistory from "./MarketHistory";
+import AssetToUSDTConverter from "./AssetToUSDTConverter";
 import MarketHistorySimple from "./MarketHistorySimple";
 import MyOpenOrderAndHistory from "./MyOpenOrderAndHistory";
 import EmbedMyMarkets from "./EmbedMyMarkets";
@@ -31,7 +32,7 @@ import { Apis } from "seerjs-ws";
 import GatewayActions from "actions/GatewayActions";
 import { checkFeeStatusAsync } from "common/trxHelper";
 import LoadingIndicator from "../LoadingIndicator";
-import { Layout } from 'antd';
+import { Layout,Row, Col } from 'antd';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -893,7 +894,6 @@ class Exchange extends React.Component {
             baseBalance = null, coreBalance = null, quoteSymbol, baseSymbol,
             showCallLimit = false, latestPrice, changeClass;
 
-
         let notMyAccount = currentAccount.get("id") === "1.2.3" || !this.props.isMyAccount;
 
         const showVolumeChart = this.props.viewSettings.get("showVolumeChart", true);
@@ -1248,8 +1248,22 @@ class Exchange extends React.Component {
                                 </Layout>
                             </Layout>
                             <Sider width={280} style={{background:"#f0f0f0"}}>
-                                <div className="right-side-header">
-                                    &nbsp;
+                                <div className="right-side-header exchange-header">
+                                    <Row>
+                                        <Col span={24} className="right">
+                                            <Translate style={{fontSize:14,color:"#666"}} content="exchange.asset_conversion" />
+                                            &nbsp;
+                                            <i style={{color:"#999",fontSize:18}} className="iconfont icon-yanjing"></i>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col span={24} className="right">
+                                            <AssetToUSDTConverter
+                                                currentAccount={currentAccount}
+                                                base={quote}
+                                             />
+                                        </Col>
+                                    </Row>
                                 </div>
                                 <div className="market-list">
                                     <EmbedMyMarkets

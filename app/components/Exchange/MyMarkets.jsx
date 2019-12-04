@@ -762,7 +762,7 @@ class MyMarkets extends React.Component {
                         </li>) : null}
                 </ul>
 
-                    <br/><br/>
+                    <br/>
                 <div
                     style={listStyle}
                     className="table-container grid-block vertical mymarkets-list"
