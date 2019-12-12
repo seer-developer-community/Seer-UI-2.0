@@ -5,6 +5,7 @@ var Clean = require("clean-webpack-plugin");
 var git = require("git-rev-sync");
 var AntdScssThemePlugin = require('antd-scss-theme-plugin');
 require("es6-promise").polyfill();
+var CopyPlugin = require('copy-webpack-plugin');
 
 // BASE APP DIR
 var root_dir = path.resolve(__dirname);
@@ -126,6 +127,8 @@ module.exports = function(env) {
     }
 
     plugins.push(new AntdScssThemePlugin(path.resolve(root_dir, "app/assets/stylesheets/ant_design_theme.scss")));
+
+    plugins.push(new CopyPlugin([{ from: 'app/static', to: 'static',toType:'dir' }]));
 
     var config = {
         entry: {
